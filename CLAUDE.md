@@ -43,12 +43,23 @@ src/
 ## Tech Stack
 
 - Next.js 16+, React 19, TypeScript (strict mode)
-- Tailwind CSS v4 + shadcn/ui
+- Tailwind CSS v4 (basic Tailwind first — shadcn/ui added in final UI polish phase)
 - TanStack Query (server state), Zustand (client state)
 - React Hook Form + Zod (forms + validation)
 - Vitest + React Testing Library (unit tests)
 - Playwright (E2E tests)
 - Docker + GitLab CI/CD
+
+## Implementation Order
+
+Build functionality first, polish UI last:
+1. Scaffold + folder structure
+2. Auth flow (working, minimal UI)
+3. Client area features (working, basic Tailwind)
+4. Admin area (functional CRUD)
+5. i18n (en, et)
+6. Testing
+7. UI/UX polish — ONLY THEN install shadcn/ui, redesign with design system
 
 ## Backend Integration
 

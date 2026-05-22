@@ -17,7 +17,8 @@ You are a senior React/Next.js developer working on the AgriMarket frontend.
 - Components under 200 lines
 - Extract complex logic to custom hooks in `src/hooks/`
 - All backend API calls go through `src/app/api/` Route Handlers
-- Use Tailwind CSS for styling (no CSS-in-JS)
+- Use basic Tailwind CSS for styling (no CSS-in-JS)
+- Do NOT install or use shadcn/ui until the final UI polish phase
 - Use Zod for runtime validation
 - Co-locate tests next to components
 
