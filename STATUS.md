@@ -2,7 +2,7 @@
 
 ## Current Phase
 
-Phase 7: UI/UX polish
+Phase 8: Docker + CI/CD
 
 ## Completed
 
@@ -14,16 +14,14 @@ Phase 7: UI/UX polish
 - [x] Phase 5: i18n (en, et) with Zustand locale store
 - [x] Phase 6: Testing (Vitest unit tests — 33 passing)
 
-## In Progress
-
-- [ ] Phase 7: UI/UX polish
+- [x] Phase 7: UI/UX polish
   - [x] Install shadcn/ui (base-nova style, Base UI primitives) + 14 components
   - [x] Agricultural green design tokens + dark mode (Zustand theme store)
   - [x] Redesign auth pages, root layout, header, sidebar, landing page
   - [x] Redesign client area (listings, bookings, payments, messaging, reviews, equipment)
-  - [ ] Redesign admin area (dashboard, CRUD tables)
+  - [x] Redesign admin area (dashboard with stat cards, CRUD data tables)
 
-## Remaining
+## In Progress
 
 - [ ] Phase 8: Docker + CI/CD deploy
 

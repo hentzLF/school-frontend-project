@@ -1,94 +1,77 @@
 "use client";
 
+import { CalendarX2 } from "lucide-react";
 import { useAdminBookings } from "@/hooks/useAdmin";
-import type { Booking } from "@/types/booking";
-
-const statusColors: Record<Booking["status"], string> = {
-  Pending: "bg-yellow-100 text-yellow-800",
-  Confirmed: "bg-blue-100 text-blue-800",
-  InProgress: "bg-indigo-100 text-indigo-800",
-  Completed: "bg-green-100 text-green-800",
-  Cancelled: "bg-red-100 text-red-800",
-};
+import { useTranslation } from "@/hooks/useTranslation";
+import { PageHeader } from "@/components/common/PageHeader";
+import { LoadingState } from "@/components/common/LoadingState";
+import { ErrorState } from "@/components/common/ErrorState";
+import { EmptyState } from "@/components/common/EmptyState";
+import { StatusBadge } from "@/components/common/StatusBadge";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 export function AdminBookings() {
   const { data: bookings, isLoading, error } = useAdminBookings();
+  const { t } = useTranslation();
 
-  if (isLoading) return <p className="text-gray-500">Loading bookings...</p>;
-  if (error) {
-    return (
-      <div
-        role="alert"
-        className="p-4 bg-red-50 border border-red-200 rounded-md text-red-700"
-      >
-        Failed to load bookings.
-      </div>
-    );
-  }
+  if (isLoading) return <LoadingState label={t("common.loading")} />;
+  if (error) return <ErrorState message={t("admin.loadError")} />;
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">
-        Booking Management
-      </h1>
+      <PageHeader title={t("admin.bookingManagement")} />
 
       {!bookings || bookings.length === 0 ? (
-        <p className="text-gray-500">No bookings found.</p>
+        <EmptyState icon={CalendarX2} title={t("common.noResults")} />
       ) : (
-        <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
-          <table className="w-full text-sm">
-            <thead className="bg-gray-50 border-b border-gray-200">
-              <tr>
-                <th className="text-left px-4 py-3 font-medium text-gray-500">
-                  Listing
-                </th>
-                <th className="text-left px-4 py-3 font-medium text-gray-500">
-                  Client
-                </th>
-                <th className="text-left px-4 py-3 font-medium text-gray-500">
-                  Provider
-                </th>
-                <th className="text-left px-4 py-3 font-medium text-gray-500">
-                  Dates
-                </th>
-                <th className="text-left px-4 py-3 font-medium text-gray-500">
-                  Total
-                </th>
-                <th className="text-left px-4 py-3 font-medium text-gray-500">
-                  Status
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100">
+        <div className="overflow-hidden rounded-xl bg-card ring-1 ring-foreground/10">
+          <Table>
+            <TableHeader className="bg-muted/50">
+              <TableRow>
+                <TableHead>{t("admin.listing")}</TableHead>
+                <TableHead>{t("bookings.client")}</TableHead>
+                <TableHead>{t("bookings.provider")}</TableHead>
+                <TableHead>{t("admin.dates")}</TableHead>
+                <TableHead>{t("admin.total")}</TableHead>
+                <TableHead>{t("admin.status")}</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {bookings.map((booking) => (
-                <tr key={booking.id}>
-                  <td className="px-4 py-3 text-gray-900">
+                <TableRow key={booking.id}>
+                  <TableCell className="font-medium text-foreground">
                     {booking.listingTitle}
-                  </td>
-                  <td className="px-4 py-3 text-gray-600">
+                  </TableCell>
+                  <TableCell className="text-muted-foreground">
                     {booking.clientName}
-                  </td>
-                  <td className="px-4 py-3 text-gray-600">
+                  </TableCell>
+                  <TableCell className="text-muted-foreground">
                     {booking.providerName}
-                  </td>
-                  <td className="px-4 py-3 text-gray-600">
+                  </TableCell>
+                  <TableCell className="text-muted-foreground">
                     {new Date(booking.startDate).toLocaleDateString()} —{" "}
                     {new Date(booking.endDate).toLocaleDateString()}
-                  </td>
-                  <td className="px-4 py-3 text-gray-600">
+                  </TableCell>
+                  <TableCell className="text-muted-foreground">
                     {booking.totalPrice.toFixed(2)} EUR
-                  </td>
-                  <td className="px-4 py-3">
-                    <span
-                      className={`px-2 py-1 text-xs rounded-full ${statusColors[booking.status]}`}
-                    >
-                      {booking.status}
-                    </span>
-                  </td>
-                </tr>
+                  </TableCell>
+                  <TableCell>
+                    <StatusBadge
+                      status={booking.status}
+                      label={t(`bookings.status.${booking.status}`)}
+                    />
+                  </TableCell>
+                </TableRow>
               ))}
-            </tbody>
-          </table>
+            </TableBody>
+          </Table>
         </div>
       )}
     </div>

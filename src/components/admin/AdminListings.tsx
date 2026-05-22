@@ -1,100 +1,96 @@
 "use client";
 
+import { PackageSearch, Trash2 } from "lucide-react";
 import { useAdminListings, useDeleteListing } from "@/hooks/useAdmin";
+import { useTranslation } from "@/hooks/useTranslation";
+import { PageHeader } from "@/components/common/PageHeader";
+import { LoadingState } from "@/components/common/LoadingState";
+import { ErrorState } from "@/components/common/ErrorState";
+import { EmptyState } from "@/components/common/EmptyState";
+import { StatusBadge } from "@/components/common/StatusBadge";
+import { ConfirmDialog } from "@/components/common/ConfirmDialog";
+import { Button } from "@/components/ui/button";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 export function AdminListings() {
   const { data: listings, isLoading, error } = useAdminListings();
   const deleteListing = useDeleteListing();
+  const { t } = useTranslation();
 
-  if (isLoading) return <p className="text-gray-500">Loading listings...</p>;
-  if (error) {
-    return (
-      <div
-        role="alert"
-        className="p-4 bg-red-50 border border-red-200 rounded-md text-red-700"
-      >
-        Failed to load listings.
-      </div>
-    );
-  }
+  if (isLoading) return <LoadingState label={t("common.loading")} />;
+  if (error) return <ErrorState message={t("admin.loadError")} />;
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">
-        Listing Management
-      </h1>
+      <PageHeader title={t("admin.listingManagement")} />
 
       {!listings || listings.length === 0 ? (
-        <p className="text-gray-500">No listings found.</p>
+        <EmptyState icon={PackageSearch} title={t("common.noResults")} />
       ) : (
-        <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
-          <table className="w-full text-sm">
-            <thead className="bg-gray-50 border-b border-gray-200">
-              <tr>
-                <th className="text-left px-4 py-3 font-medium text-gray-500">
-                  Title
-                </th>
-                <th className="text-left px-4 py-3 font-medium text-gray-500">
-                  Provider
-                </th>
-                <th className="text-left px-4 py-3 font-medium text-gray-500">
-                  Category
-                </th>
-                <th className="text-left px-4 py-3 font-medium text-gray-500">
-                  Price
-                </th>
-                <th className="text-left px-4 py-3 font-medium text-gray-500">
-                  Status
-                </th>
-                <th className="text-right px-4 py-3 font-medium text-gray-500">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100">
+        <div className="overflow-hidden rounded-xl bg-card ring-1 ring-foreground/10">
+          <Table>
+            <TableHeader className="bg-muted/50">
+              <TableRow>
+                <TableHead>{t("listings.titleLabel")}</TableHead>
+                <TableHead>{t("bookings.provider")}</TableHead>
+                <TableHead>{t("listings.category")}</TableHead>
+                <TableHead>{t("listings.price")}</TableHead>
+                <TableHead>{t("admin.status")}</TableHead>
+                <TableHead className="text-right">
+                  {t("admin.actions")}
+                </TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {listings.map((listing) => (
-                <tr key={listing.id}>
-                  <td className="px-4 py-3 text-gray-900 font-medium">
+                <TableRow key={listing.id}>
+                  <TableCell className="font-medium text-foreground">
                     {listing.title}
-                  </td>
-                  <td className="px-4 py-3 text-gray-600">
+                  </TableCell>
+                  <TableCell className="text-muted-foreground">
                     {listing.providerName}
-                  </td>
-                  <td className="px-4 py-3 text-gray-600">
+                  </TableCell>
+                  <TableCell className="text-muted-foreground">
                     {listing.categoryName}
-                  </td>
-                  <td className="px-4 py-3 text-gray-600">
+                  </TableCell>
+                  <TableCell className="text-muted-foreground">
                     {listing.price.toFixed(2)} EUR
-                  </td>
-                  <td className="px-4 py-3">
-                    <span
-                      className={`px-2 py-1 text-xs rounded-full ${
-                        listing.status === "Active"
-                          ? "bg-green-100 text-green-800"
-                          : listing.status === "Inactive"
-                            ? "bg-gray-100 text-gray-800"
-                            : "bg-yellow-100 text-yellow-800"
-                      }`}
-                    >
-                      {listing.status}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3 text-right">
-                    <button
-                      onClick={() => {
-                        if (confirm(`Delete listing "${listing.title}"?`)) {
-                          deleteListing.mutate(listing.id);
-                        }
-                      }}
-                      className="text-red-600 hover:text-red-700 text-sm"
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
+                  </TableCell>
+                  <TableCell>
+                    <StatusBadge
+                      status={listing.status}
+                      label={listing.status}
+                    />
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <ConfirmDialog
+                      title={t("admin.confirmDelete")}
+                      description={t("admin.confirmDeleteText")}
+                      confirmLabel={t("common.delete")}
+                      cancelLabel={t("common.cancel")}
+                      onConfirm={() => deleteListing.mutate(listing.id)}
+                      trigger={
+                        <Button
+                          variant="ghost"
+                          size="icon-sm"
+                          aria-label={t("common.delete")}
+                        >
+                          <Trash2 aria-hidden="true" />
+                        </Button>
+                      }
+                    />
+                  </TableCell>
+                </TableRow>
               ))}
-            </tbody>
-          </table>
+            </TableBody>
+          </Table>
         </div>
       )}
     </div>
