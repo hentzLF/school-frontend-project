@@ -1,18 +1,23 @@
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { Header } from "@/components/layout/Header";
 import { AdminSidebar } from "@/components/admin/AdminSidebar";
+import { getCurrentUser } from "@/lib/auth";
 
 type AdminLayoutProps = {
   children: React.ReactNode;
 };
 
 export default async function AdminLayout({ children }: AdminLayoutProps) {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("token");
+  const user = await getCurrentUser();
 
-  if (!token) {
+  if (!user) {
     redirect("/login");
+  }
+
+  // Admin routes require the Admin role — authenticated Client/Provider
+  // users are sent back to their dashboard.
+  if (user.role !== "Admin") {
+    redirect("/dashboard");
   }
 
   return (
