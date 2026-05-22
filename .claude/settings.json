@@ -1,0 +1,47 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run *)",
+      "Bash(npm install *)",
+      "Bash(npm test *)",
+      "Bash(npx *)",
+      "Bash(node *)",
+      "Bash(git status *)",
+      "Bash(git diff *)",
+      "Bash(git log *)",
+      "Bash(git branch *)",
+      "Bash(git show *)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(ls *)",
+      "PowerShell(npm run *)",
+      "PowerShell(npx *)",
+      "PowerShell(git status *)",
+      "PowerShell(git diff *)",
+      "PowerShell(git log *)"
+    ],
+    "deny": [
+      "Bash(rm -rf *)",
+      "Bash(git push *)",
+      "Bash(git reset --hard *)",
+      "Bash(git clean -f *)",
+      "PowerShell(Remove-Item -Recurse -Force *)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash|PowerShell",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -c 'if echo \"$CLAUDE_TOOL_INPUT\" | grep -qi \"git push\"; then echo \"{\\\"hookSpecificOutput\\\":{\\\"hookEventName\\\":\\\"PreToolUse\\\",\\\"permissionDecision\\\":\\\"deny\\\",\\\"permissionDecisionReason\\\":\\\"git push is blocked — human pushes manually\\\"}}\" && exit 0; fi'"
+          }
+        ]
+      }
+    ]
+  },
+  "env": {
+    "NEXT_TELEMETRY_DISABLED": "1"
+  }
+}

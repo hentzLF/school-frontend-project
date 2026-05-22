@@ -1,0 +1,37 @@
+{
+  "name": "AgriMarket Frontend Claude Code",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "features": {
+    "ghcr.io/anthropics/devcontainer-features/claude-code:1.0": {},
+    "ghcr.io/devcontainers/features/github-cli:1": {}
+  },
+  "remoteUser": "node",
+  "mounts": [
+    "source=claude-frontend-config-${devcontainerId},target=/home/node/.claude,type=volume",
+    "source=npm-cache-${devcontainerId},target=/home/node/.npm,type=volume"
+  ],
+  "containerEnv": {
+    "ANTHROPIC_API_KEY": "${localEnv:ANTHROPIC_API_KEY}",
+    "CLAUDE_CODE_OAUTH_TOKEN": "${localEnv:CLAUDE_CODE_OAUTH_TOKEN}",
+    "CLAUDE_CONFIG_DIR": "/home/node/.claude",
+    "NEXT_TELEMETRY_DISABLED": "1",
+    "NODE_OPTIONS": "--max-old-space-size=4096"
+  },
+  "forwardPorts": [3000],
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "anthropic.claude-code",
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "bradlc.vscode-tailwindcss",
+        "ms-playwright.playwright"
+      ]
+    }
+  },
+  "postCreateCommand": "npm install || true && npx playwright install --with-deps || true && git config core.hooksPath .githooks",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=delegated",
+  "workspaceFolder": "/workspace"
+}
