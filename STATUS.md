@@ -13,7 +13,8 @@ Phase 0: AI workflow setup complete. Ready to scaffold Next.js project.
 - [ ] Phase 4: Admin area (dashboard, CRUD management)
 - [ ] Phase 5: i18n (en, et)
 - [ ] Phase 6: Testing (Vitest unit + Playwright E2E)
-- [ ] Phase 7: Docker + CI/CD deploy
+- [ ] Phase 7: UI/UX polish (install shadcn/ui, design system, responsive, dark mode, a11y)
+- [ ] Phase 8: Docker + CI/CD deploy
 
 ## Blocked
 (none)
