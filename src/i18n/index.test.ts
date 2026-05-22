@@ -9,7 +9,9 @@ describe("getTranslation", () => {
 
   it("should return the correct Estonian translation", () => {
     expect(getTranslation("et", "common.loading")).toBe("Laadimine...");
-    expect(getTranslation("et", "auth.signIn")).toBe("Logi sisse AgriMarketisse");
+    expect(getTranslation("et", "auth.signIn")).toBe(
+      "Logi sisse AgriMarketisse",
+    );
   });
 
   it("should return the key for missing translations", () => {

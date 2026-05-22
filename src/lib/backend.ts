@@ -10,13 +10,16 @@ type BackendRequestOptions = {
 
 export async function backendFetch<T>(
   path: string,
-  options: BackendRequestOptions = {}
+  options: BackendRequestOptions = {},
 ): Promise<{ data: T; status: number } | NextResponse> {
   const { method = "GET", body, requireAuth = true, headers = {} } = options;
 
   const backendUrl = process.env.BACKEND_URL;
   if (!backendUrl) {
-    return NextResponse.json({ error: "Server configuration error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Server configuration error" },
+      { status: 500 },
+    );
   }
 
   const requestHeaders: Record<string, string> = {
@@ -45,7 +48,10 @@ export async function backendFetch<T>(
   try {
     response = await fetch(`${backendUrl}${path}`, config);
   } catch {
-    return NextResponse.json({ error: "Failed to reach backend service" }, { status: 502 });
+    return NextResponse.json(
+      { error: "Failed to reach backend service" },
+      { status: 502 },
+    );
   }
 
   if (!response.ok) {
@@ -54,7 +60,7 @@ export async function backendFetch<T>(
     }));
     return NextResponse.json(
       { error: errorData.message ?? "Request failed" },
-      { status: response.status }
+      { status: response.status },
     );
   }
 
@@ -67,7 +73,7 @@ export async function backendFetch<T>(
 }
 
 export function isErrorResponse(
-  result: { data: unknown; status: number } | NextResponse
+  result: { data: unknown; status: number } | NextResponse,
 ): result is NextResponse {
   return result instanceof NextResponse;
 }

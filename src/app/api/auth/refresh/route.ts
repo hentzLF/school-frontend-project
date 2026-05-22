@@ -11,7 +11,10 @@ export async function POST(): Promise<NextResponse> {
 
   const backendUrl = process.env.BACKEND_URL;
   if (!backendUrl) {
-    return NextResponse.json({ error: "Server configuration error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Server configuration error" },
+      { status: 500 },
+    );
   }
 
   let backendResponse: Response;
@@ -22,16 +25,21 @@ export async function POST(): Promise<NextResponse> {
       body: JSON.stringify({ refreshToken }),
     });
   } catch {
-    return NextResponse.json({ error: "Failed to reach authentication service" }, { status: 502 });
+    return NextResponse.json(
+      { error: "Failed to reach authentication service" },
+      { status: 502 },
+    );
   }
 
   if (!backendResponse.ok) {
-    const errorData: ApiErrorResponse = await backendResponse.json().catch(() => ({
-      message: backendResponse.statusText,
-    }));
+    const errorData: ApiErrorResponse = await backendResponse
+      .json()
+      .catch(() => ({
+        message: backendResponse.statusText,
+      }));
     return NextResponse.json(
       { error: errorData.message ?? "Token refresh failed" },
-      { status: backendResponse.status }
+      { status: backendResponse.status },
     );
   }
 

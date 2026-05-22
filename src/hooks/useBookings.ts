@@ -3,7 +3,11 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { BOOKING_ROUTES } from "@/config/constants";
-import type { Booking, CreateBookingRequest, UpdateBookingStatusRequest } from "@/types/booking";
+import type {
+  Booking,
+  CreateBookingRequest,
+  UpdateBookingStatusRequest,
+} from "@/types/booking";
 
 export function useBookings() {
   return useQuery<Booking[]>({
@@ -35,7 +39,11 @@ export function useCreateBooking() {
 export function useUpdateBookingStatus() {
   const queryClient = useQueryClient();
 
-  return useMutation<Booking, Error, { id: string } & UpdateBookingStatusRequest>({
+  return useMutation<
+    Booking,
+    Error,
+    { id: string } & UpdateBookingStatusRequest
+  >({
     mutationFn: ({ id, status }) =>
       api<Booking>(BOOKING_ROUTES.updateStatus(id), {
         method: "PUT",

@@ -1,5 +1,12 @@
 import { describe, it, expect } from "vitest";
-import { AUTH_ROUTES, LISTING_ROUTES, BOOKING_ROUTES, CONVERSATION_ROUTES, REVIEW_ROUTES, EQUIPMENT_ROUTES } from "./constants";
+import {
+  AUTH_ROUTES,
+  LISTING_ROUTES,
+  BOOKING_ROUTES,
+  CONVERSATION_ROUTES,
+  REVIEW_ROUTES,
+  EQUIPMENT_ROUTES,
+} from "./constants";
 
 describe("AUTH_ROUTES", () => {
   it("should have correct login route", () => {
@@ -27,13 +34,17 @@ describe("LISTING_ROUTES", () => {
 
 describe("BOOKING_ROUTES", () => {
   it("should generate correct status update route", () => {
-    expect(BOOKING_ROUTES.updateStatus("booking-1")).toBe("/api/bookings/booking-1/status");
+    expect(BOOKING_ROUTES.updateStatus("booking-1")).toBe(
+      "/api/bookings/booking-1/status",
+    );
   });
 });
 
 describe("CONVERSATION_ROUTES", () => {
   it("should generate correct messages route", () => {
-    expect(CONVERSATION_ROUTES.messages("conv-1")).toBe("/api/conversations/conv-1/messages");
+    expect(CONVERSATION_ROUTES.messages("conv-1")).toBe(
+      "/api/conversations/conv-1/messages",
+    );
   });
 });
 

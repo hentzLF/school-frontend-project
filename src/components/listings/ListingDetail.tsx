@@ -16,7 +16,10 @@ export function ListingDetail({ listingId }: ListingDetailProps) {
 
   if (error) {
     return (
-      <div role="alert" className="p-4 bg-red-50 border border-red-200 rounded-md text-red-700">
+      <div
+        role="alert"
+        className="p-4 bg-red-50 border border-red-200 rounded-md text-red-700"
+      >
         Failed to load listing.
       </div>
     );
@@ -26,7 +29,10 @@ export function ListingDetail({ listingId }: ListingDetailProps) {
 
   return (
     <div className="max-w-3xl">
-      <Link href="/listings" className="text-sm text-green-600 hover:text-green-700 mb-4 inline-block">
+      <Link
+        href="/listings"
+        className="text-sm text-green-600 hover:text-green-700 mb-4 inline-block"
+      >
         &larr; Back to listings
       </Link>
 
@@ -39,7 +45,9 @@ export function ListingDetail({ listingId }: ListingDetailProps) {
       </div>
 
       <div className="bg-white border border-gray-200 rounded-lg p-6 mb-6">
-        <p className="text-gray-700 whitespace-pre-wrap">{listing.description}</p>
+        <p className="text-gray-700 whitespace-pre-wrap">
+          {listing.description}
+        </p>
       </div>
 
       <div className="bg-white border border-gray-200 rounded-lg p-6 flex items-center justify-between mb-8">
@@ -47,7 +55,10 @@ export function ListingDetail({ listingId }: ListingDetailProps) {
           <p className="text-sm text-gray-500">Price</p>
           <p className="text-2xl font-bold text-green-700">
             {listing.price.toFixed(2)} EUR
-            <span className="text-sm font-normal text-gray-500"> / {listing.priceUnit}</span>
+            <span className="text-sm font-normal text-gray-500">
+              {" "}
+              / {listing.priceUnit}
+            </span>
           </p>
         </div>
         <Link
@@ -64,7 +75,9 @@ export function ListingDetail({ listingId }: ListingDetailProps) {
       </div>
 
       <div className="bg-white border border-gray-200 rounded-lg p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-3">Write a Review</h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-3">
+          Write a Review
+        </h3>
         <CreateReviewForm listingId={listingId} />
       </div>
     </div>

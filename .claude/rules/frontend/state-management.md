@@ -4,17 +4,18 @@ paths:
   - "src/hooks/**"
   - "src/**/*.{ts,tsx}"
 ---
+
 # State Management Rules
 
 ## When to Use What
 
-| State Type | Tool | Example |
-|-----------|------|---------|
-| Server data (API responses) | TanStack Query | Listings, bookings, user profile |
-| Client UI state | Zustand | Sidebar open, theme, modal visibility |
-| Form state | React Hook Form | Login form, booking form |
-| URL state | Next.js searchParams | Filters, pagination, sorting |
-| Auth state | HttpOnly cookies + Route Handlers | JWT tokens |
+| State Type                  | Tool                              | Example                               |
+| --------------------------- | --------------------------------- | ------------------------------------- |
+| Server data (API responses) | TanStack Query                    | Listings, bookings, user profile      |
+| Client UI state             | Zustand                           | Sidebar open, theme, modal visibility |
+| Form state                  | React Hook Form                   | Login form, booking form              |
+| URL state                   | Next.js searchParams              | Filters, pagination, sorting          |
+| Auth state                  | HttpOnly cookies + Route Handlers | JWT tokens                            |
 
 ## TanStack Query
 

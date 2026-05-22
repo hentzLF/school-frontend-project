@@ -17,7 +17,7 @@ describe("StarRating", () => {
     const ratingContainer = screen.getByLabelText("4 out of 5 stars");
     const stars = ratingContainer.querySelectorAll("span");
     const filled = Array.from(stars).filter((s) =>
-      s.className.includes("text-yellow-400")
+      s.className.includes("text-yellow-400"),
     );
     expect(filled).toHaveLength(4);
   });
@@ -33,7 +33,7 @@ describe("StarRating", () => {
     const ratingContainer = screen.getByLabelText("0 out of 5 stars");
     const stars = ratingContainer.querySelectorAll("span");
     const filled = Array.from(stars).filter((s) =>
-      s.className.includes("text-yellow-400")
+      s.className.includes("text-yellow-400"),
     );
     expect(filled).toHaveLength(0);
   });

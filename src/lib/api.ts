@@ -6,7 +6,7 @@ type RequestOptions = {
 
 export async function api<T>(
   endpoint: string,
-  options: RequestOptions = {}
+  options: RequestOptions = {},
 ): Promise<T> {
   const { method = "GET", body, headers = {} } = options;
 
@@ -42,7 +42,7 @@ export async function api<T>(
 export class ApiError extends Error {
   constructor(
     public status: number,
-    message: string
+    message: string,
   ) {
     super(message);
     this.name = "ApiError";

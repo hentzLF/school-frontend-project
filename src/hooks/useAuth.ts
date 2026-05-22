@@ -29,10 +29,7 @@ export function useAuth(): UseAuthReturn {
   const queryClient = useQueryClient();
   const router = useRouter();
 
-  const {
-    data: user,
-    isLoading,
-  } = useQuery<MeResponse | null>({
+  const { data: user, isLoading } = useQuery<MeResponse | null>({
     queryKey: ["auth", "me"],
     queryFn: async () => {
       try {
@@ -50,15 +47,25 @@ export function useAuth(): UseAuthReturn {
 
   const loginMutation = useMutation<AuthMutationResponse, Error, LoginRequest>({
     mutationFn: (data: LoginRequest) =>
-      api<AuthMutationResponse>(AUTH_ROUTES.login, { method: "POST", body: data }),
+      api<AuthMutationResponse>(AUTH_ROUTES.login, {
+        method: "POST",
+        body: data,
+      }),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ["auth", "me"] });
     },
   });
 
-  const registerMutation = useMutation<AuthMutationResponse, Error, RegisterRequest>({
+  const registerMutation = useMutation<
+    AuthMutationResponse,
+    Error,
+    RegisterRequest
+  >({
     mutationFn: (data: RegisterRequest) =>
-      api<AuthMutationResponse>(AUTH_ROUTES.register, { method: "POST", body: data }),
+      api<AuthMutationResponse>(AUTH_ROUTES.register, {
+        method: "POST",
+        body: data,
+      }),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ["auth", "me"] });
     },

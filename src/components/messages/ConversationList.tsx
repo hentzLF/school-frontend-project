@@ -6,11 +6,15 @@ import { useConversations } from "@/hooks/useConversations";
 export function ConversationList() {
   const { data: conversations, isLoading, error } = useConversations();
 
-  if (isLoading) return <p className="text-gray-500">Loading conversations...</p>;
+  if (isLoading)
+    return <p className="text-gray-500">Loading conversations...</p>;
 
   if (error) {
     return (
-      <div role="alert" className="p-4 bg-red-50 border border-red-200 rounded-md text-red-700">
+      <div
+        role="alert"
+        className="p-4 bg-red-50 border border-red-200 rounded-md text-red-700"
+      >
         Failed to load conversations.
       </div>
     );

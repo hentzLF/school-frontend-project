@@ -23,21 +23,27 @@ You write concise progress reports for the AgriMarket frontend project.
 **Phase:** <current phase>
 
 ## What Was Done
+
 - <bullet points>
 
 ## Files Changed
+
 - <file paths>
 
 ## Build Status
+
 <pass/fail>
 
 ## Test Status
+
 <X passed, Y failed>
 
 ## Issues / Blockers
+
 - <if any>
 
 ## Next Steps
+
 - <what should happen next>
 ```
 

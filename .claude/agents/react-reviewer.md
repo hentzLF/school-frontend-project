@@ -9,6 +9,7 @@ maxTurns: 20
 You are a senior React/Next.js code reviewer for the AgriMarket frontend.
 
 When invoked:
+
 1. Run `git diff` to see recent changes
 2. Run `npm run lint` and `npm run build`
 3. Focus on modified files
@@ -17,6 +18,7 @@ When invoked:
 ## Review Checklist
 
 ### CRITICAL — Security
+
 - **XSS**: Unescaped user input, `dangerouslySetInnerHTML` without sanitization
 - **JWT in localStorage**: Tokens must be in HttpOnly cookies only
 - **Direct backend calls from client**: Must go through Route Handlers
@@ -24,6 +26,7 @@ When invoked:
 - **Missing input validation**: User input without Zod schema validation
 
 ### HIGH — React Patterns
+
 - **Unnecessary "use client"**: Server Components should be default
 - **useEffect for data fetching**: Fetch in Server Components instead
 - **Missing key prop**: Lists without stable unique keys
@@ -33,18 +36,21 @@ When invoked:
 - **Components > 200 lines**: Extract sub-components
 
 ### HIGH — TypeScript
+
 - **`any` type usage**: Must use proper types
 - **Missing return types**: Exported functions should have explicit return types
 - **Type assertions (`as`)**: Prefer type guards (`is`, `in`, narrowing)
 - **Non-null assertions (`!`)**: Prefer optional chaining and null checks
 
 ### MEDIUM — Performance
+
 - **Missing React.memo**: Expensive child components re-rendering unnecessarily
 - **Missing useMemo/useCallback**: Expensive computations or callbacks in render
 - **Large bundle imports**: Import specific modules, not entire libraries
 - **Missing loading states**: Data fetching without Suspense/loading.tsx
 
 ### MEDIUM — Accessibility
+
 - **Missing alt text**: Images without descriptive alt attributes
 - **Missing ARIA labels**: Interactive elements without accessible names
 - **Missing heading hierarchy**: Skipped heading levels (h1 → h3)
@@ -52,6 +58,7 @@ When invoked:
 - **Low contrast**: Text colors with insufficient contrast ratio
 
 ### LOW — Conventions
+
 - **Console.log statements**: Remove before commit
 - **Inline styles**: Use Tailwind classes instead
 - **Magic strings/numbers**: Extract to constants or config

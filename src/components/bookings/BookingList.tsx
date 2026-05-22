@@ -25,7 +25,10 @@ export function BookingList() {
 
   if (error) {
     return (
-      <div role="alert" className="p-4 bg-red-50 border border-red-200 rounded-md text-red-700">
+      <div
+        role="alert"
+        className="p-4 bg-red-50 border border-red-200 rounded-md text-red-700"
+      >
         Failed to load bookings.
       </div>
     );
@@ -53,14 +56,18 @@ export function BookingList() {
                     {booking.listingTitle}
                   </Link>
                   <p className="text-sm text-gray-500 mt-1">
-                    {new Date(booking.startDate).toLocaleDateString()} — {new Date(booking.endDate).toLocaleDateString()}
+                    {new Date(booking.startDate).toLocaleDateString()} —{" "}
+                    {new Date(booking.endDate).toLocaleDateString()}
                   </p>
                   <p className="text-sm text-gray-500">
-                    Client: {booking.clientName} | Provider: {booking.providerName}
+                    Client: {booking.clientName} | Provider:{" "}
+                    {booking.providerName}
                   </p>
                 </div>
                 <div className="flex items-center gap-3">
-                  <span className={`px-2 py-1 text-xs font-medium rounded-full ${statusColors[booking.status]}`}>
+                  <span
+                    className={`px-2 py-1 text-xs font-medium rounded-full ${statusColors[booking.status]}`}
+                  >
                     {booking.status}
                   </span>
                   <span className="text-sm font-medium text-gray-900">
@@ -73,18 +80,24 @@ export function BookingList() {
                 <p className="mt-2 text-sm text-gray-600">{booking.notes}</p>
               )}
 
-              {(booking.status === "Pending" || booking.status === "Confirmed" || booking.status === "InProgress") && (
+              {(booking.status === "Pending" ||
+                booking.status === "Confirmed" ||
+                booking.status === "InProgress") && (
                 <div className="mt-3 flex gap-2">
                   {booking.status === "Pending" && (
                     <>
                       <button
-                        onClick={() => handleStatusUpdate(booking.id, "Confirmed")}
+                        onClick={() =>
+                          handleStatusUpdate(booking.id, "Confirmed")
+                        }
                         className="px-3 py-1 text-xs font-medium bg-blue-600 text-white rounded hover:bg-blue-700"
                       >
                         Confirm
                       </button>
                       <button
-                        onClick={() => handleStatusUpdate(booking.id, "Cancelled")}
+                        onClick={() =>
+                          handleStatusUpdate(booking.id, "Cancelled")
+                        }
                         className="px-3 py-1 text-xs font-medium bg-red-600 text-white rounded hover:bg-red-700"
                       >
                         Cancel
@@ -93,7 +106,9 @@ export function BookingList() {
                   )}
                   {booking.status === "Confirmed" && (
                     <button
-                      onClick={() => handleStatusUpdate(booking.id, "InProgress")}
+                      onClick={() =>
+                        handleStatusUpdate(booking.id, "InProgress")
+                      }
                       className="px-3 py-1 text-xs font-medium bg-indigo-600 text-white rounded hover:bg-indigo-700"
                     >
                       Start Work
@@ -101,7 +116,9 @@ export function BookingList() {
                   )}
                   {booking.status === "InProgress" && (
                     <button
-                      onClick={() => handleStatusUpdate(booking.id, "Completed")}
+                      onClick={() =>
+                        handleStatusUpdate(booking.id, "Completed")
+                      }
                       className="px-3 py-1 text-xs font-medium bg-green-600 text-white rounded hover:bg-green-700"
                     >
                       Complete

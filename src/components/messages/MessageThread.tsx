@@ -35,7 +35,10 @@ export function MessageThread({ conversationId }: MessageThreadProps) {
   return (
     <div className="flex flex-col h-[calc(100vh-8rem)]">
       <div className="mb-4">
-        <Link href="/messages" className="text-sm text-green-600 hover:text-green-700">
+        <Link
+          href="/messages"
+          className="text-sm text-green-600 hover:text-green-700"
+        >
           &larr; Back to conversations
         </Link>
       </div>
@@ -63,7 +66,9 @@ export function MessageThread({ conversationId }: MessageThreadProps) {
                   </p>
                 )}
                 <p className="text-sm">{message.content}</p>
-                <p className={`text-xs mt-1 ${isOwn ? "text-green-200" : "text-gray-400"}`}>
+                <p
+                  className={`text-xs mt-1 ${isOwn ? "text-green-200" : "text-gray-400"}`}
+                >
                   {new Date(message.createdAt).toLocaleTimeString()}
                 </p>
               </div>

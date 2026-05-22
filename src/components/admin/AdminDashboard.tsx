@@ -9,7 +9,10 @@ export function AdminDashboard() {
 
   if (error) {
     return (
-      <div role="alert" className="p-4 bg-red-50 border border-red-200 rounded-md text-red-700">
+      <div
+        role="alert"
+        className="p-4 bg-red-50 border border-red-200 rounded-md text-red-700"
+      >
         Failed to load dashboard data.
       </div>
     );
@@ -31,9 +34,14 @@ export function AdminDashboard() {
       <h1 className="text-2xl font-bold text-gray-900 mb-6">Admin Dashboard</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {stats.map((stat) => (
-          <div key={stat.label} className="bg-white border border-gray-200 rounded-lg p-6">
+          <div
+            key={stat.label}
+            className="bg-white border border-gray-200 rounded-lg p-6"
+          >
             <p className="text-sm text-gray-500">{stat.label}</p>
-            <p className="text-2xl font-bold text-gray-900 mt-1">{stat.value}</p>
+            <p className="text-2xl font-bold text-gray-900 mt-1">
+              {stat.value}
+            </p>
           </div>
         ))}
       </div>

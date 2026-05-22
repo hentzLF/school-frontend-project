@@ -2,6 +2,7 @@
 paths:
   - "src/**/*.{tsx,jsx}"
 ---
+
 # Accessibility Rules (WCAG 2.1 AA)
 
 - All images have descriptive `alt` attributes

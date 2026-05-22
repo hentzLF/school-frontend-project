@@ -20,10 +20,16 @@ const cookieOptions: CookieOptions = {
   maxAge: 60 * 60 * 24 * 7, // 7 days
 };
 
-export async function setAuthCookies(authResponse: AuthResponse): Promise<void> {
+export async function setAuthCookies(
+  authResponse: AuthResponse,
+): Promise<void> {
   const cookieStore = await cookies();
   cookieStore.set(TOKEN_COOKIE, authResponse.token, cookieOptions);
-  cookieStore.set(REFRESH_TOKEN_COOKIE, authResponse.refreshToken, cookieOptions);
+  cookieStore.set(
+    REFRESH_TOKEN_COOKIE,
+    authResponse.refreshToken,
+    cookieOptions,
+  );
 }
 
 export async function clearAuthCookies(): Promise<void> {

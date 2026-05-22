@@ -8,9 +8,9 @@
 ## Test Naming
 
 ```typescript
-describe('LoginForm', () => {
-  it('should show validation error for empty email', () => {});
-  it('should redirect to dashboard on successful login', () => {});
+describe("LoginForm", () => {
+  it("should show validation error for empty email", () => {});
+  it("should redirect to dashboard on successful login", () => {});
 });
 ```
 

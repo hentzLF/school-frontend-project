@@ -20,6 +20,7 @@ npm run test -- --run path/to/file      # Specific test file
 ## Output Format
 
 Report back with:
+
 - Total tests: X passed, Y failed, Z skipped
 - Failed test names and root cause (one line each)
 - Coverage percentage if requested

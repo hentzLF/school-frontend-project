@@ -1,7 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { useEquipment, useCreateEquipment, useDeleteEquipment } from "@/hooks/useEquipment";
+import {
+  useEquipment,
+  useCreateEquipment,
+  useDeleteEquipment,
+} from "@/hooks/useEquipment";
 import { ApiError } from "@/lib/api";
 
 export function EquipmentList() {
@@ -47,14 +51,25 @@ export function EquipmentList() {
       </div>
 
       {showForm && (
-        <form onSubmit={handleSubmit} className="mb-6 p-4 bg-white border border-gray-200 rounded-lg space-y-3">
+        <form
+          onSubmit={handleSubmit}
+          className="mb-6 p-4 bg-white border border-gray-200 rounded-lg space-y-3"
+        >
           {errorMessage && (
-            <div role="alert" className="p-3 rounded bg-red-50 border border-red-200 text-red-700 text-sm">
+            <div
+              role="alert"
+              className="p-3 rounded bg-red-50 border border-red-200 text-red-700 text-sm"
+            >
               {errorMessage}
             </div>
           )}
           <div>
-            <label htmlFor="eq-name" className="block text-sm font-medium text-gray-700 mb-1">Name</label>
+            <label
+              htmlFor="eq-name"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
+              Name
+            </label>
             <input
               id="eq-name"
               type="text"
@@ -65,7 +80,12 @@ export function EquipmentList() {
             />
           </div>
           <div>
-            <label htmlFor="eq-description" className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+            <label
+              htmlFor="eq-description"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
+              Description
+            </label>
             <textarea
               id="eq-description"
               rows={2}
@@ -76,7 +96,12 @@ export function EquipmentList() {
             />
           </div>
           <div>
-            <label htmlFor="eq-condition" className="block text-sm font-medium text-gray-700 mb-1">Condition</label>
+            <label
+              htmlFor="eq-condition"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
+              Condition
+            </label>
             <select
               id="eq-condition"
               value={condition}
@@ -104,7 +129,10 @@ export function EquipmentList() {
       {isLoading && <p className="text-gray-500">Loading equipment...</p>}
 
       {error && (
-        <div role="alert" className="p-4 bg-red-50 border border-red-200 rounded-md text-red-700">
+        <div
+          role="alert"
+          className="p-4 bg-red-50 border border-red-200 rounded-md text-red-700"
+        >
           Failed to load equipment.
         </div>
       )}
@@ -116,7 +144,10 @@ export function EquipmentList() {
       {equipment && equipment.length > 0 && (
         <div className="space-y-3">
           {equipment.map((item) => (
-            <div key={item.id} className="border border-gray-200 rounded-lg p-4 bg-white flex items-start justify-between">
+            <div
+              key={item.id}
+              className="border border-gray-200 rounded-lg p-4 bg-white flex items-start justify-between"
+            >
               <div>
                 <h3 className="font-medium text-gray-900">{item.name}</h3>
                 <p className="text-sm text-gray-600 mt-1">{item.description}</p>

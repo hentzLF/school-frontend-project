@@ -28,7 +28,10 @@ export function useUpdateUser() {
   const queryClient = useQueryClient();
   return useMutation<AdminUser, Error, { id: string; role: string }>({
     mutationFn: ({ id, role }) =>
-      api<AdminUser>(`${ADMIN_API}/users/${id}`, { method: "PUT", body: { role } }),
+      api<AdminUser>(`${ADMIN_API}/users/${id}`, {
+        method: "PUT",
+        body: { role },
+      }),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ["admin", "users"] });
     },

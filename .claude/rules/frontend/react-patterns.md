@@ -2,6 +2,7 @@
 paths:
   - "src/**/*.{tsx,jsx,ts}"
 ---
+
 # React Component Rules
 
 - Functional components with hooks only (no class components)

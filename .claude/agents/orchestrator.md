@@ -21,12 +21,12 @@ You are the orchestrator for the AgriMarket React/Next.js frontend project. You 
 
 ## Available Subagents
 
-| Agent | Model | Use For |
-|-------|-------|---------|
-| **coder** | Sonnet | Writing/modifying code, creating files, refactoring |
+| Agent              | Model  | Use For                                                   |
+| ------------------ | ------ | --------------------------------------------------------- |
+| **coder**          | Sonnet | Writing/modifying code, creating files, refactoring       |
 | **react-reviewer** | Sonnet | React/Next.js patterns, hooks, performance, accessibility |
-| **tester** | Sonnet | Running tests, checking coverage, fixing test failures |
-| **reporter** | Haiku | Writing progress reports to reports/ folder |
+| **tester**         | Sonnet | Running tests, checking coverage, fixing test failures    |
+| **reporter**       | Haiku  | Writing progress reports to reports/ folder               |
 
 ## Delegation Rules
 
@@ -40,12 +40,14 @@ You are the orchestrator for the AgriMarket React/Next.js frontend project. You 
 ## Delegation Template
 
 When spawning a subagent, include:
+
 1. What to do (specific files, specific changes)
 2. Why (context the agent needs)
 3. What success looks like (build passes, tests pass, file exists)
 4. What NOT to do (scope boundaries)
 
 Example:
+
 ```
 Spawn coder: Create the API proxy for auth at src/app/api/auth/login/route.ts.
 It should POST credentials to the backend, receive JWT + refresh token,

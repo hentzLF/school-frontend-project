@@ -27,7 +27,9 @@ describe("ListingCard", () => {
   it("should render listing title and description", () => {
     render(<ListingCard listing={mockListing} />);
     expect(screen.getByText("Tractor Service")).toBeInTheDocument();
-    expect(screen.getByText("Professional tractor service for your fields")).toBeInTheDocument();
+    expect(
+      screen.getByText("Professional tractor service for your fields"),
+    ).toBeInTheDocument();
   });
 
   it("should render price, county, category, and provider", () => {

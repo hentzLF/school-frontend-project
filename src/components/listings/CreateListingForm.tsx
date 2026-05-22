@@ -4,7 +4,11 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
-import { useCreateListing, useCounties, useCategories } from "@/hooks/useListings";
+import {
+  useCreateListing,
+  useCounties,
+  useCategories,
+} from "@/hooks/useListings";
 import { ApiError } from "@/lib/api";
 
 const createListingSchema = z.object({
@@ -54,14 +58,22 @@ export function CreateListingForm() {
       <h1 className="text-2xl font-bold text-gray-900 mb-6">Create Listing</h1>
 
       {errorMessage && (
-        <div role="alert" className="mb-4 p-3 rounded bg-red-50 border border-red-200 text-red-700 text-sm">
+        <div
+          role="alert"
+          className="mb-4 p-3 rounded bg-red-50 border border-red-200 text-red-700 text-sm"
+        >
           {errorMessage}
         </div>
       )}
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div>
-          <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">Title</label>
+          <label
+            htmlFor="title"
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
+            Title
+          </label>
           <input
             id="title"
             type="text"
@@ -69,11 +81,20 @@ export function CreateListingForm() {
             className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
             aria-invalid={!!errors.title}
           />
-          {errors.title && <p role="alert" className="mt-1 text-xs text-red-600">{errors.title.message}</p>}
+          {errors.title && (
+            <p role="alert" className="mt-1 text-xs text-red-600">
+              {errors.title.message}
+            </p>
+          )}
         </div>
 
         <div>
-          <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+          <label
+            htmlFor="description"
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
+            Description
+          </label>
           <textarea
             id="description"
             rows={4}
@@ -81,12 +102,21 @@ export function CreateListingForm() {
             className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
             aria-invalid={!!errors.description}
           />
-          {errors.description && <p role="alert" className="mt-1 text-xs text-red-600">{errors.description.message}</p>}
+          {errors.description && (
+            <p role="alert" className="mt-1 text-xs text-red-600">
+              {errors.description.message}
+            </p>
+          )}
         </div>
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label htmlFor="price" className="block text-sm font-medium text-gray-700 mb-1">Price (EUR)</label>
+            <label
+              htmlFor="price"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
+              Price (EUR)
+            </label>
             <input
               id="price"
               type="number"
@@ -95,11 +125,20 @@ export function CreateListingForm() {
               className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
               aria-invalid={!!errors.price}
             />
-            {errors.price && <p role="alert" className="mt-1 text-xs text-red-600">{errors.price.message}</p>}
+            {errors.price && (
+              <p role="alert" className="mt-1 text-xs text-red-600">
+                {errors.price.message}
+              </p>
+            )}
           </div>
 
           <div>
-            <label htmlFor="priceUnit" className="block text-sm font-medium text-gray-700 mb-1">Price Unit</label>
+            <label
+              htmlFor="priceUnit"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
+              Price Unit
+            </label>
             <select
               id="priceUnit"
               {...register("priceUnit")}
@@ -112,13 +151,22 @@ export function CreateListingForm() {
               <option value="hectare">Per hectare</option>
               <option value="job">Per job</option>
             </select>
-            {errors.priceUnit && <p role="alert" className="mt-1 text-xs text-red-600">{errors.priceUnit.message}</p>}
+            {errors.priceUnit && (
+              <p role="alert" className="mt-1 text-xs text-red-600">
+                {errors.priceUnit.message}
+              </p>
+            )}
           </div>
         </div>
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label htmlFor="categoryId" className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+            <label
+              htmlFor="categoryId"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
+              Category
+            </label>
             <select
               id="categoryId"
               {...register("categoryId")}
@@ -127,14 +175,25 @@ export function CreateListingForm() {
             >
               <option value="">Select category</option>
               {categories?.map((cat) => (
-                <option key={cat.id} value={cat.id}>{cat.name}</option>
+                <option key={cat.id} value={cat.id}>
+                  {cat.name}
+                </option>
               ))}
             </select>
-            {errors.categoryId && <p role="alert" className="mt-1 text-xs text-red-600">{errors.categoryId.message}</p>}
+            {errors.categoryId && (
+              <p role="alert" className="mt-1 text-xs text-red-600">
+                {errors.categoryId.message}
+              </p>
+            )}
           </div>
 
           <div>
-            <label htmlFor="countyId" className="block text-sm font-medium text-gray-700 mb-1">County</label>
+            <label
+              htmlFor="countyId"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
+              County
+            </label>
             <select
               id="countyId"
               {...register("countyId")}
@@ -143,10 +202,16 @@ export function CreateListingForm() {
             >
               <option value="">Select county</option>
               {counties?.map((county) => (
-                <option key={county.id} value={county.id}>{county.name}</option>
+                <option key={county.id} value={county.id}>
+                  {county.name}
+                </option>
               ))}
             </select>
-            {errors.countyId && <p role="alert" className="mt-1 text-xs text-red-600">{errors.countyId.message}</p>}
+            {errors.countyId && (
+              <p role="alert" className="mt-1 text-xs text-red-600">
+                {errors.countyId.message}
+              </p>
+            )}
           </div>
         </div>
 

@@ -69,7 +69,10 @@ describe("LoginPage", () => {
 
   it("should render register link", () => {
     render(<LoginPage />);
-    expect(screen.getByRole("link", { name: "Register" })).toHaveAttribute("href", "/register");
+    expect(screen.getByRole("link", { name: "Register" })).toHaveAttribute(
+      "href",
+      "/register",
+    );
   });
 
   it("should call login on valid form submission", async () => {

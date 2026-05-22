@@ -17,7 +17,10 @@ export function ReviewList({ listingId }: ReviewListProps) {
 
   if (error) {
     return (
-      <div role="alert" className="p-4 bg-red-50 border border-red-200 rounded-md text-red-700">
+      <div
+        role="alert"
+        className="p-4 bg-red-50 border border-red-200 rounded-md text-red-700"
+      >
         Failed to load reviews.
       </div>
     );
@@ -30,7 +33,10 @@ export function ReviewList({ listingId }: ReviewListProps) {
   return (
     <div className="space-y-4">
       {reviews.map((review) => (
-        <div key={review.id} className="border border-gray-200 rounded-lg p-4 bg-white">
+        <div
+          key={review.id}
+          className="border border-gray-200 rounded-lg p-4 bg-white"
+        >
           <div className="flex items-start justify-between">
             <div>
               <div className="flex items-center gap-2">
@@ -40,7 +46,9 @@ export function ReviewList({ listingId }: ReviewListProps) {
                 </span>
               </div>
               {!listingId && (
-                <p className="text-xs text-gray-500 mt-1">{review.listingTitle}</p>
+                <p className="text-xs text-gray-500 mt-1">
+                  {review.listingTitle}
+                </p>
               )}
             </div>
             <div className="flex items-center gap-2">

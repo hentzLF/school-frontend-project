@@ -10,7 +10,10 @@ export function AdminUsers() {
   if (isLoading) return <p className="text-gray-500">Loading users...</p>;
   if (error) {
     return (
-      <div role="alert" className="p-4 bg-red-50 border border-red-200 rounded-md text-red-700">
+      <div
+        role="alert"
+        className="p-4 bg-red-50 border border-red-200 rounded-md text-red-700"
+      >
         Failed to load users.
       </div>
     );
@@ -27,11 +30,21 @@ export function AdminUsers() {
           <table className="w-full text-sm">
             <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
-                <th className="text-left px-4 py-3 font-medium text-gray-500">Name</th>
-                <th className="text-left px-4 py-3 font-medium text-gray-500">Email</th>
-                <th className="text-left px-4 py-3 font-medium text-gray-500">Role</th>
-                <th className="text-left px-4 py-3 font-medium text-gray-500">Joined</th>
-                <th className="text-right px-4 py-3 font-medium text-gray-500">Actions</th>
+                <th className="text-left px-4 py-3 font-medium text-gray-500">
+                  Name
+                </th>
+                <th className="text-left px-4 py-3 font-medium text-gray-500">
+                  Email
+                </th>
+                <th className="text-left px-4 py-3 font-medium text-gray-500">
+                  Role
+                </th>
+                <th className="text-left px-4 py-3 font-medium text-gray-500">
+                  Joined
+                </th>
+                <th className="text-right px-4 py-3 font-medium text-gray-500">
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
@@ -44,7 +57,9 @@ export function AdminUsers() {
                   <td className="px-4 py-3">
                     <select
                       value={user.role}
-                      onChange={(e) => updateUser.mutate({ id: user.id, role: e.target.value })}
+                      onChange={(e) =>
+                        updateUser.mutate({ id: user.id, role: e.target.value })
+                      }
                       className="text-sm border border-gray-300 rounded px-2 py-1 bg-white"
                       aria-label={`Role for ${user.firstName} ${user.lastName}`}
                     >
@@ -59,7 +74,11 @@ export function AdminUsers() {
                   <td className="px-4 py-3 text-right">
                     <button
                       onClick={() => {
-                        if (confirm(`Delete user ${user.firstName} ${user.lastName}?`)) {
+                        if (
+                          confirm(
+                            `Delete user ${user.firstName} ${user.lastName}?`,
+                          )
+                        ) {
                           deleteUser.mutate(user.id);
                         }
                       }}

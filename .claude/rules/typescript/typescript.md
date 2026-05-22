@@ -2,6 +2,7 @@
 paths:
   - "**/*.{ts,tsx}"
 ---
+
 # TypeScript Rules
 
 - Strict mode enabled — no implicit `any`

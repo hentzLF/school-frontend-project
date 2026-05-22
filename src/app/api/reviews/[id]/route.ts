@@ -4,14 +4,20 @@ import type { Review } from "@/types/review";
 
 type RouteParams = { params: Promise<{ id: string }> };
 
-export async function PUT(request: NextRequest, { params }: RouteParams): Promise<NextResponse> {
+export async function PUT(
+  request: NextRequest,
+  { params }: RouteParams,
+): Promise<NextResponse> {
   const { id } = await params;
 
   let body: unknown;
   try {
     body = await request.json();
   } catch {
-    return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
+    return NextResponse.json(
+      { error: "Invalid request body" },
+      { status: 400 },
+    );
   }
 
   const result = await backendFetch<Review>(`/api/v1/reviews/${id}`, {
@@ -23,7 +29,10 @@ export async function PUT(request: NextRequest, { params }: RouteParams): Promis
   return NextResponse.json(result.data, { status: 200 });
 }
 
-export async function DELETE(_request: NextRequest, { params }: RouteParams): Promise<NextResponse> {
+export async function DELETE(
+  _request: NextRequest,
+  { params }: RouteParams,
+): Promise<NextResponse> {
   const { id } = await params;
   const result = await backendFetch<void>(`/api/v1/reviews/${id}`, {
     method: "DELETE",

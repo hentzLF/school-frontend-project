@@ -15,10 +15,7 @@ export function useTranslation(): UseTranslationReturn {
   const locale = useLocaleStore((s) => s.locale);
   const setLocale = useLocaleStore((s) => s.setLocale);
 
-  const t = useCallback(
-    (key: string) => getTranslation(locale, key),
-    [locale]
-  );
+  const t = useCallback((key: string) => getTranslation(locale, key), [locale]);
 
   return { t, locale, setLocale };
 }

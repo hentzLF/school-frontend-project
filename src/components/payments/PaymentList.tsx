@@ -37,7 +37,10 @@ export function PaymentList() {
           <h2 className="text-lg font-semibold mb-3">Process Payment</h2>
           <div className="flex items-end gap-3">
             <div>
-              <label htmlFor="paymentMethod" className="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                htmlFor="paymentMethod"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
                 Payment Method
               </label>
               <select
@@ -60,7 +63,9 @@ export function PaymentList() {
             </button>
           </div>
           {createPayment.error && (
-            <p role="alert" className="mt-2 text-sm text-red-600">Payment failed. Please try again.</p>
+            <p role="alert" className="mt-2 text-sm text-red-600">
+              Payment failed. Please try again.
+            </p>
           )}
         </div>
       )}
@@ -68,7 +73,10 @@ export function PaymentList() {
       {isLoading && <p className="text-gray-500">Loading payments...</p>}
 
       {error && (
-        <div role="alert" className="p-4 bg-red-50 border border-red-200 rounded-md text-red-700">
+        <div
+          role="alert"
+          className="p-4 bg-red-50 border border-red-200 rounded-md text-red-700"
+        >
           Failed to load payments.
         </div>
       )}
@@ -89,11 +97,14 @@ export function PaymentList() {
                   Booking: {payment.bookingId.slice(0, 8)}...
                 </p>
                 <p className="text-xs text-gray-500 mt-1">
-                  {payment.paymentMethod} — {new Date(payment.createdAt).toLocaleDateString()}
+                  {payment.paymentMethod} —{" "}
+                  {new Date(payment.createdAt).toLocaleDateString()}
                 </p>
               </div>
               <div className="flex items-center gap-3">
-                <span className={`px-2 py-1 text-xs font-medium rounded-full ${statusColors[payment.status]}`}>
+                <span
+                  className={`px-2 py-1 text-xs font-medium rounded-full ${statusColors[payment.status]}`}
+                >
                   {payment.status}
                 </span>
                 <span className="text-sm font-bold text-gray-900">

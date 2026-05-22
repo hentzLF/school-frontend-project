@@ -15,6 +15,6 @@ export const useLocaleStore = create<LocaleState>()(
     }),
     {
       name: "agrimarket-locale",
-    }
-  )
+    },
+  ),
 );

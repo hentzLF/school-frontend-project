@@ -23,7 +23,10 @@ export function BookingDetail({ bookingId }: BookingDetailProps) {
   if (isLoading) return <p className="text-gray-500">Loading booking...</p>;
   if (error) {
     return (
-      <div role="alert" className="p-4 bg-red-50 border border-red-200 rounded-md text-red-700">
+      <div
+        role="alert"
+        className="p-4 bg-red-50 border border-red-200 rounded-md text-red-700"
+      >
         Failed to load booking.
       </div>
     );
@@ -37,13 +40,20 @@ export function BookingDetail({ bookingId }: BookingDetailProps) {
 
   return (
     <div className="max-w-2xl">
-      <Link href="/bookings" className="text-sm text-green-600 hover:text-green-700 mb-4 inline-block">
+      <Link
+        href="/bookings"
+        className="text-sm text-green-600 hover:text-green-700 mb-4 inline-block"
+      >
         &larr; Back to bookings
       </Link>
 
       <div className="flex items-center gap-3 mb-4">
-        <h1 className="text-2xl font-bold text-gray-900">{booking.listingTitle}</h1>
-        <span className={`px-2 py-1 text-xs font-medium rounded-full ${statusColors[booking.status]}`}>
+        <h1 className="text-2xl font-bold text-gray-900">
+          {booking.listingTitle}
+        </h1>
+        <span
+          className={`px-2 py-1 text-xs font-medium rounded-full ${statusColors[booking.status]}`}
+        >
           {booking.status}
         </span>
       </div>
@@ -60,15 +70,21 @@ export function BookingDetail({ bookingId }: BookingDetailProps) {
           </div>
           <div>
             <p className="text-gray-500">Start Date</p>
-            <p className="font-medium">{new Date(booking.startDate).toLocaleDateString()}</p>
+            <p className="font-medium">
+              {new Date(booking.startDate).toLocaleDateString()}
+            </p>
           </div>
           <div>
             <p className="text-gray-500">End Date</p>
-            <p className="font-medium">{new Date(booking.endDate).toLocaleDateString()}</p>
+            <p className="font-medium">
+              {new Date(booking.endDate).toLocaleDateString()}
+            </p>
           </div>
           <div>
             <p className="text-gray-500">Total Price</p>
-            <p className="font-medium text-green-700">{booking.totalPrice.toFixed(2)} EUR</p>
+            <p className="font-medium text-green-700">
+              {booking.totalPrice.toFixed(2)} EUR
+            </p>
           </div>
         </div>
 
@@ -79,7 +95,9 @@ export function BookingDetail({ bookingId }: BookingDetailProps) {
           </div>
         )}
 
-        {(booking.status === "Pending" || booking.status === "Confirmed" || booking.status === "InProgress") && (
+        {(booking.status === "Pending" ||
+          booking.status === "Confirmed" ||
+          booking.status === "InProgress") && (
           <div className="flex gap-2 pt-2 border-t border-gray-100">
             {booking.status === "Pending" && (
               <>

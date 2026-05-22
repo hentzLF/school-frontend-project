@@ -3,7 +3,12 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { CONVERSATION_ROUTES } from "@/config/constants";
-import type { Conversation, Message, CreateConversationRequest, SendMessageRequest } from "@/types/conversation";
+import type {
+  Conversation,
+  Message,
+  CreateConversationRequest,
+  SendMessageRequest,
+} from "@/types/conversation";
 
 export function useConversations() {
   return useQuery<Conversation[]>({
@@ -26,7 +31,10 @@ export function useCreateConversation() {
 
   return useMutation<Conversation, Error, CreateConversationRequest>({
     mutationFn: (data) =>
-      api<Conversation>(CONVERSATION_ROUTES.list, { method: "POST", body: data }),
+      api<Conversation>(CONVERSATION_ROUTES.list, {
+        method: "POST",
+        body: data,
+      }),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ["conversations"] });
     },

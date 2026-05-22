@@ -5,6 +5,7 @@ paths:
   - "src/hooks/use*Query*"
   - "src/hooks/use*Mutation*"
 ---
+
 # API Integration Rules
 
 ## Proxy Pattern

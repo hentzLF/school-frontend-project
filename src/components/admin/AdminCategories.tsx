@@ -1,7 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { useAdminCategories, useCreateCategory, useDeleteCategory } from "@/hooks/useAdmin";
+import {
+  useAdminCategories,
+  useCreateCategory,
+  useDeleteCategory,
+} from "@/hooks/useAdmin";
 
 export function AdminCategories() {
   const { data: categories, isLoading, error } = useAdminCategories();
@@ -28,7 +32,10 @@ export function AdminCategories() {
   if (isLoading) return <p className="text-gray-500">Loading categories...</p>;
   if (error) {
     return (
-      <div role="alert" className="p-4 bg-red-50 border border-red-200 rounded-md text-red-700">
+      <div
+        role="alert"
+        className="p-4 bg-red-50 border border-red-200 rounded-md text-red-700"
+      >
         Failed to load categories.
       </div>
     );
@@ -36,11 +43,18 @@ export function AdminCategories() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">Category Management</h1>
+      <h1 className="text-2xl font-bold text-gray-900 mb-6">
+        Category Management
+      </h1>
 
       <form onSubmit={handleCreate} className="mb-6 flex gap-3 items-end">
         <div>
-          <label htmlFor="cat-name" className="block text-sm font-medium text-gray-700 mb-1">Name</label>
+          <label
+            htmlFor="cat-name"
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
+            Name
+          </label>
           <input
             id="cat-name"
             type="text"
@@ -51,7 +65,12 @@ export function AdminCategories() {
           />
         </div>
         <div>
-          <label htmlFor="cat-desc" className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+          <label
+            htmlFor="cat-desc"
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
+            Description
+          </label>
           <input
             id="cat-desc"
             type="text"
@@ -74,11 +93,16 @@ export function AdminCategories() {
       ) : (
         <div className="space-y-2">
           {categories.map((category) => (
-            <div key={category.id} className="flex items-center justify-between p-3 bg-white border border-gray-200 rounded-lg">
+            <div
+              key={category.id}
+              className="flex items-center justify-between p-3 bg-white border border-gray-200 rounded-lg"
+            >
               <div>
                 <p className="font-medium text-gray-900">{category.name}</p>
                 {category.description && (
-                  <p className="text-sm text-gray-500">{category.description}</p>
+                  <p className="text-sm text-gray-500">
+                    {category.description}
+                  </p>
                 )}
               </div>
               <button

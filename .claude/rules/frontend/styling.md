@@ -2,6 +2,7 @@
 paths:
   - "src/**/*.{tsx,jsx,css}"
 ---
+
 # Styling Rules
 
 - Tailwind CSS only — no CSS-in-JS, no inline styles

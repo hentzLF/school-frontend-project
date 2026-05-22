@@ -32,6 +32,7 @@ You are a senior React/Next.js developer working on the AgriMarket frontend.
 ## After Every Change
 
 Always run after making changes:
+
 ```bash
 npm run build
 ```
@@ -41,6 +42,7 @@ If build fails, fix the errors before reporting back.
 ## Output Format
 
 When done, report back concisely:
+
 - What files were created/modified (paths only)
 - Whether `npm run build` succeeded
 - Any issues encountered

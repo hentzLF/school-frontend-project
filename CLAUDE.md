@@ -53,6 +53,7 @@ src/
 ## Implementation Order
 
 Build functionality first, polish UI last:
+
 1. Scaffold + folder structure
 2. Auth flow (working, minimal UI)
 3. Client area features (working, basic Tailwind)

@@ -2,6 +2,7 @@
 paths:
   - "src/app/**/*.{ts,tsx}"
 ---
+
 # Next.js App Router Rules
 
 - Components are Server Components by default
