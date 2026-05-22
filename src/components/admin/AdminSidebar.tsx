@@ -2,38 +2,63 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import {
+  LayoutDashboard,
+  Users,
+  ClipboardList,
+  CalendarCheck,
+  Tags,
+  CreditCard,
+  type LucideIcon,
+} from "lucide-react";
+import { useTranslation } from "@/hooks/useTranslation";
+import { cn } from "@/lib/utils";
 
-const adminLinks = [
-  { href: "/admin", label: "Dashboard" },
-  { href: "/admin/users", label: "Users" },
-  { href: "/admin/listings", label: "Listings" },
-  { href: "/admin/bookings", label: "Bookings" },
-  { href: "/admin/categories", label: "Categories" },
-  { href: "/admin/payments", label: "Payments" },
-] as const;
+type AdminLink = {
+  href: string;
+  key: string;
+  icon: LucideIcon;
+};
+
+const adminLinks: AdminLink[] = [
+  { href: "/admin", key: "admin.overview", icon: LayoutDashboard },
+  { href: "/admin/users", key: "admin.users", icon: Users },
+  { href: "/admin/listings", key: "admin.listings", icon: ClipboardList },
+  { href: "/admin/bookings", key: "admin.bookings", icon: CalendarCheck },
+  { href: "/admin/categories", key: "admin.categories", icon: Tags },
+  { href: "/admin/payments", key: "admin.payments", icon: CreditCard },
+];
 
 export function AdminSidebar() {
   const pathname = usePathname();
+  const { t } = useTranslation();
 
   return (
-    <aside className="w-56 border-r border-gray-200 bg-white p-4">
-      <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">
-        Admin
-      </h2>
-      <nav className="space-y-1">
+    <aside className="border-b bg-card md:w-60 md:shrink-0 md:border-r md:border-b-0">
+      <nav
+        aria-label="Admin navigation"
+        className="flex gap-1 overflow-x-auto p-3 md:flex-col md:p-4"
+      >
+        <p className="hidden px-2 pb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground md:block">
+          {t("admin.title")}
+        </p>
         {adminLinks.map((link) => {
           const isActive = pathname === link.href;
+          const Icon = link.icon;
           return (
             <Link
               key={link.href}
               href={link.href}
-              className={`block px-3 py-2 text-sm rounded-md ${
+              aria-current={isActive ? "page" : undefined}
+              className={cn(
+                "flex items-center gap-2.5 whitespace-nowrap rounded-md px-3 py-2 text-sm font-medium transition-colors",
                 isActive
-                  ? "bg-green-50 text-green-700 font-medium"
-                  : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
-              }`}
+                  ? "bg-primary/10 text-primary"
+                  : "text-muted-foreground hover:bg-muted hover:text-foreground",
+              )}
             >
-              {link.label}
+              <Icon className="size-4 shrink-0" aria-hidden="true" />
+              {t(link.key)}
             </Link>
           );
         })}

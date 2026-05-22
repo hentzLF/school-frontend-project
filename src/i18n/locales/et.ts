@@ -39,6 +39,9 @@ export const et: TranslationKeys = {
     haveAccount: "Juba on konto?",
     register: "Registreeru",
     signInLink: "Logi sisse",
+    signInSubtitle: "Tere tulemast tagasi — jätkamiseks sisesta oma andmed.",
+    registerSubtitle:
+      "Liitu AgriMarketiga, et alustada põllumajandusteenuste broneerimist.",
     emailRequired: "E-post on kohustuslik",
     emailInvalid: "Sisesta kehtiv e-posti aadress",
     passwordMin: "Parool peab olema vähemalt 6 tähemärki",
@@ -57,6 +60,25 @@ export const et: TranslationKeys = {
     reviews: "Arvustused",
     payments: "Maksed",
     admin: "Admin",
+    openMenu: "Ava menüü",
+    account: "Konto",
+    signedInAs: "Sisse logitud kui",
+  },
+  landing: {
+    badge: "Põllumajandusteenuste turg",
+    title: "Leia usaldusväärsed põllumajandusteenused",
+    subtitle:
+      "Leia seadmete omanikke ja teenusepakkujaid üle Eesti. Broneeri kündmist, koristust, transporti ja muud — kõik ühest kohast.",
+    getStarted: "Alusta",
+    signIn: "Logi sisse",
+    feature1Title: "Sirvi kuulutusi",
+    feature1Desc:
+      "Avasta põllumajandusteenuseid kontrollitud pakkujatelt oma maakonnas.",
+    feature2Title: "Broneeri kindlustundega",
+    feature2Desc:
+      "Halda broneeringuid algusest lõpuni — taotlusest lõpetamise ja makseni.",
+    feature3Title: "Hinda ja arvusta",
+    feature3Desc: "Jaga tagasisidet ja loo usaldust põllumajanduskogukonnas.",
   },
   dashboard: {
     welcome: "Tere tulemast AgriMarketisse",
@@ -193,6 +215,12 @@ export const et: TranslationKeys = {
   },
   admin: {
     title: "Admin",
+    overview: "Ülevaade",
+    users: "Kasutajad",
+    listings: "Kuulutused",
+    bookings: "Broneeringud",
+    categories: "Kategooriad",
+    payments: "Maksed",
     dashboard: "Admini töölaud",
     totalUsers: "Kasutajaid kokku",
     activeListings: "Aktiivsed kuulutused",

@@ -2,9 +2,21 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Menu } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useTranslation } from "@/hooks/useTranslation";
 import { LocaleSwitcher } from "@/components/layout/LocaleSwitcher";
+import { ThemeToggle } from "@/components/layout/ThemeToggle";
+import { Logo } from "@/components/layout/Logo";
+import { UserMenu } from "@/components/layout/UserMenu";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { cn } from "@/lib/utils";
 
 const navKeys = [
   { href: "/dashboard", key: "nav.dashboard" },
@@ -15,68 +27,76 @@ const navKeys = [
 ] as const;
 
 export function Header() {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const pathname = usePathname();
   const { t } = useTranslation();
 
-  const handleLogout = async () => {
-    await logout();
-  };
+  const links = [
+    ...navKeys,
+    ...(user?.role === "Admin"
+      ? ([{ href: "/admin", key: "nav.admin" }] as const)
+      : []),
+  ];
+
+  const isActive = (href: string) =>
+    pathname === href || pathname.startsWith(`${href}/`);
 
   return (
-    <header className="border-b border-gray-200 bg-white">
-      <div className="flex items-center justify-between px-6 py-4">
-        <div className="flex items-center gap-8">
-          <Link
-            href="/dashboard"
-            className="text-xl font-bold text-green-700 hover:text-green-800"
+    <header className="sticky top-0 z-40 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6">
+        <div className="flex items-center gap-6">
+          <Logo href="/dashboard" />
+          <nav
+            className="hidden items-center gap-1 md:flex"
+            aria-label="Main navigation"
           >
-            AgriMarket
-          </Link>
-          <nav className="hidden md:flex items-center gap-1">
-            {navKeys.map((link) => {
-              const isActive = pathname.startsWith(link.href);
-              return (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className={`px-3 py-2 text-sm font-medium rounded-md ${
-                    isActive
-                      ? "bg-green-50 text-green-700"
-                      : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
-                  }`}
-                >
-                  {t(link.key)}
-                </Link>
-              );
-            })}
-            {user?.role === "Admin" && (
+            {links.map((link) => (
               <Link
-                href="/admin"
-                className={`px-3 py-2 text-sm font-medium rounded-md ${
-                  pathname.startsWith("/admin")
-                    ? "bg-green-50 text-green-700"
-                    : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
-                }`}
+                key={link.href}
+                href={link.href}
+                aria-current={isActive(link.href) ? "page" : undefined}
+                className={cn(
+                  "rounded-md px-3 py-2 text-sm font-medium transition-colors",
+                  isActive(link.href)
+                    ? "bg-primary/10 text-primary"
+                    : "text-muted-foreground hover:bg-muted hover:text-foreground",
+                )}
               >
-                {t("nav.admin")}
+                {t(link.key)}
               </Link>
-            )}
+            ))}
           </nav>
         </div>
-        <div className="flex items-center gap-4">
+
+        <div className="flex items-center gap-1.5">
           <LocaleSwitcher />
-          {user && (
-            <span className="text-sm text-gray-600">
-              {user.firstName} {user.lastName}
-            </span>
-          )}
-          <button
-            onClick={handleLogout}
-            className="px-4 py-2 text-sm font-medium text-gray-700 border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500"
-          >
-            {t("auth.signOut")}
-          </button>
+          <ThemeToggle />
+          <UserMenu />
+
+          <DropdownMenu>
+            <DropdownMenuTrigger
+              render={
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="md:hidden"
+                  aria-label={t("nav.openMenu")}
+                />
+              }
+            >
+              <Menu aria-hidden="true" />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-52">
+              {links.map((link) => (
+                <DropdownMenuItem
+                  key={link.href}
+                  render={<Link href={link.href} />}
+                >
+                  {t(link.key)}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
     </header>

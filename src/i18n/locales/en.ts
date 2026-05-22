@@ -37,6 +37,8 @@ export const en = {
     haveAccount: "Already have an account?",
     register: "Register",
     signInLink: "Sign in",
+    signInSubtitle: "Welcome back — enter your details to continue.",
+    registerSubtitle: "Join AgriMarket to start booking agricultural services.",
     emailRequired: "Email is required",
     emailInvalid: "Enter a valid email address",
     passwordMin: "Password must be at least 6 characters",
@@ -55,6 +57,26 @@ export const en = {
     reviews: "Reviews",
     payments: "Payments",
     admin: "Admin",
+    openMenu: "Open menu",
+    account: "Account",
+    signedInAs: "Signed in as",
+  },
+  landing: {
+    badge: "Agricultural service marketplace",
+    title: "Find trusted agricultural services",
+    subtitle:
+      "Connect with equipment owners and service providers across Estonia. Book plowing, harvesting, transport and more — all in one place.",
+    getStarted: "Get started",
+    signIn: "Sign in",
+    feature1Title: "Browse listings",
+    feature1Desc:
+      "Discover agricultural services from verified providers in your county.",
+    feature2Title: "Book with confidence",
+    feature2Desc:
+      "Manage bookings end to end — from request to completion and payment.",
+    feature3Title: "Rate and review",
+    feature3Desc:
+      "Share feedback and build trust within the farming community.",
   },
   dashboard: {
     welcome: "Welcome to AgriMarket",
@@ -191,6 +213,12 @@ export const en = {
   },
   admin: {
     title: "Admin",
+    overview: "Overview",
+    users: "Users",
+    listings: "Listings",
+    bookings: "Bookings",
+    categories: "Categories",
+    payments: "Payments",
     dashboard: "Admin Dashboard",
     totalUsers: "Total Users",
     activeListings: "Active Listings",

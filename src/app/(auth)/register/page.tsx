@@ -1,6 +1,6 @@
 "use client";
 
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
@@ -8,13 +8,36 @@ import Link from "next/link";
 import { useAuth } from "@/hooks/useAuth";
 import { useTranslation } from "@/hooks/useTranslation";
 import { LocaleSwitcher } from "@/components/layout/LocaleSwitcher";
+import { ThemeToggle } from "@/components/layout/ThemeToggle";
+import { FormAlert } from "@/components/common/FormAlert";
 import { ApiError } from "@/lib/api";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const registerSchema = z
   .object({
     firstName: z.string().min(1, "First name is required"),
     lastName: z.string().min(1, "Last name is required"),
-    email: z.string().min(1, "Email is required").email("Enter a valid email address"),
+    email: z
+      .string()
+      .min(1, "Email is required")
+      .email("Enter a valid email address"),
     password: z.string().min(6, "Password must be at least 6 characters"),
     confirmPassword: z.string().min(1, "Please confirm your password"),
     role: z.enum(["Client", "Provider"], {
@@ -28,14 +51,21 @@ const registerSchema = z
 
 type RegisterFormValues = z.infer<typeof registerSchema>;
 
+const fieldError = "text-xs text-destructive";
+
 export default function RegisterPage() {
   const router = useRouter();
-  const { register: registerUser, registerError, isRegisterPending } = useAuth();
+  const {
+    register: registerUser,
+    registerError,
+    isRegisterPending,
+  } = useAuth();
   const { t } = useTranslation();
 
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors },
   } = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
@@ -64,182 +94,188 @@ export default function RegisterPage() {
         : null;
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-8">
-      <div className="flex justify-end mb-4">
+    <div className="space-y-4">
+      <div className="flex justify-end gap-1.5">
         <LocaleSwitcher />
+        <ThemeToggle />
       </div>
 
-      <h1 className="text-2xl font-bold text-gray-900 mb-6 text-center">
-        {t("auth.createAccount")}
-      </h1>
+      <Card>
+        <CardHeader className="text-center">
+          <CardTitle className="text-xl">{t("auth.createAccount")}</CardTitle>
+          <CardDescription>{t("auth.registerSubtitle")}</CardDescription>
+        </CardHeader>
 
-      {apiErrorMessage && (
-        <div
-          role="alert"
-          className="mb-4 p-3 rounded bg-red-50 border border-red-200 text-red-700 text-sm"
-        >
-          {apiErrorMessage}
-        </div>
-      )}
+        <CardContent>
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            noValidate
+            className="space-y-4"
+          >
+            {apiErrorMessage && <FormAlert message={apiErrorMessage} />}
 
-      <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-4">
-        <div className="grid grid-cols-2 gap-3">
-          <div>
-            <label
-              htmlFor="firstName"
-              className="block text-sm font-medium text-gray-700 mb-1"
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1.5">
+                <Label htmlFor="firstName">{t("auth.firstName")}</Label>
+                <Input
+                  id="firstName"
+                  type="text"
+                  autoComplete="given-name"
+                  {...register("firstName")}
+                  aria-invalid={!!errors.firstName}
+                  aria-describedby={
+                    errors.firstName ? "firstName-error" : undefined
+                  }
+                />
+                {errors.firstName && (
+                  <p id="firstName-error" role="alert" className={fieldError}>
+                    {errors.firstName.message}
+                  </p>
+                )}
+              </div>
+
+              <div className="space-y-1.5">
+                <Label htmlFor="lastName">{t("auth.lastName")}</Label>
+                <Input
+                  id="lastName"
+                  type="text"
+                  autoComplete="family-name"
+                  {...register("lastName")}
+                  aria-invalid={!!errors.lastName}
+                  aria-describedby={
+                    errors.lastName ? "lastName-error" : undefined
+                  }
+                />
+                {errors.lastName && (
+                  <p id="lastName-error" role="alert" className={fieldError}>
+                    {errors.lastName.message}
+                  </p>
+                )}
+              </div>
+            </div>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="email">{t("auth.email")}</Label>
+              <Input
+                id="email"
+                type="email"
+                autoComplete="email"
+                {...register("email")}
+                aria-invalid={!!errors.email}
+                aria-describedby={errors.email ? "email-error" : undefined}
+              />
+              {errors.email && (
+                <p id="email-error" role="alert" className={fieldError}>
+                  {errors.email.message}
+                </p>
+              )}
+            </div>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="password">{t("auth.password")}</Label>
+              <Input
+                id="password"
+                type="password"
+                autoComplete="new-password"
+                {...register("password")}
+                aria-invalid={!!errors.password}
+                aria-describedby={
+                  errors.password ? "password-error" : undefined
+                }
+              />
+              {errors.password && (
+                <p id="password-error" role="alert" className={fieldError}>
+                  {errors.password.message}
+                </p>
+              )}
+            </div>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="confirmPassword">
+                {t("auth.confirmPassword")}
+              </Label>
+              <Input
+                id="confirmPassword"
+                type="password"
+                autoComplete="new-password"
+                {...register("confirmPassword")}
+                aria-invalid={!!errors.confirmPassword}
+                aria-describedby={
+                  errors.confirmPassword ? "confirmPassword-error" : undefined
+                }
+              />
+              {errors.confirmPassword && (
+                <p
+                  id="confirmPassword-error"
+                  role="alert"
+                  className={fieldError}
+                >
+                  {errors.confirmPassword.message}
+                </p>
+              )}
+            </div>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="role">{t("auth.role")}</Label>
+              <Controller
+                control={control}
+                name="role"
+                render={({ field }) => (
+                  <Select
+                    value={field.value ?? ""}
+                    onValueChange={field.onChange}
+                  >
+                    <SelectTrigger
+                      id="role"
+                      className="w-full"
+                      aria-invalid={!!errors.role}
+                      aria-describedby={errors.role ? "role-error" : undefined}
+                    >
+                      <SelectValue placeholder={t("auth.roleRequired")} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Client">
+                        {t("auth.roleClient")}
+                      </SelectItem>
+                      <SelectItem value="Provider">
+                        {t("auth.roleProvider")}
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+              {errors.role && (
+                <p id="role-error" role="alert" className={fieldError}>
+                  {errors.role.message}
+                </p>
+              )}
+            </div>
+
+            <Button
+              type="submit"
+              size="lg"
+              className="w-full"
+              disabled={isRegisterPending}
             >
-              {t("auth.firstName")}
-            </label>
-            <input
-              id="firstName"
-              type="text"
-              autoComplete="given-name"
-              {...register("firstName")}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
-              aria-invalid={!!errors.firstName}
-              aria-describedby={errors.firstName ? "firstName-error" : undefined}
-            />
-            {errors.firstName && (
-              <p id="firstName-error" role="alert" className="mt-1 text-xs text-red-600">
-                {errors.firstName.message}
-              </p>
-            )}
-          </div>
+              {isRegisterPending
+                ? t("auth.creatingAccount")
+                : t("auth.createAccount")}
+            </Button>
+          </form>
+        </CardContent>
 
-          <div>
-            <label
-              htmlFor="lastName"
-              className="block text-sm font-medium text-gray-700 mb-1"
+        <CardFooter className="justify-center">
+          <p className="text-sm text-muted-foreground">
+            {t("auth.haveAccount")}{" "}
+            <Link
+              href="/login"
+              className="font-medium text-primary hover:underline"
             >
-              {t("auth.lastName")}
-            </label>
-            <input
-              id="lastName"
-              type="text"
-              autoComplete="family-name"
-              {...register("lastName")}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
-              aria-invalid={!!errors.lastName}
-              aria-describedby={errors.lastName ? "lastName-error" : undefined}
-            />
-            {errors.lastName && (
-              <p id="lastName-error" role="alert" className="mt-1 text-xs text-red-600">
-                {errors.lastName.message}
-              </p>
-            )}
-          </div>
-        </div>
-
-        <div>
-          <label
-            htmlFor="email"
-            className="block text-sm font-medium text-gray-700 mb-1"
-          >
-            {t("auth.email")}
-          </label>
-          <input
-            id="email"
-            type="email"
-            autoComplete="email"
-            {...register("email")}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
-            aria-invalid={!!errors.email}
-            aria-describedby={errors.email ? "email-error" : undefined}
-          />
-          {errors.email && (
-            <p id="email-error" role="alert" className="mt-1 text-xs text-red-600">
-              {errors.email.message}
-            </p>
-          )}
-        </div>
-
-        <div>
-          <label
-            htmlFor="password"
-            className="block text-sm font-medium text-gray-700 mb-1"
-          >
-            {t("auth.password")}
-          </label>
-          <input
-            id="password"
-            type="password"
-            autoComplete="new-password"
-            {...register("password")}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
-            aria-invalid={!!errors.password}
-            aria-describedby={errors.password ? "password-error" : undefined}
-          />
-          {errors.password && (
-            <p id="password-error" role="alert" className="mt-1 text-xs text-red-600">
-              {errors.password.message}
-            </p>
-          )}
-        </div>
-
-        <div>
-          <label
-            htmlFor="confirmPassword"
-            className="block text-sm font-medium text-gray-700 mb-1"
-          >
-            {t("auth.confirmPassword")}
-          </label>
-          <input
-            id="confirmPassword"
-            type="password"
-            autoComplete="new-password"
-            {...register("confirmPassword")}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
-            aria-invalid={!!errors.confirmPassword}
-            aria-describedby={errors.confirmPassword ? "confirmPassword-error" : undefined}
-          />
-          {errors.confirmPassword && (
-            <p id="confirmPassword-error" role="alert" className="mt-1 text-xs text-red-600">
-              {errors.confirmPassword.message}
-            </p>
-          )}
-        </div>
-
-        <div>
-          <label
-            htmlFor="role"
-            className="block text-sm font-medium text-gray-700 mb-1"
-          >
-            {t("auth.role")}
-          </label>
-          <select
-            id="role"
-            {...register("role")}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white"
-            aria-invalid={!!errors.role}
-            aria-describedby={errors.role ? "role-error" : undefined}
-          >
-            <option value="">{t("auth.roleRequired")}</option>
-            <option value="Client">{t("auth.roleClient")}</option>
-            <option value="Provider">{t("auth.roleProvider")}</option>
-          </select>
-          {errors.role && (
-            <p id="role-error" role="alert" className="mt-1 text-xs text-red-600">
-              {errors.role.message}
-            </p>
-          )}
-        </div>
-
-        <button
-          type="submit"
-          disabled={isRegisterPending}
-          className="w-full py-2 px-4 bg-green-600 text-white font-medium rounded-md text-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {isRegisterPending ? t("auth.creatingAccount") : t("auth.createAccount")}
-        </button>
-      </form>
-
-      <p className="mt-4 text-center text-sm text-gray-600">
-        {t("auth.haveAccount")}{" "}
-        <Link href="/login" className="text-green-600 hover:text-green-700 font-medium">
-          {t("auth.signInLink")}
-        </Link>
-      </p>
+              {t("auth.signInLink")}
+            </Link>
+          </p>
+        </CardFooter>
+      </Card>
     </div>
   );
 }

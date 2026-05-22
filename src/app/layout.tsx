@@ -2,9 +2,10 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
+import { ThemeInitScript } from "@/components/layout/ThemeProvider";
 
 const geistSans = Geist({
-  variable: "--font-geist-sans",
+  variable: "--font-sans",
   subsets: ["latin"],
 });
 
@@ -14,8 +15,12 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "AgriMarket",
-  description: "Agricultural service marketplace",
+  title: {
+    default: "AgriMarket",
+    template: "%s · AgriMarket",
+  },
+  description:
+    "AgriMarket — the agricultural service marketplace connecting farmers with equipment and service providers.",
 };
 
 export default function RootLayout({
@@ -26,9 +31,13 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">
+      <head>
+        <ThemeInitScript />
+      </head>
+      <body className="min-h-full flex flex-col bg-background text-foreground">
         <Providers>{children}</Providers>
       </body>
     </html>

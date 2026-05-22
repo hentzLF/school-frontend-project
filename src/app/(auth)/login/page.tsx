@@ -8,10 +8,26 @@ import Link from "next/link";
 import { useAuth } from "@/hooks/useAuth";
 import { useTranslation } from "@/hooks/useTranslation";
 import { LocaleSwitcher } from "@/components/layout/LocaleSwitcher";
+import { ThemeToggle } from "@/components/layout/ThemeToggle";
+import { FormAlert } from "@/components/common/FormAlert";
 import { ApiError } from "@/lib/api";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 const loginSchema = z.object({
-  email: z.string().min(1, "Email is required").email("Enter a valid email address"),
+  email: z
+    .string()
+    .min(1, "Email is required")
+    .email("Enter a valid email address"),
   password: z.string().min(6, "Password must be at least 6 characters"),
 });
 
@@ -47,86 +63,93 @@ export default function LoginPage() {
         : null;
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-8">
-      <div className="flex justify-end mb-4">
+    <div className="space-y-4">
+      <div className="flex justify-end gap-1.5">
         <LocaleSwitcher />
+        <ThemeToggle />
       </div>
 
-      <h1 className="text-2xl font-bold text-gray-900 mb-6 text-center">
-        {t("auth.signIn")}
-      </h1>
+      <Card>
+        <CardHeader className="text-center">
+          <CardTitle className="text-xl">{t("auth.signIn")}</CardTitle>
+          <CardDescription>{t("auth.signInSubtitle")}</CardDescription>
+        </CardHeader>
 
-      {apiErrorMessage && (
-        <div
-          role="alert"
-          className="mb-4 p-3 rounded bg-red-50 border border-red-200 text-red-700 text-sm"
-        >
-          {apiErrorMessage}
-        </div>
-      )}
-
-      <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-4">
-        <div>
-          <label
-            htmlFor="email"
-            className="block text-sm font-medium text-gray-700 mb-1"
+        <CardContent>
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            noValidate
+            className="space-y-4"
           >
-            {t("auth.email")}
-          </label>
-          <input
-            id="email"
-            type="email"
-            autoComplete="email"
-            {...register("email")}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
-            aria-invalid={!!errors.email}
-            aria-describedby={errors.email ? "email-error" : undefined}
-          />
-          {errors.email && (
-            <p id="email-error" role="alert" className="mt-1 text-xs text-red-600">
-              {errors.email.message}
-            </p>
-          )}
-        </div>
+            {apiErrorMessage && <FormAlert message={apiErrorMessage} />}
 
-        <div>
-          <label
-            htmlFor="password"
-            className="block text-sm font-medium text-gray-700 mb-1"
-          >
-            {t("auth.password")}
-          </label>
-          <input
-            id="password"
-            type="password"
-            autoComplete="current-password"
-            {...register("password")}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
-            aria-invalid={!!errors.password}
-            aria-describedby={errors.password ? "password-error" : undefined}
-          />
-          {errors.password && (
-            <p id="password-error" role="alert" className="mt-1 text-xs text-red-600">
-              {errors.password.message}
-            </p>
-          )}
-        </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="email">{t("auth.email")}</Label>
+              <Input
+                id="email"
+                type="email"
+                autoComplete="email"
+                {...register("email")}
+                aria-invalid={!!errors.email}
+                aria-describedby={errors.email ? "email-error" : undefined}
+              />
+              {errors.email && (
+                <p
+                  id="email-error"
+                  role="alert"
+                  className="text-xs text-destructive"
+                >
+                  {errors.email.message}
+                </p>
+              )}
+            </div>
 
-        <button
-          type="submit"
-          disabled={isLoginPending}
-          className="w-full py-2 px-4 bg-green-600 text-white font-medium rounded-md text-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {isLoginPending ? t("auth.signingIn") : t("auth.signInLink")}
-        </button>
-      </form>
+            <div className="space-y-1.5">
+              <Label htmlFor="password">{t("auth.password")}</Label>
+              <Input
+                id="password"
+                type="password"
+                autoComplete="current-password"
+                {...register("password")}
+                aria-invalid={!!errors.password}
+                aria-describedby={
+                  errors.password ? "password-error" : undefined
+                }
+              />
+              {errors.password && (
+                <p
+                  id="password-error"
+                  role="alert"
+                  className="text-xs text-destructive"
+                >
+                  {errors.password.message}
+                </p>
+              )}
+            </div>
 
-      <p className="mt-4 text-center text-sm text-gray-600">
-        {t("auth.noAccount")}{" "}
-        <Link href="/register" className="text-green-600 hover:text-green-700 font-medium">
-          {t("auth.register")}
-        </Link>
-      </p>
+            <Button
+              type="submit"
+              size="lg"
+              className="w-full"
+              disabled={isLoginPending}
+            >
+              {isLoginPending ? t("auth.signingIn") : t("auth.signInLink")}
+            </Button>
+          </form>
+        </CardContent>
+
+        <CardFooter className="justify-center">
+          <p className="text-sm text-muted-foreground">
+            {t("auth.noAccount")}{" "}
+            <Link
+              href="/register"
+              className="font-medium text-primary hover:underline"
+            >
+              {t("auth.register")}
+            </Link>
+          </p>
+        </CardFooter>
+      </Card>
     </div>
   );
 }

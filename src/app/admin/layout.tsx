@@ -16,11 +16,13 @@ export default async function AdminLayout({ children }: AdminLayoutProps) {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
+    <div className="flex min-h-svh flex-col bg-background">
       <Header />
-      <div className="flex flex-1">
+      <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col md:flex-row">
         <AdminSidebar />
-        <main className="flex-1 p-6">{children}</main>
+        <main className="min-w-0 flex-1 px-4 py-6 sm:px-6 sm:py-8">
+          {children}
+        </main>
       </div>
     </div>
   );
