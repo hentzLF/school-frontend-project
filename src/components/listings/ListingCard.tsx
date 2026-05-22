@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { MapPin, Tag } from "lucide-react";
 import type { Listing } from "@/types/listing";
 
 type ListingCardProps = {
@@ -11,23 +12,33 @@ export function ListingCard({ listing }: ListingCardProps) {
   return (
     <Link
       href={`/listings/${listing.id}`}
-      className="block border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow bg-white"
+      className="group flex flex-col gap-3 rounded-xl bg-card p-4 ring-1 ring-foreground/10 transition-all hover:shadow-md hover:ring-primary/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
     >
-      <h3 className="text-lg font-semibold text-gray-900 mb-1">
-        {listing.title}
-      </h3>
-      <p className="text-sm text-gray-600 mb-2 line-clamp-2">
-        {listing.description}
-      </p>
-      <div className="flex items-center justify-between text-sm">
-        <span className="font-medium text-green-700">
-          {listing.price.toFixed(2)} EUR / {listing.priceUnit}
-        </span>
-        <span className="text-gray-500">{listing.countyName}</span>
+      <div className="space-y-1">
+        <h3 className="line-clamp-1 font-semibold text-foreground group-hover:text-primary">
+          {listing.title}
+        </h3>
+        <p className="line-clamp-2 text-sm text-muted-foreground">
+          {listing.description}
+        </p>
       </div>
-      <div className="mt-2 flex items-center justify-between text-xs text-gray-400">
-        <span>{listing.categoryName}</span>
-        <span>{listing.providerName}</span>
+
+      <p className="mt-auto text-lg font-bold text-primary">
+        {listing.price.toFixed(2)} EUR / {listing.priceUnit}
+      </p>
+
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 border-t pt-3 text-xs text-muted-foreground">
+        <span className="inline-flex items-center gap-1">
+          <Tag className="size-3.5" aria-hidden="true" />
+          {listing.categoryName}
+        </span>
+        <span className="inline-flex items-center gap-1">
+          <MapPin className="size-3.5" aria-hidden="true" />
+          {listing.countyName}
+        </span>
+        <span className="ml-auto font-medium text-foreground">
+          {listing.providerName}
+        </span>
       </div>
     </Link>
   );

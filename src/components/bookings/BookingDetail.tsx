@@ -1,37 +1,49 @@
 "use client";
 
 import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 import { useBooking, useUpdateBookingStatus } from "@/hooks/useBookings";
+import { useTranslation } from "@/hooks/useTranslation";
+import { LoadingState } from "@/components/common/LoadingState";
+import { ErrorState } from "@/components/common/ErrorState";
+import { StatusBadge } from "@/components/common/StatusBadge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import type { Booking } from "@/types/booking";
 
 type BookingDetailProps = {
   bookingId: string;
 };
 
-const statusColors: Record<Booking["status"], string> = {
-  Pending: "bg-yellow-100 text-yellow-800",
-  Confirmed: "bg-blue-100 text-blue-800",
-  InProgress: "bg-indigo-100 text-indigo-800",
-  Completed: "bg-green-100 text-green-800",
-  Cancelled: "bg-red-100 text-red-800",
+type DetailRowProps = {
+  label: string;
+  value: string;
+  accent?: boolean;
 };
+
+function DetailRow({ label, value, accent }: DetailRowProps) {
+  return (
+    <div className="space-y-0.5">
+      <p className="text-xs text-muted-foreground">{label}</p>
+      <p
+        className={
+          accent ? "font-semibold text-primary" : "font-medium text-foreground"
+        }
+      >
+        {value}
+      </p>
+    </div>
+  );
+}
 
 export function BookingDetail({ bookingId }: BookingDetailProps) {
   const { data: booking, isLoading, error } = useBooking(bookingId);
   const updateStatus = useUpdateBookingStatus();
+  const { t } = useTranslation();
 
-  if (isLoading) return <p className="text-gray-500">Loading booking...</p>;
-  if (error) {
-    return (
-      <div
-        role="alert"
-        className="p-4 bg-red-50 border border-red-200 rounded-md text-red-700"
-      >
-        Failed to load booking.
-      </div>
-    );
-  }
-  if (!booking) return <p className="text-gray-500">Booking not found.</p>;
+  if (isLoading) return <LoadingState label={t("common.loading")} />;
+  if (error) return <ErrorState message={t("bookings.loadError")} />;
+  if (!booking) return <ErrorState message={t("common.noResults")} />;
 
   const handleStatusUpdate = (status: Booking["status"]) => {
     if (status === "Pending") return;
@@ -39,109 +51,95 @@ export function BookingDetail({ bookingId }: BookingDetailProps) {
   };
 
   return (
-    <div className="max-w-2xl">
+    <div className="mx-auto max-w-2xl">
       <Link
         href="/bookings"
-        className="text-sm text-green-600 hover:text-green-700 mb-4 inline-block"
+        className="mb-4 inline-flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
       >
-        &larr; Back to bookings
+        <ArrowLeft className="size-4" aria-hidden="true" />
+        {t("bookings.backToBookings")}
       </Link>
 
-      <div className="flex items-center gap-3 mb-4">
-        <h1 className="text-2xl font-bold text-gray-900">
+      <div className="mb-4 flex flex-wrap items-center gap-3">
+        <h1 className="text-2xl font-bold tracking-tight text-foreground">
           {booking.listingTitle}
         </h1>
-        <span
-          className={`px-2 py-1 text-xs font-medium rounded-full ${statusColors[booking.status]}`}
-        >
-          {booking.status}
-        </span>
+        <StatusBadge
+          status={booking.status}
+          label={t(`bookings.status.${booking.status}`)}
+        />
       </div>
 
-      <div className="bg-white border border-gray-200 rounded-lg p-6 space-y-4">
-        <div className="grid grid-cols-2 gap-4 text-sm">
-          <div>
-            <p className="text-gray-500">Client</p>
-            <p className="font-medium">{booking.clientName}</p>
+      <Card>
+        <CardContent className="space-y-5">
+          <div className="grid grid-cols-2 gap-4 text-sm">
+            <DetailRow
+              label={t("bookings.client")}
+              value={booking.clientName}
+            />
+            <DetailRow
+              label={t("bookings.provider")}
+              value={booking.providerName}
+            />
+            <DetailRow
+              label={t("bookings.startDate")}
+              value={new Date(booking.startDate).toLocaleDateString()}
+            />
+            <DetailRow
+              label={t("bookings.endDate")}
+              value={new Date(booking.endDate).toLocaleDateString()}
+            />
+            <DetailRow
+              label={t("bookings.totalPrice")}
+              value={`${booking.totalPrice.toFixed(2)} EUR`}
+              accent
+            />
           </div>
-          <div>
-            <p className="text-gray-500">Provider</p>
-            <p className="font-medium">{booking.providerName}</p>
-          </div>
-          <div>
-            <p className="text-gray-500">Start Date</p>
-            <p className="font-medium">
-              {new Date(booking.startDate).toLocaleDateString()}
-            </p>
-          </div>
-          <div>
-            <p className="text-gray-500">End Date</p>
-            <p className="font-medium">
-              {new Date(booking.endDate).toLocaleDateString()}
-            </p>
-          </div>
-          <div>
-            <p className="text-gray-500">Total Price</p>
-            <p className="font-medium text-green-700">
-              {booking.totalPrice.toFixed(2)} EUR
-            </p>
-          </div>
-        </div>
 
-        {booking.notes && (
-          <div>
-            <p className="text-sm text-gray-500">Notes</p>
-            <p className="text-sm">{booking.notes}</p>
-          </div>
-        )}
+          {booking.notes && (
+            <div className="space-y-0.5">
+              <p className="text-xs text-muted-foreground">
+                {t("bookings.notes")}
+              </p>
+              <p className="text-sm text-foreground">{booking.notes}</p>
+            </div>
+          )}
 
-        {(booking.status === "Pending" ||
-          booking.status === "Confirmed" ||
-          booking.status === "InProgress") && (
-          <div className="flex gap-2 pt-2 border-t border-gray-100">
-            {booking.status === "Pending" && (
-              <>
-                <button
-                  onClick={() => handleStatusUpdate("Confirmed")}
-                  className="px-4 py-2 text-sm font-medium bg-blue-600 text-white rounded-md hover:bg-blue-700"
-                >
-                  Confirm
-                </button>
-                <button
-                  onClick={() => handleStatusUpdate("Cancelled")}
-                  className="px-4 py-2 text-sm font-medium bg-red-600 text-white rounded-md hover:bg-red-700"
-                >
-                  Cancel
-                </button>
-              </>
-            )}
-            {booking.status === "Confirmed" && (
-              <button
-                onClick={() => handleStatusUpdate("InProgress")}
-                className="px-4 py-2 text-sm font-medium bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
+          {booking.status === "Pending" && (
+            <div className="flex flex-wrap gap-2 border-t pt-4">
+              <Button onClick={() => handleStatusUpdate("Confirmed")}>
+                {t("bookings.confirm")}
+              </Button>
+              <Button
+                variant="destructive"
+                onClick={() => handleStatusUpdate("Cancelled")}
               >
-                Start Work
-              </button>
-            )}
-            {booking.status === "InProgress" && (
-              <>
-                <button
-                  onClick={() => handleStatusUpdate("Completed")}
-                  className="px-4 py-2 text-sm font-medium bg-green-600 text-white rounded-md hover:bg-green-700"
-                >
-                  Complete
-                </button>
-                <Link
-                  href={`/payments?bookingId=${booking.id}`}
-                  className="px-4 py-2 text-sm font-medium bg-gray-600 text-white rounded-md hover:bg-gray-700"
-                >
-                  Process Payment
-                </Link>
-              </>
-            )}
-          </div>
-        )}
-      </div>
+                {t("common.cancel")}
+              </Button>
+            </div>
+          )}
+          {booking.status === "Confirmed" && (
+            <div className="flex flex-wrap gap-2 border-t pt-4">
+              <Button onClick={() => handleStatusUpdate("InProgress")}>
+                {t("bookings.startWork")}
+              </Button>
+            </div>
+          )}
+          {booking.status === "InProgress" && (
+            <div className="flex flex-wrap gap-2 border-t pt-4">
+              <Button onClick={() => handleStatusUpdate("Completed")}>
+                {t("bookings.complete")}
+              </Button>
+              <Button
+                variant="outline"
+                render={<Link href={`/payments?bookingId=${booking.id}`} />}
+              >
+                {t("bookings.processPayment")}
+              </Button>
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }

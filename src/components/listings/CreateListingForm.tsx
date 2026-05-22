@@ -1,6 +1,6 @@
 "use client";
 
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
@@ -9,7 +9,22 @@ import {
   useCounties,
   useCategories,
 } from "@/hooks/useListings";
+import { useTranslation } from "@/hooks/useTranslation";
 import { ApiError } from "@/lib/api";
+import { PageHeader } from "@/components/common/PageHeader";
+import { FormAlert } from "@/components/common/FormAlert";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const createListingSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -22,15 +37,19 @@ const createListingSchema = z.object({
 
 type CreateListingFormValues = z.infer<typeof createListingSchema>;
 
+const fieldError = "text-xs text-destructive";
+
 export function CreateListingForm() {
   const router = useRouter();
   const createListing = useCreateListing();
   const { data: counties } = useCounties();
   const { data: categories } = useCategories();
+  const { t } = useTranslation();
 
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors },
   } = useForm<CreateListingFormValues>({
     resolver: zodResolver(createListingSchema),
@@ -50,179 +69,192 @@ export function CreateListingForm() {
     apiError instanceof ApiError
       ? apiError.message
       : apiError
-        ? "An unexpected error occurred."
+        ? t("auth.unexpectedError")
         : null;
 
+  const priceUnits = [
+    { value: "hour", label: t("listings.perHour") },
+    { value: "day", label: t("listings.perDay") },
+    { value: "hectare", label: t("listings.perHectare") },
+    { value: "job", label: t("listings.perJob") },
+  ];
+
   return (
-    <div className="max-w-2xl">
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">Create Listing</h1>
+    <div className="mx-auto max-w-2xl">
+      <PageHeader title={t("listings.createListing")} />
 
-      {errorMessage && (
-        <div
-          role="alert"
-          className="mb-4 p-3 rounded bg-red-50 border border-red-200 text-red-700 text-sm"
-        >
-          {errorMessage}
-        </div>
-      )}
+      <Card>
+        <CardContent>
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            {errorMessage && <FormAlert message={errorMessage} />}
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        <div>
-          <label
-            htmlFor="title"
-            className="block text-sm font-medium text-gray-700 mb-1"
-          >
-            Title
-          </label>
-          <input
-            id="title"
-            type="text"
-            {...register("title")}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
-            aria-invalid={!!errors.title}
-          />
-          {errors.title && (
-            <p role="alert" className="mt-1 text-xs text-red-600">
-              {errors.title.message}
-            </p>
-          )}
-        </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="title">{t("listings.titleLabel")}</Label>
+              <Input
+                id="title"
+                type="text"
+                {...register("title")}
+                aria-invalid={!!errors.title}
+              />
+              {errors.title && (
+                <p role="alert" className={fieldError}>
+                  {errors.title.message}
+                </p>
+              )}
+            </div>
 
-        <div>
-          <label
-            htmlFor="description"
-            className="block text-sm font-medium text-gray-700 mb-1"
-          >
-            Description
-          </label>
-          <textarea
-            id="description"
-            rows={4}
-            {...register("description")}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
-            aria-invalid={!!errors.description}
-          />
-          {errors.description && (
-            <p role="alert" className="mt-1 text-xs text-red-600">
-              {errors.description.message}
-            </p>
-          )}
-        </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="description">{t("listings.description")}</Label>
+              <Textarea
+                id="description"
+                rows={4}
+                {...register("description")}
+                aria-invalid={!!errors.description}
+              />
+              {errors.description && (
+                <p role="alert" className={fieldError}>
+                  {errors.description.message}
+                </p>
+              )}
+            </div>
 
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label
-              htmlFor="price"
-              className="block text-sm font-medium text-gray-700 mb-1"
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-1.5">
+                <Label htmlFor="price">{t("listings.priceLabel")}</Label>
+                <Input
+                  id="price"
+                  type="number"
+                  step="0.01"
+                  {...register("price", { valueAsNumber: true })}
+                  aria-invalid={!!errors.price}
+                />
+                {errors.price && (
+                  <p role="alert" className={fieldError}>
+                    {errors.price.message}
+                  </p>
+                )}
+              </div>
+
+              <div className="space-y-1.5">
+                <Label htmlFor="priceUnit">{t("listings.priceUnit")}</Label>
+                <Controller
+                  control={control}
+                  name="priceUnit"
+                  render={({ field }) => (
+                    <Select
+                      value={field.value ?? ""}
+                      onValueChange={field.onChange}
+                    >
+                      <SelectTrigger
+                        id="priceUnit"
+                        className="w-full"
+                        aria-invalid={!!errors.priceUnit}
+                      >
+                        <SelectValue placeholder={t("listings.selectUnit")} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {priceUnits.map((unit) => (
+                          <SelectItem key={unit.value} value={unit.value}>
+                            {unit.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
+                {errors.priceUnit && (
+                  <p role="alert" className={fieldError}>
+                    {errors.priceUnit.message}
+                  </p>
+                )}
+              </div>
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-1.5">
+                <Label htmlFor="categoryId">{t("listings.category")}</Label>
+                <Controller
+                  control={control}
+                  name="categoryId"
+                  render={({ field }) => (
+                    <Select
+                      value={field.value ?? ""}
+                      onValueChange={field.onChange}
+                    >
+                      <SelectTrigger
+                        id="categoryId"
+                        className="w-full"
+                        aria-invalid={!!errors.categoryId}
+                      >
+                        <SelectValue
+                          placeholder={t("listings.selectCategory")}
+                        />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {categories?.map((category) => (
+                          <SelectItem key={category.id} value={category.id}>
+                            {category.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
+                {errors.categoryId && (
+                  <p role="alert" className={fieldError}>
+                    {errors.categoryId.message}
+                  </p>
+                )}
+              </div>
+
+              <div className="space-y-1.5">
+                <Label htmlFor="countyId">{t("listings.county")}</Label>
+                <Controller
+                  control={control}
+                  name="countyId"
+                  render={({ field }) => (
+                    <Select
+                      value={field.value ?? ""}
+                      onValueChange={field.onChange}
+                    >
+                      <SelectTrigger
+                        id="countyId"
+                        className="w-full"
+                        aria-invalid={!!errors.countyId}
+                      >
+                        <SelectValue placeholder={t("listings.selectCounty")} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {counties?.map((county) => (
+                          <SelectItem key={county.id} value={county.id}>
+                            {county.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
+                {errors.countyId && (
+                  <p role="alert" className={fieldError}>
+                    {errors.countyId.message}
+                  </p>
+                )}
+              </div>
+            </div>
+
+            <Button
+              type="submit"
+              size="lg"
+              className="w-full"
+              disabled={createListing.isPending}
             >
-              Price (EUR)
-            </label>
-            <input
-              id="price"
-              type="number"
-              step="0.01"
-              {...register("price", { valueAsNumber: true })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
-              aria-invalid={!!errors.price}
-            />
-            {errors.price && (
-              <p role="alert" className="mt-1 text-xs text-red-600">
-                {errors.price.message}
-              </p>
-            )}
-          </div>
-
-          <div>
-            <label
-              htmlFor="priceUnit"
-              className="block text-sm font-medium text-gray-700 mb-1"
-            >
-              Price Unit
-            </label>
-            <select
-              id="priceUnit"
-              {...register("priceUnit")}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm bg-white focus:outline-none focus:ring-2 focus:ring-green-500"
-              aria-invalid={!!errors.priceUnit}
-            >
-              <option value="">Select unit</option>
-              <option value="hour">Per hour</option>
-              <option value="day">Per day</option>
-              <option value="hectare">Per hectare</option>
-              <option value="job">Per job</option>
-            </select>
-            {errors.priceUnit && (
-              <p role="alert" className="mt-1 text-xs text-red-600">
-                {errors.priceUnit.message}
-              </p>
-            )}
-          </div>
-        </div>
-
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label
-              htmlFor="categoryId"
-              className="block text-sm font-medium text-gray-700 mb-1"
-            >
-              Category
-            </label>
-            <select
-              id="categoryId"
-              {...register("categoryId")}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm bg-white focus:outline-none focus:ring-2 focus:ring-green-500"
-              aria-invalid={!!errors.categoryId}
-            >
-              <option value="">Select category</option>
-              {categories?.map((cat) => (
-                <option key={cat.id} value={cat.id}>
-                  {cat.name}
-                </option>
-              ))}
-            </select>
-            {errors.categoryId && (
-              <p role="alert" className="mt-1 text-xs text-red-600">
-                {errors.categoryId.message}
-              </p>
-            )}
-          </div>
-
-          <div>
-            <label
-              htmlFor="countyId"
-              className="block text-sm font-medium text-gray-700 mb-1"
-            >
-              County
-            </label>
-            <select
-              id="countyId"
-              {...register("countyId")}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm bg-white focus:outline-none focus:ring-2 focus:ring-green-500"
-              aria-invalid={!!errors.countyId}
-            >
-              <option value="">Select county</option>
-              {counties?.map((county) => (
-                <option key={county.id} value={county.id}>
-                  {county.name}
-                </option>
-              ))}
-            </select>
-            {errors.countyId && (
-              <p role="alert" className="mt-1 text-xs text-red-600">
-                {errors.countyId.message}
-              </p>
-            )}
-          </div>
-        </div>
-
-        <button
-          type="submit"
-          disabled={createListing.isPending}
-          className="w-full py-2 px-4 bg-green-600 text-white font-medium rounded-md text-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {createListing.isPending ? "Creating..." : "Create Listing"}
-        </button>
-      </form>
+              {createListing.isPending
+                ? t("listings.creating")
+                : t("listings.createListing")}
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
     </div>
   );
 }

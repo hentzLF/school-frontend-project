@@ -6,7 +6,15 @@ import { z } from "zod";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCreateBooking } from "@/hooks/useBookings";
 import { useListing } from "@/hooks/useListings";
+import { useTranslation } from "@/hooks/useTranslation";
 import { ApiError } from "@/lib/api";
+import { PageHeader } from "@/components/common/PageHeader";
+import { FormAlert } from "@/components/common/FormAlert";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 
 const bookingSchema = z.object({
   listingId: z.string().min(1, "Listing is required"),
@@ -17,12 +25,15 @@ const bookingSchema = z.object({
 
 type BookingFormValues = z.infer<typeof bookingSchema>;
 
+const fieldError = "text-xs text-destructive";
+
 export function CreateBookingForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const listingId = searchParams.get("listingId") ?? "";
   const { data: listing } = useListing(listingId);
   const createBooking = useCreateBooking();
+  const { t } = useTranslation();
 
   const {
     register,
@@ -47,97 +58,77 @@ export function CreateBookingForm() {
     apiError instanceof ApiError
       ? apiError.message
       : apiError
-        ? "An unexpected error occurred."
+        ? t("auth.unexpectedError")
         : null;
 
   return (
-    <div className="max-w-lg">
-      <h1 className="text-2xl font-bold text-gray-900 mb-2">Create Booking</h1>
+    <div className="mx-auto max-w-lg">
+      <PageHeader title={t("bookings.createBooking")} />
 
-      {listing && (
-        <p className="text-sm text-gray-600 mb-6">
-          Booking: <span className="font-medium">{listing.title}</span> —{" "}
-          {listing.price.toFixed(2)} EUR / {listing.priceUnit}
-        </p>
-      )}
-
-      {errorMessage && (
-        <div
-          role="alert"
-          className="mb-4 p-3 rounded bg-red-50 border border-red-200 text-red-700 text-sm"
-        >
-          {errorMessage}
-        </div>
-      )}
-
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        <input type="hidden" {...register("listingId")} />
-
-        <div>
-          <label
-            htmlFor="startDate"
-            className="block text-sm font-medium text-gray-700 mb-1"
-          >
-            Start Date
-          </label>
-          <input
-            id="startDate"
-            type="date"
-            {...register("startDate")}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
-            aria-invalid={!!errors.startDate}
-          />
-          {errors.startDate && (
-            <p role="alert" className="mt-1 text-xs text-red-600">
-              {errors.startDate.message}
-            </p>
+      <Card>
+        <CardContent>
+          {listing && (
+            <div className="mb-4 rounded-lg border bg-muted/50 p-3 text-sm">
+              <p className="font-medium text-foreground">{listing.title}</p>
+              <p className="text-muted-foreground">
+                {listing.price.toFixed(2)} EUR / {listing.priceUnit}
+              </p>
+            </div>
           )}
-        </div>
 
-        <div>
-          <label
-            htmlFor="endDate"
-            className="block text-sm font-medium text-gray-700 mb-1"
-          >
-            End Date
-          </label>
-          <input
-            id="endDate"
-            type="date"
-            {...register("endDate")}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
-            aria-invalid={!!errors.endDate}
-          />
-          {errors.endDate && (
-            <p role="alert" className="mt-1 text-xs text-red-600">
-              {errors.endDate.message}
-            </p>
-          )}
-        </div>
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            {errorMessage && <FormAlert message={errorMessage} />}
 
-        <div>
-          <label
-            htmlFor="notes"
-            className="block text-sm font-medium text-gray-700 mb-1"
-          >
-            Notes (optional)
-          </label>
-          <textarea
-            id="notes"
-            rows={3}
-            {...register("notes")}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
-          />
-        </div>
+            <input type="hidden" {...register("listingId")} />
 
-        <button
-          type="submit"
-          disabled={createBooking.isPending}
-          className="w-full py-2 px-4 bg-green-600 text-white font-medium rounded-md text-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {createBooking.isPending ? "Creating..." : "Create Booking"}
-        </button>
-      </form>
+            <div className="space-y-1.5">
+              <Label htmlFor="startDate">{t("bookings.startDate")}</Label>
+              <Input
+                id="startDate"
+                type="date"
+                {...register("startDate")}
+                aria-invalid={!!errors.startDate}
+              />
+              {errors.startDate && (
+                <p role="alert" className={fieldError}>
+                  {errors.startDate.message}
+                </p>
+              )}
+            </div>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="endDate">{t("bookings.endDate")}</Label>
+              <Input
+                id="endDate"
+                type="date"
+                {...register("endDate")}
+                aria-invalid={!!errors.endDate}
+              />
+              {errors.endDate && (
+                <p role="alert" className={fieldError}>
+                  {errors.endDate.message}
+                </p>
+              )}
+            </div>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="notes">{t("bookings.notes")}</Label>
+              <Textarea id="notes" rows={3} {...register("notes")} />
+            </div>
+
+            <Button
+              type="submit"
+              size="lg"
+              className="w-full"
+              disabled={createBooking.isPending}
+            >
+              {createBooking.isPending
+                ? t("bookings.creating")
+                : t("bookings.createBooking")}
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
     </div>
   );
 }

@@ -1,21 +1,58 @@
 "use client";
 
 import { useState } from "react";
+import { Plus, Tractor, Trash2 } from "lucide-react";
 import {
   useEquipment,
   useCreateEquipment,
   useDeleteEquipment,
 } from "@/hooks/useEquipment";
+import { useTranslation } from "@/hooks/useTranslation";
 import { ApiError } from "@/lib/api";
+import { PageHeader } from "@/components/common/PageHeader";
+import { LoadingState } from "@/components/common/LoadingState";
+import { ErrorState } from "@/components/common/ErrorState";
+import { EmptyState } from "@/components/common/EmptyState";
+import { FormAlert } from "@/components/common/FormAlert";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export function EquipmentList() {
   const { data: equipment, isLoading, error } = useEquipment();
   const createEquipment = useCreateEquipment();
   const deleteEquipment = useDeleteEquipment();
-  const [showForm, setShowForm] = useState(false);
+  const { t } = useTranslation();
+  const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [condition, setCondition] = useState("");
+
+  const conditions = [
+    { value: "New", label: t("equipment.conditionNew") },
+    { value: "Good", label: t("equipment.conditionGood") },
+    { value: "Fair", label: t("equipment.conditionFair") },
+    { value: "Poor", label: t("equipment.conditionPoor") },
+  ];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,7 +61,7 @@ export function EquipmentList() {
       setName("");
       setDescription("");
       setCondition("");
-      setShowForm(false);
+      setOpen(false);
     } catch {
       // Error captured by mutation
     }
@@ -35,133 +72,124 @@ export function EquipmentList() {
     apiError instanceof ApiError
       ? apiError.message
       : apiError
-        ? "An unexpected error occurred."
+        ? t("auth.unexpectedError")
         : null;
+
+  const conditionLabel = (value: string) =>
+    conditions.find((c) => c.value === value)?.label ?? value;
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Equipment</h1>
-        <button
-          onClick={() => setShowForm(!showForm)}
-          className="px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-md hover:bg-green-700"
-        >
-          {showForm ? "Cancel" : "Add Equipment"}
-        </button>
-      </div>
+      <PageHeader
+        title={t("equipment.title")}
+        action={
+          <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger render={<Button />}>
+              <Plus aria-hidden="true" />
+              {t("equipment.addEquipment")}
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>{t("equipment.addEquipment")}</DialogTitle>
+              </DialogHeader>
+              <form onSubmit={handleSubmit} className="space-y-4">
+                {errorMessage && <FormAlert message={errorMessage} />}
+                <div className="space-y-1.5">
+                  <Label htmlFor="eq-name">{t("equipment.name")}</Label>
+                  <Input
+                    id="eq-name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    required
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="eq-description">
+                    {t("equipment.description")}
+                  </Label>
+                  <Textarea
+                    id="eq-description"
+                    rows={2}
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    required
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="eq-condition">
+                    {t("equipment.condition")}
+                  </Label>
+                  <Select
+                    value={condition}
+                    onValueChange={(value) => setCondition(value ?? "")}
+                  >
+                    <SelectTrigger id="eq-condition" className="w-full">
+                      <SelectValue
+                        placeholder={t("equipment.selectCondition")}
+                      />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {conditions.map((c) => (
+                        <SelectItem key={c.value} value={c.value}>
+                          {c.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <DialogFooter>
+                  <DialogClose
+                    render={<Button type="button" variant="outline" />}
+                  >
+                    {t("common.cancel")}
+                  </DialogClose>
+                  <Button
+                    type="submit"
+                    disabled={createEquipment.isPending || !condition}
+                  >
+                    {createEquipment.isPending
+                      ? t("equipment.adding")
+                      : t("equipment.addEquipment")}
+                  </Button>
+                </DialogFooter>
+              </form>
+            </DialogContent>
+          </Dialog>
+        }
+      />
 
-      {showForm && (
-        <form
-          onSubmit={handleSubmit}
-          className="mb-6 p-4 bg-white border border-gray-200 rounded-lg space-y-3"
-        >
-          {errorMessage && (
-            <div
-              role="alert"
-              className="p-3 rounded bg-red-50 border border-red-200 text-red-700 text-sm"
-            >
-              {errorMessage}
-            </div>
-          )}
-          <div>
-            <label
-              htmlFor="eq-name"
-              className="block text-sm font-medium text-gray-700 mb-1"
-            >
-              Name
-            </label>
-            <input
-              id="eq-name"
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
-            />
-          </div>
-          <div>
-            <label
-              htmlFor="eq-description"
-              className="block text-sm font-medium text-gray-700 mb-1"
-            >
-              Description
-            </label>
-            <textarea
-              id="eq-description"
-              rows={2}
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
-            />
-          </div>
-          <div>
-            <label
-              htmlFor="eq-condition"
-              className="block text-sm font-medium text-gray-700 mb-1"
-            >
-              Condition
-            </label>
-            <select
-              id="eq-condition"
-              value={condition}
-              onChange={(e) => setCondition(e.target.value)}
-              required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm bg-white focus:outline-none focus:ring-2 focus:ring-green-500"
-            >
-              <option value="">Select condition</option>
-              <option value="New">New</option>
-              <option value="Good">Good</option>
-              <option value="Fair">Fair</option>
-              <option value="Poor">Poor</option>
-            </select>
-          </div>
-          <button
-            type="submit"
-            disabled={createEquipment.isPending}
-            className="px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-md hover:bg-green-700 disabled:opacity-50"
-          >
-            {createEquipment.isPending ? "Adding..." : "Add Equipment"}
-          </button>
-        </form>
-      )}
+      {isLoading && <LoadingState label={t("common.loading")} />}
 
-      {isLoading && <p className="text-gray-500">Loading equipment...</p>}
-
-      {error && (
-        <div
-          role="alert"
-          className="p-4 bg-red-50 border border-red-200 rounded-md text-red-700"
-        >
-          Failed to load equipment.
-        </div>
-      )}
+      {error && <ErrorState message={t("equipment.loadError")} />}
 
       {equipment && equipment.length === 0 && (
-        <p className="text-gray-500">No equipment registered yet.</p>
+        <EmptyState icon={Tractor} title={t("equipment.noEquipment")} />
       )}
 
       {equipment && equipment.length > 0 && (
-        <div className="space-y-3">
+        <div className="grid gap-3 sm:grid-cols-2">
           {equipment.map((item) => (
-            <div
-              key={item.id}
-              className="border border-gray-200 rounded-lg p-4 bg-white flex items-start justify-between"
-            >
-              <div>
-                <h3 className="font-medium text-gray-900">{item.name}</h3>
-                <p className="text-sm text-gray-600 mt-1">{item.description}</p>
-                <span className="inline-block mt-2 px-2 py-1 text-xs font-medium bg-gray-100 text-gray-700 rounded">
-                  {item.condition}
-                </span>
-              </div>
-              <button
-                onClick={() => deleteEquipment.mutate(item.id)}
-                className="text-sm text-red-600 hover:text-red-700"
-              >
-                Delete
-              </button>
-            </div>
+            <Card key={item.id} size="sm">
+              <CardContent className="flex items-start justify-between gap-3">
+                <div className="min-w-0 space-y-1.5">
+                  <h3 className="font-medium text-foreground">{item.name}</h3>
+                  <p className="text-sm text-muted-foreground">
+                    {item.description}
+                  </p>
+                  <Badge variant="secondary">
+                    {conditionLabel(item.condition)}
+                  </Badge>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="icon-sm"
+                  onClick={() => deleteEquipment.mutate(item.id)}
+                  aria-label={t("common.delete")}
+                >
+                  <Trash2 aria-hidden="true" />
+                </Button>
+              </CardContent>
+            </Card>
           ))}
         </div>
       )}

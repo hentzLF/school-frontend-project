@@ -1,8 +1,16 @@
 "use client";
 
+import { Star, Trash2 } from "lucide-react";
 import { useReviews, useDeleteReview } from "@/hooks/useReviews";
 import { useAuth } from "@/hooks/useAuth";
+import { useTranslation } from "@/hooks/useTranslation";
 import { StarRating } from "@/components/reviews/StarRating";
+import { PageHeader } from "@/components/common/PageHeader";
+import { LoadingState } from "@/components/common/LoadingState";
+import { ErrorState } from "@/components/common/ErrorState";
+import { EmptyState } from "@/components/common/EmptyState";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 
 type ReviewListProps = {
   listingId?: string;
@@ -12,62 +20,64 @@ export function ReviewList({ listingId }: ReviewListProps) {
   const { user } = useAuth();
   const { data: reviews, isLoading, error } = useReviews(listingId);
   const deleteReview = useDeleteReview();
+  const { t } = useTranslation();
 
-  if (isLoading) return <p className="text-gray-500">Loading reviews...</p>;
+  let content: React.ReactNode;
 
-  if (error) {
-    return (
-      <div
-        role="alert"
-        className="p-4 bg-red-50 border border-red-200 rounded-md text-red-700"
-      >
-        Failed to load reviews.
+  if (isLoading) {
+    content = <LoadingState label={t("common.loading")} />;
+  } else if (error) {
+    content = <ErrorState message={t("reviews.loadError")} />;
+  } else if (!reviews || reviews.length === 0) {
+    content = <EmptyState icon={Star} title={t("reviews.noReviews")} />;
+  } else {
+    content = (
+      <div className="space-y-3">
+        {reviews.map((review) => (
+          <Card key={review.id} size="sm">
+            <CardContent className="space-y-2">
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <StarRating rating={review.rating} />
+                    <span className="text-sm font-medium text-foreground">
+                      {review.reviewerName}
+                    </span>
+                  </div>
+                  {!listingId && (
+                    <p className="mt-0.5 text-xs text-muted-foreground">
+                      {review.listingTitle}
+                    </p>
+                  )}
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-muted-foreground">
+                    {new Date(review.createdAt).toLocaleDateString()}
+                  </span>
+                  {user?.id === review.reviewerId && (
+                    <Button
+                      variant="ghost"
+                      size="icon-sm"
+                      onClick={() => deleteReview.mutate(review.id)}
+                      aria-label={t("common.delete")}
+                    >
+                      <Trash2 aria-hidden="true" />
+                    </Button>
+                  )}
+                </div>
+              </div>
+              <p className="text-sm text-foreground/90">{review.comment}</p>
+            </CardContent>
+          </Card>
+        ))}
       </div>
     );
   }
 
-  if (!reviews || reviews.length === 0) {
-    return <p className="text-gray-500">No reviews yet.</p>;
-  }
-
   return (
-    <div className="space-y-4">
-      {reviews.map((review) => (
-        <div
-          key={review.id}
-          className="border border-gray-200 rounded-lg p-4 bg-white"
-        >
-          <div className="flex items-start justify-between">
-            <div>
-              <div className="flex items-center gap-2">
-                <StarRating rating={review.rating} />
-                <span className="text-sm font-medium text-gray-900">
-                  {review.reviewerName}
-                </span>
-              </div>
-              {!listingId && (
-                <p className="text-xs text-gray-500 mt-1">
-                  {review.listingTitle}
-                </p>
-              )}
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-xs text-gray-400">
-                {new Date(review.createdAt).toLocaleDateString()}
-              </span>
-              {user?.id === review.reviewerId && (
-                <button
-                  onClick={() => deleteReview.mutate(review.id)}
-                  className="text-xs text-red-600 hover:text-red-700"
-                >
-                  Delete
-                </button>
-              )}
-            </div>
-          </div>
-          <p className="mt-2 text-sm text-gray-700">{review.comment}</p>
-        </div>
-      ))}
+    <div>
+      {!listingId && <PageHeader title={t("reviews.title")} />}
+      {content}
     </div>
   );
 }

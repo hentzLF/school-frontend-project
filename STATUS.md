@@ -20,7 +20,7 @@ Phase 7: UI/UX polish
   - [x] Install shadcn/ui (base-nova style, Base UI primitives) + 14 components
   - [x] Agricultural green design tokens + dark mode (Zustand theme store)
   - [x] Redesign auth pages, root layout, header, sidebar, landing page
-  - [ ] Redesign client area (listings, bookings, payments, messaging, reviews)
+  - [x] Redesign client area (listings, bookings, payments, messaging, reviews, equipment)
   - [ ] Redesign admin area (dashboard, CRUD tables)
 
 ## Remaining

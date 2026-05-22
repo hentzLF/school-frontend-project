@@ -2,10 +2,16 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { ChevronLeft, ChevronRight, PackageSearch, Plus } from "lucide-react";
 import { useListings } from "@/hooks/useListings";
 import { useTranslation } from "@/hooks/useTranslation";
 import { ListingCard } from "@/components/listings/ListingCard";
 import { ListingFilters } from "@/components/listings/ListingFilters";
+import { PageHeader } from "@/components/common/PageHeader";
+import { LoadingState } from "@/components/common/LoadingState";
+import { ErrorState } from "@/components/common/ErrorState";
+import { EmptyState } from "@/components/common/EmptyState";
+import { Button } from "@/components/ui/button";
 import type { ListingFilters as ListingFiltersType } from "@/types/listing";
 
 export function ListingList() {
@@ -19,67 +25,66 @@ export function ListingList() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-4">
-        <h1 className="text-2xl font-bold text-gray-900">
-          {t("listings.title")}
-        </h1>
-        <Link
-          href="/listings/new"
-          className="px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-md hover:bg-green-700"
-        >
-          {t("listings.createListing")}
-        </Link>
-      </div>
+      <PageHeader
+        title={t("listings.title")}
+        action={
+          <Button render={<Link href="/listings/new" />}>
+            <Plus aria-hidden="true" />
+            {t("listings.createListing")}
+          </Button>
+        }
+      />
 
       <ListingFilters filters={filters} onFiltersChange={setFilters} />
 
-      {isLoading && <p className="text-gray-500">{t("common.loading")}</p>}
+      {isLoading && <LoadingState label={t("common.loading")} />}
 
-      {error && (
-        <div
-          role="alert"
-          className="p-4 bg-red-50 border border-red-200 rounded-md text-red-700"
-        >
-          {t("listings.loadError")}
-        </div>
-      )}
+      {error && <ErrorState message={t("listings.loadError")} />}
 
       {data && data.items.length === 0 && (
-        <p className="text-gray-500">{t("listings.noListings")}</p>
+        <EmptyState
+          icon={PackageSearch}
+          title={t("listings.noListings")}
+          description={t("dashboard.listingsDesc")}
+        />
       )}
 
       {data && data.items.length > 0 && (
         <>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {data.items.map((listing) => (
               <ListingCard key={listing.id} listing={listing} />
             ))}
           </div>
 
           {data.totalPages > 1 && (
-            <div className="mt-6 flex items-center justify-center gap-2">
-              <button
+            <div className="mt-8 flex items-center justify-center gap-3">
+              <Button
+                variant="outline"
+                size="sm"
                 onClick={() =>
                   setFilters((f) => ({ ...f, page: (f.page ?? 1) - 1 }))
                 }
                 disabled={!filters.page || filters.page <= 1}
-                className="px-3 py-1 text-sm border border-gray-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
               >
+                <ChevronLeft aria-hidden="true" />
                 {t("common.previous")}
-              </button>
-              <span className="text-sm text-gray-600">
+              </Button>
+              <span className="text-sm text-muted-foreground">
                 {t("common.page")} {filters.page ?? 1} {t("common.of")}{" "}
                 {data.totalPages}
               </span>
-              <button
+              <Button
+                variant="outline"
+                size="sm"
                 onClick={() =>
                   setFilters((f) => ({ ...f, page: (f.page ?? 1) + 1 }))
                 }
                 disabled={(filters.page ?? 1) >= data.totalPages}
-                className="px-3 py-1 text-sm border border-gray-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
               >
                 {t("common.next")}
-              </button>
+                <ChevronRight aria-hidden="true" />
+              </Button>
             </div>
           )}
         </>

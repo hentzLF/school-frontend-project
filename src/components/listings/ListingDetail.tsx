@@ -1,9 +1,15 @@
 "use client";
 
 import Link from "next/link";
+import { ArrowLeft, MapPin, Tag, User } from "lucide-react";
 import { useListing } from "@/hooks/useListings";
+import { useTranslation } from "@/hooks/useTranslation";
 import { ReviewList } from "@/components/reviews/ReviewList";
 import { CreateReviewForm } from "@/components/reviews/CreateReviewForm";
+import { LoadingState } from "@/components/common/LoadingState";
+import { ErrorState } from "@/components/common/ErrorState";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 type ListingDetailProps = {
   listingId: string;
@@ -11,75 +17,89 @@ type ListingDetailProps = {
 
 export function ListingDetail({ listingId }: ListingDetailProps) {
   const { data: listing, isLoading, error } = useListing(listingId);
+  const { t } = useTranslation();
 
-  if (isLoading) return <p className="text-gray-500">Loading listing...</p>;
+  if (isLoading) return <LoadingState label={t("common.loading")} />;
 
-  if (error) {
-    return (
-      <div
-        role="alert"
-        className="p-4 bg-red-50 border border-red-200 rounded-md text-red-700"
-      >
-        Failed to load listing.
-      </div>
-    );
-  }
+  if (error) return <ErrorState message={t("listings.loadError")} />;
 
-  if (!listing) return <p className="text-gray-500">Listing not found.</p>;
+  if (!listing) return <ErrorState message={t("common.noResults")} />;
 
   return (
-    <div className="max-w-3xl">
+    <div className="mx-auto max-w-3xl">
       <Link
         href="/listings"
-        className="text-sm text-green-600 hover:text-green-700 mb-4 inline-block"
+        className="mb-4 inline-flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
       >
-        &larr; Back to listings
+        <ArrowLeft className="size-4" aria-hidden="true" />
+        {t("listings.backToListings")}
       </Link>
 
-      <h1 className="text-3xl font-bold text-gray-900 mb-2">{listing.title}</h1>
+      <h1 className="mb-2 text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+        {listing.title}
+      </h1>
 
-      <div className="flex items-center gap-4 text-sm text-gray-500 mb-6">
-        <span>{listing.categoryName}</span>
-        <span>{listing.countyName}</span>
-        <span>by {listing.providerName}</span>
+      <div className="mb-6 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted-foreground">
+        <span className="inline-flex items-center gap-1">
+          <Tag className="size-4" aria-hidden="true" />
+          {listing.categoryName}
+        </span>
+        <span className="inline-flex items-center gap-1">
+          <MapPin className="size-4" aria-hidden="true" />
+          {listing.countyName}
+        </span>
+        <span className="inline-flex items-center gap-1">
+          <User className="size-4" aria-hidden="true" />
+          {listing.providerName}
+        </span>
       </div>
 
-      <div className="bg-white border border-gray-200 rounded-lg p-6 mb-6">
-        <p className="text-gray-700 whitespace-pre-wrap">
-          {listing.description}
-        </p>
-      </div>
-
-      <div className="bg-white border border-gray-200 rounded-lg p-6 flex items-center justify-between mb-8">
-        <div>
-          <p className="text-sm text-gray-500">Price</p>
-          <p className="text-2xl font-bold text-green-700">
-            {listing.price.toFixed(2)} EUR
-            <span className="text-sm font-normal text-gray-500">
-              {" "}
-              / {listing.priceUnit}
-            </span>
+      <Card className="mb-6">
+        <CardContent>
+          <p className="whitespace-pre-wrap text-foreground/90">
+            {listing.description}
           </p>
-        </div>
-        <Link
-          href={`/bookings/new?listingId=${listing.id}`}
-          className="px-6 py-2 bg-green-600 text-white font-medium rounded-md hover:bg-green-700"
-        >
-          Book Now
-        </Link>
-      </div>
+        </CardContent>
+      </Card>
 
-      <div className="mb-6">
-        <h2 className="text-xl font-bold text-gray-900 mb-4">Reviews</h2>
+      <Card className="mb-8">
+        <CardContent className="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <p className="text-sm text-muted-foreground">
+              {t("listings.price")}
+            </p>
+            <p className="text-2xl font-bold text-primary">
+              {listing.price.toFixed(2)} EUR
+              <span className="text-sm font-normal text-muted-foreground">
+                {" "}
+                / {listing.priceUnit}
+              </span>
+            </p>
+          </div>
+          <Button
+            size="lg"
+            render={<Link href={`/bookings/new?listingId=${listing.id}`} />}
+          >
+            {t("listings.bookNow")}
+          </Button>
+        </CardContent>
+      </Card>
+
+      <section className="mb-6">
+        <h2 className="mb-4 text-xl font-bold text-foreground">
+          {t("reviews.title")}
+        </h2>
         <ReviewList listingId={listingId} />
-      </div>
+      </section>
 
-      <div className="bg-white border border-gray-200 rounded-lg p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-3">
-          Write a Review
-        </h3>
-        <CreateReviewForm listingId={listingId} />
-      </div>
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg">{t("reviews.writeReview")}</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <CreateReviewForm listingId={listingId} />
+        </CardContent>
+      </Card>
     </div>
   );
 }

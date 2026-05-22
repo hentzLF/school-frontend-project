@@ -1,6 +1,16 @@
 "use client";
 
+import { Search } from "lucide-react";
 import { useCategories, useCounties } from "@/hooks/useListings";
+import { useTranslation } from "@/hooks/useTranslation";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import type { ListingFilters as ListingFiltersType } from "@/types/listing";
 
 type ListingFiltersProps = {
@@ -14,58 +24,78 @@ export function ListingFilters({
 }: ListingFiltersProps) {
   const { data: counties } = useCounties();
   const { data: categories } = useCategories();
+  const { t } = useTranslation();
 
   return (
-    <div className="flex flex-wrap gap-3 mb-6">
-      <input
-        type="text"
-        placeholder="Search listings..."
-        value={filters.search ?? ""}
-        onChange={(e) =>
-          onFiltersChange({ ...filters, search: e.target.value, page: 1 })
-        }
-        className="px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
-      />
+    <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+      <div className="relative sm:min-w-56 sm:flex-1">
+        <Search
+          className="pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground"
+          aria-hidden="true"
+        />
+        <Input
+          type="text"
+          placeholder={t("listings.searchPlaceholder")}
+          value={filters.search ?? ""}
+          onChange={(e) =>
+            onFiltersChange({ ...filters, search: e.target.value, page: 1 })
+          }
+          className="pl-8"
+          aria-label={t("common.search")}
+        />
+      </div>
 
-      <select
-        value={filters.categoryId ?? ""}
-        onChange={(e) =>
+      <Select
+        value={filters.categoryId ?? "all"}
+        onValueChange={(value) =>
           onFiltersChange({
             ...filters,
-            categoryId: e.target.value || undefined,
+            categoryId: value && value !== "all" ? value : undefined,
             page: 1,
           })
         }
-        className="px-3 py-2 border border-gray-300 rounded-md text-sm bg-white focus:outline-none focus:ring-2 focus:ring-green-500"
-        aria-label="Filter by category"
       >
-        <option value="">All categories</option>
-        {categories?.map((cat) => (
-          <option key={cat.id} value={cat.id}>
-            {cat.name}
-          </option>
-        ))}
-      </select>
+        <SelectTrigger
+          className="w-full sm:w-48"
+          aria-label={t("listings.category")}
+        >
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="all">{t("listings.allCategories")}</SelectItem>
+          {categories?.map((category) => (
+            <SelectItem key={category.id} value={category.id}>
+              {category.name}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
 
-      <select
-        value={filters.countyId ?? ""}
-        onChange={(e) =>
+      <Select
+        value={filters.countyId ?? "all"}
+        onValueChange={(value) =>
           onFiltersChange({
             ...filters,
-            countyId: e.target.value || undefined,
+            countyId: value && value !== "all" ? value : undefined,
             page: 1,
           })
         }
-        className="px-3 py-2 border border-gray-300 rounded-md text-sm bg-white focus:outline-none focus:ring-2 focus:ring-green-500"
-        aria-label="Filter by county"
       >
-        <option value="">All counties</option>
-        {counties?.map((county) => (
-          <option key={county.id} value={county.id}>
-            {county.name}
-          </option>
-        ))}
-      </select>
+        <SelectTrigger
+          className="w-full sm:w-48"
+          aria-label={t("listings.county")}
+        >
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="all">{t("listings.allCounties")}</SelectItem>
+          {counties?.map((county) => (
+            <SelectItem key={county.id} value={county.id}>
+              {county.name}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
     </div>
   );
 }

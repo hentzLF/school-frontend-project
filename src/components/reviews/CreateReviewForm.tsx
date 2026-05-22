@@ -1,10 +1,22 @@
 "use client";
 
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useCreateReview } from "@/hooks/useReviews";
+import { useTranslation } from "@/hooks/useTranslation";
 import { ApiError } from "@/lib/api";
+import { FormAlert } from "@/components/common/FormAlert";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const reviewSchema = z.object({
   rating: z.number().min(1, "Rating is required").max(5),
@@ -18,15 +30,19 @@ type CreateReviewFormProps = {
   onSuccess?: () => void;
 };
 
+const fieldError = "text-xs text-destructive";
+
 export function CreateReviewForm({
   listingId,
   onSuccess,
 }: CreateReviewFormProps) {
   const createReview = useCreateReview();
+  const { t } = useTranslation();
 
   const {
     register,
     handleSubmit,
+    control,
     reset,
     formState: { errors },
   } = useForm<ReviewFormValues>({
@@ -52,75 +68,75 @@ export function CreateReviewForm({
     apiError instanceof ApiError
       ? apiError.message
       : apiError
-        ? "An unexpected error occurred."
+        ? t("auth.unexpectedError")
         : null;
+
+  const ratings = [
+    { value: "5", label: `5 — ${t("reviews.excellent")}` },
+    { value: "4", label: `4 — ${t("reviews.good")}` },
+    { value: "3", label: `3 — ${t("reviews.average")}` },
+    { value: "2", label: `2 — ${t("reviews.poor")}` },
+    { value: "1", label: `1 — ${t("reviews.terrible")}` },
+  ];
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
-      {errorMessage && (
-        <div
-          role="alert"
-          className="p-3 rounded bg-red-50 border border-red-200 text-red-700 text-sm"
-        >
-          {errorMessage}
-        </div>
-      )}
+      {errorMessage && <FormAlert message={errorMessage} />}
 
-      <div>
-        <label
-          htmlFor="rating"
-          className="block text-sm font-medium text-gray-700 mb-1"
-        >
-          Rating
-        </label>
-        <select
-          id="rating"
-          {...register("rating", { valueAsNumber: true })}
-          className="px-3 py-2 border border-gray-300 rounded-md text-sm bg-white focus:outline-none focus:ring-2 focus:ring-green-500"
-          aria-invalid={!!errors.rating}
-        >
-          <option value="">Select rating</option>
-          <option value="5">5 — Excellent</option>
-          <option value="4">4 — Good</option>
-          <option value="3">3 — Average</option>
-          <option value="2">2 — Poor</option>
-          <option value="1">1 — Terrible</option>
-        </select>
+      <div className="space-y-1.5">
+        <Label htmlFor="rating">{t("reviews.rating")}</Label>
+        <Controller
+          control={control}
+          name="rating"
+          render={({ field }) => (
+            <Select
+              value={field.value ? String(field.value) : ""}
+              onValueChange={(value) => field.onChange(Number(value))}
+            >
+              <SelectTrigger
+                id="rating"
+                className="w-full sm:w-64"
+                aria-invalid={!!errors.rating}
+              >
+                <SelectValue placeholder={t("reviews.selectRating")} />
+              </SelectTrigger>
+              <SelectContent>
+                {ratings.map((rating) => (
+                  <SelectItem key={rating.value} value={rating.value}>
+                    {rating.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
+        />
         {errors.rating && (
-          <p role="alert" className="mt-1 text-xs text-red-600">
+          <p role="alert" className={fieldError}>
             {errors.rating.message}
           </p>
         )}
       </div>
 
-      <div>
-        <label
-          htmlFor="comment"
-          className="block text-sm font-medium text-gray-700 mb-1"
-        >
-          Comment
-        </label>
-        <textarea
+      <div className="space-y-1.5">
+        <Label htmlFor="comment">{t("reviews.comment")}</Label>
+        <Textarea
           id="comment"
           rows={3}
           {...register("comment")}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
           aria-invalid={!!errors.comment}
         />
         {errors.comment && (
-          <p role="alert" className="mt-1 text-xs text-red-600">
+          <p role="alert" className={fieldError}>
             {errors.comment.message}
           </p>
         )}
       </div>
 
-      <button
-        type="submit"
-        disabled={createReview.isPending}
-        className="px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-md hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
-      >
-        {createReview.isPending ? "Submitting..." : "Submit Review"}
-      </button>
+      <Button type="submit" disabled={createReview.isPending}>
+        {createReview.isPending
+          ? t("reviews.submitting")
+          : t("reviews.submitReview")}
+      </Button>
     </form>
   );
 }

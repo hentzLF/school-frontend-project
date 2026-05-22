@@ -1,132 +1,128 @@
 "use client";
 
 import Link from "next/link";
+import { CalendarRange, CalendarX2 } from "lucide-react";
 import { useBookings, useUpdateBookingStatus } from "@/hooks/useBookings";
+import { useTranslation } from "@/hooks/useTranslation";
+import { PageHeader } from "@/components/common/PageHeader";
+import { LoadingState } from "@/components/common/LoadingState";
+import { ErrorState } from "@/components/common/ErrorState";
+import { EmptyState } from "@/components/common/EmptyState";
+import { StatusBadge } from "@/components/common/StatusBadge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import type { Booking } from "@/types/booking";
-
-const statusColors: Record<Booking["status"], string> = {
-  Pending: "bg-yellow-100 text-yellow-800",
-  Confirmed: "bg-blue-100 text-blue-800",
-  InProgress: "bg-indigo-100 text-indigo-800",
-  Completed: "bg-green-100 text-green-800",
-  Cancelled: "bg-red-100 text-red-800",
-};
 
 export function BookingList() {
   const { data: bookings, isLoading, error } = useBookings();
   const updateStatus = useUpdateBookingStatus();
+  const { t } = useTranslation();
 
   const handleStatusUpdate = (id: string, status: Booking["status"]) => {
     if (status === "Pending") return;
     updateStatus.mutate({ id, status });
   };
 
-  if (isLoading) return <p className="text-gray-500">Loading bookings...</p>;
-
-  if (error) {
-    return (
-      <div
-        role="alert"
-        className="p-4 bg-red-50 border border-red-200 rounded-md text-red-700"
-      >
-        Failed to load bookings.
-      </div>
-    );
-  }
+  if (isLoading) return <LoadingState label={t("common.loading")} />;
+  if (error) return <ErrorState message={t("bookings.loadError")} />;
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">Bookings</h1>
+      <PageHeader title={t("bookings.title")} />
 
       {!bookings || bookings.length === 0 ? (
-        <p className="text-gray-500">No bookings yet.</p>
+        <EmptyState
+          icon={CalendarX2}
+          title={t("bookings.noBookings")}
+          description={t("dashboard.bookingsDesc")}
+        />
       ) : (
         <div className="space-y-4">
           {bookings.map((booking) => (
-            <div
-              key={booking.id}
-              className="border border-gray-200 rounded-lg p-4 bg-white"
-            >
-              <div className="flex items-start justify-between">
-                <div>
-                  <Link
-                    href={`/bookings/${booking.id}`}
-                    className="text-lg font-semibold text-gray-900 hover:text-green-700"
-                  >
-                    {booking.listingTitle}
-                  </Link>
-                  <p className="text-sm text-gray-500 mt-1">
-                    {new Date(booking.startDate).toLocaleDateString()} —{" "}
-                    {new Date(booking.endDate).toLocaleDateString()}
-                  </p>
-                  <p className="text-sm text-gray-500">
-                    Client: {booking.clientName} | Provider:{" "}
-                    {booking.providerName}
-                  </p>
+            <Card key={booking.id}>
+              <CardContent className="space-y-3">
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div className="space-y-1">
+                    <Link
+                      href={`/bookings/${booking.id}`}
+                      className="font-semibold text-foreground transition-colors hover:text-primary"
+                    >
+                      {booking.listingTitle}
+                    </Link>
+                    <p className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                      <CalendarRange className="size-4" aria-hidden="true" />
+                      {new Date(booking.startDate).toLocaleDateString()} —{" "}
+                      {new Date(booking.endDate).toLocaleDateString()}
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      {t("bookings.client")}: {booking.clientName} ·{" "}
+                      {t("bookings.provider")}: {booking.providerName}
+                    </p>
+                  </div>
+                  <div className="flex flex-col items-end gap-1.5">
+                    <StatusBadge
+                      status={booking.status}
+                      label={t(`bookings.status.${booking.status}`)}
+                    />
+                    <span className="text-sm font-bold text-foreground">
+                      {booking.totalPrice.toFixed(2)} EUR
+                    </span>
+                  </div>
                 </div>
-                <div className="flex items-center gap-3">
-                  <span
-                    className={`px-2 py-1 text-xs font-medium rounded-full ${statusColors[booking.status]}`}
-                  >
-                    {booking.status}
-                  </span>
-                  <span className="text-sm font-medium text-gray-900">
-                    {booking.totalPrice.toFixed(2)} EUR
-                  </span>
-                </div>
-              </div>
 
-              {booking.notes && (
-                <p className="mt-2 text-sm text-gray-600">{booking.notes}</p>
-              )}
+                {booking.notes && (
+                  <p className="rounded-md bg-muted/60 p-2.5 text-sm text-muted-foreground">
+                    {booking.notes}
+                  </p>
+                )}
 
-              {(booking.status === "Pending" ||
-                booking.status === "Confirmed" ||
-                booking.status === "InProgress") && (
-                <div className="mt-3 flex gap-2">
-                  {booking.status === "Pending" && (
-                    <>
-                      <button
-                        onClick={() =>
-                          handleStatusUpdate(booking.id, "Confirmed")
-                        }
-                        className="px-3 py-1 text-xs font-medium bg-blue-600 text-white rounded hover:bg-blue-700"
-                      >
-                        Confirm
-                      </button>
-                      <button
-                        onClick={() =>
-                          handleStatusUpdate(booking.id, "Cancelled")
-                        }
-                        className="px-3 py-1 text-xs font-medium bg-red-600 text-white rounded hover:bg-red-700"
-                      >
-                        Cancel
-                      </button>
-                    </>
-                  )}
-                  {booking.status === "Confirmed" && (
-                    <button
+                {booking.status === "Pending" && (
+                  <div className="flex gap-2 border-t pt-3">
+                    <Button
+                      size="sm"
+                      onClick={() =>
+                        handleStatusUpdate(booking.id, "Confirmed")
+                      }
+                    >
+                      {t("bookings.confirm")}
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="destructive"
+                      onClick={() =>
+                        handleStatusUpdate(booking.id, "Cancelled")
+                      }
+                    >
+                      {t("common.cancel")}
+                    </Button>
+                  </div>
+                )}
+                {booking.status === "Confirmed" && (
+                  <div className="flex gap-2 border-t pt-3">
+                    <Button
+                      size="sm"
                       onClick={() =>
                         handleStatusUpdate(booking.id, "InProgress")
                       }
-                      className="px-3 py-1 text-xs font-medium bg-indigo-600 text-white rounded hover:bg-indigo-700"
                     >
-                      Start Work
-                    </button>
-                  )}
-                  {booking.status === "InProgress" && (
-                    <button
+                      {t("bookings.startWork")}
+                    </Button>
+                  </div>
+                )}
+                {booking.status === "InProgress" && (
+                  <div className="flex gap-2 border-t pt-3">
+                    <Button
+                      size="sm"
                       onClick={() =>
                         handleStatusUpdate(booking.id, "Completed")
                       }
-                      className="px-3 py-1 text-xs font-medium bg-green-600 text-white rounded hover:bg-green-700"
                     >
-                      Complete
-                    </button>
-                  )}
-                </div>
-              )}
-            </div>
+                      {t("bookings.complete")}
+                    </Button>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
           ))}
         </div>
       )}
