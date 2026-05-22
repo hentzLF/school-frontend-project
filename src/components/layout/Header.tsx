@@ -3,18 +3,21 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
+import { useTranslation } from "@/hooks/useTranslation";
+import { LocaleSwitcher } from "@/components/layout/LocaleSwitcher";
 
-const navLinks = [
-  { href: "/dashboard", label: "Dashboard" },
-  { href: "/listings", label: "Listings" },
-  { href: "/bookings", label: "Bookings" },
-  { href: "/messages", label: "Messages" },
-  { href: "/equipment", label: "Equipment" },
+const navKeys = [
+  { href: "/dashboard", key: "nav.dashboard" },
+  { href: "/listings", key: "nav.listings" },
+  { href: "/bookings", key: "nav.bookings" },
+  { href: "/messages", key: "nav.messages" },
+  { href: "/equipment", key: "nav.equipment" },
 ] as const;
 
 export function Header() {
   const { user, logout } = useAuth();
   const pathname = usePathname();
+  const { t } = useTranslation();
 
   const handleLogout = async () => {
     await logout();
@@ -31,7 +34,7 @@ export function Header() {
             AgriMarket
           </Link>
           <nav className="hidden md:flex items-center gap-1">
-            {navLinks.map((link) => {
+            {navKeys.map((link) => {
               const isActive = pathname.startsWith(link.href);
               return (
                 <Link
@@ -43,7 +46,7 @@ export function Header() {
                       : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
                   }`}
                 >
-                  {link.label}
+                  {t(link.key)}
                 </Link>
               );
             })}
@@ -56,12 +59,13 @@ export function Header() {
                     : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
                 }`}
               >
-                Admin
+                {t("nav.admin")}
               </Link>
             )}
           </nav>
         </div>
         <div className="flex items-center gap-4">
+          <LocaleSwitcher />
           {user && (
             <span className="text-sm text-gray-600">
               {user.firstName} {user.lastName}
@@ -71,7 +75,7 @@ export function Header() {
             onClick={handleLogout}
             className="px-4 py-2 text-sm font-medium text-gray-700 border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500"
           >
-            Log out
+            {t("auth.signOut")}
           </button>
         </div>
       </div>

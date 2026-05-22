@@ -6,6 +6,8 @@ import { z } from "zod";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/hooks/useAuth";
+import { useTranslation } from "@/hooks/useTranslation";
+import { LocaleSwitcher } from "@/components/layout/LocaleSwitcher";
 import { ApiError } from "@/lib/api";
 
 const loginSchema = z.object({
@@ -18,6 +20,7 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 export default function LoginPage() {
   const router = useRouter();
   const { login, loginError, isLoginPending } = useAuth();
+  const { t } = useTranslation();
 
   const {
     register,
@@ -40,13 +43,17 @@ export default function LoginPage() {
     loginError instanceof ApiError
       ? loginError.message
       : loginError
-        ? "An unexpected error occurred. Please try again."
+        ? t("auth.unexpectedError")
         : null;
 
   return (
     <div className="bg-white rounded-lg shadow-md p-8">
+      <div className="flex justify-end mb-4">
+        <LocaleSwitcher />
+      </div>
+
       <h1 className="text-2xl font-bold text-gray-900 mb-6 text-center">
-        Sign in to AgriMarket
+        {t("auth.signIn")}
       </h1>
 
       {apiErrorMessage && (
@@ -64,7 +71,7 @@ export default function LoginPage() {
             htmlFor="email"
             className="block text-sm font-medium text-gray-700 mb-1"
           >
-            Email address
+            {t("auth.email")}
           </label>
           <input
             id="email"
@@ -87,7 +94,7 @@ export default function LoginPage() {
             htmlFor="password"
             className="block text-sm font-medium text-gray-700 mb-1"
           >
-            Password
+            {t("auth.password")}
           </label>
           <input
             id="password"
@@ -110,14 +117,14 @@ export default function LoginPage() {
           disabled={isLoginPending}
           className="w-full py-2 px-4 bg-green-600 text-white font-medium rounded-md text-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {isLoginPending ? "Signing in..." : "Sign in"}
+          {isLoginPending ? t("auth.signingIn") : t("auth.signInLink")}
         </button>
       </form>
 
       <p className="mt-4 text-center text-sm text-gray-600">
-        Don&apos;t have an account?{" "}
+        {t("auth.noAccount")}{" "}
         <Link href="/register" className="text-green-600 hover:text-green-700 font-medium">
-          Register
+          {t("auth.register")}
         </Link>
       </p>
     </div>
