@@ -1,0 +1,41 @@
+# Dependencies and build output (reinstalled / rebuilt inside the image)
+node_modules
+.next
+out
+build
+dist
+
+# Version control and CI
+.git
+.gitignore
+.gitattributes
+.githooks
+.gitlab-ci.yml
+
+# Docker
+Dockerfile
+.dockerignore
+docker-compose.yml
+
+# Environment files (provided at runtime)
+.env
+.env*.local
+
+# Tests and reports
+coverage
+playwright-report
+test-results
+**/*.test.ts
+**/*.test.tsx
+
+# Tooling and editor config
+.devcontainer
+.vscode
+.idea
+.claude
+reports
+
+# Docs
+README.md
+STATUS.md
+*.log

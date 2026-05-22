@@ -2,7 +2,7 @@
 
 ## Current Phase
 
-Phase 8: Docker + CI/CD
+Complete — all phases delivered
 
 ## Completed
 
@@ -13,21 +13,32 @@ Phase 8: Docker + CI/CD
 - [x] Phase 4: Admin area (dashboard, users, listings, bookings, categories, payments)
 - [x] Phase 5: i18n (en, et) with Zustand locale store
 - [x] Phase 6: Testing (Vitest unit tests — 33 passing)
-
 - [x] Phase 7: UI/UX polish
   - [x] Install shadcn/ui (base-nova style, Base UI primitives) + 14 components
   - [x] Agricultural green design tokens + dark mode (Zustand theme store)
   - [x] Redesign auth pages, root layout, header, sidebar, landing page
   - [x] Redesign client area (listings, bookings, payments, messaging, reviews, equipment)
   - [x] Redesign admin area (dashboard with stat cards, CRUD data tables)
+  - [x] Responsive, mobile-first layouts and accessibility pass
+- [x] Phase 8: Docker + CI/CD
+  - [x] Multi-stage Dockerfile (deps → build → standalone runner)
+  - [x] .dockerignore, docker-compose.yml for the frontend service
+  - [x] .gitlab-ci.yml (verify → build → deploy stages)
+  - [x] next.config.ts standalone output verified
 
-## In Progress
+## Remaining
 
-- [ ] Phase 8: Docker + CI/CD deploy
+(none)
 
 ## Blocked
 
 (none)
+
+## Notes
+
+- `docker build` could not be executed in the build environment (Docker not
+  installed). The Next.js standalone output the Dockerfile consumes was
+  verified instead: `.next/standalone/server.js` boots and serves HTTP 200.
 
 ## Last Updated
 
