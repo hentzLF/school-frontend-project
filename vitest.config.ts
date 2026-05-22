@@ -10,6 +10,7 @@ export default defineConfig({
     include: ["src/**/*.test.{ts,tsx}"],
     fileParallelism: false,
     testTimeout: 30000,
+    pool: "vmThreads",
   },
   resolve: {
     alias: {
