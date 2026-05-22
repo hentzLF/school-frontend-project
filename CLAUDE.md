@@ -12,7 +12,7 @@ npm run build                   # Production build
 npm run lint                    # ESLint check
 npm run format                  # Prettier formatting
 npm run test                    # Vitest unit tests
-npm run test:e2e                # Playwright E2E tests
+npm run test -- --coverage      # Unit tests with coverage report
 ```
 
 ## Architecture
@@ -47,7 +47,6 @@ src/
 - TanStack Query (server state), Zustand (client state)
 - React Hook Form + Zod (forms + validation)
 - Vitest + React Testing Library (unit tests)
-- Playwright (E2E tests)
 - Docker + GitLab CI/CD
 
 ## Implementation Order
@@ -100,7 +99,6 @@ Build functionality first, polish UI last:
 
 - Minimum 80% coverage
 - Unit tests: Vitest + React Testing Library
-- E2E tests: Playwright
 - Naming: `describe('ComponentName', () => it('should do X when Y'))`
 
 ## What NOT to Do

@@ -13,7 +13,6 @@ You are a test specialist for the AgriMarket React/Next.js frontend.
 ```bash
 npm run test                            # Vitest unit tests
 npm run test -- --coverage              # With coverage report
-npm run test:e2e                        # Playwright E2E tests
 npm run test -- --run path/to/file      # Specific test file
 ```
 

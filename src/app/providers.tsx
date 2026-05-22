@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useState } from "react";
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/components/layout/ThemeProvider";
+import { HtmlLangSync } from "@/components/layout/HtmlLangSync";
 
 type ProvidersProps = {
   children: React.ReactNode;
@@ -25,6 +26,7 @@ export function Providers({ children }: ProvidersProps) {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider />
+      <HtmlLangSync />
       {children}
       <Toaster position="top-right" richColors />
     </QueryClientProvider>

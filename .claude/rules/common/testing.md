@@ -2,8 +2,8 @@
 
 ## Minimum Coverage: 80%
 
-1. **Unit Tests** (Vitest + React Testing Library) — components, hooks, utilities
-2. **E2E Tests** (Playwright) — critical user flows
+1. **Unit Tests** (Vitest + React Testing Library) — components, hooks, utilities,
+   Route Handlers
 
 ## Test Naming
 

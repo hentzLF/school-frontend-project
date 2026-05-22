@@ -1,3 +1,5 @@
+import { redirectToLogin } from "@/lib/navigation";
+
 type RequestOptions = {
   method?: string;
   body?: unknown;
@@ -29,6 +31,13 @@ export async function api<T>(
     const error = await response.json().catch(() => ({
       message: response.statusText,
     }));
+
+    // A 401 here means the server-side token refresh also failed — the
+    // session is genuinely over, so send the user to the login page.
+    if (response.status === 401) {
+      redirectToLogin();
+    }
+
     throw new ApiError(response.status, error.message ?? "Request failed");
   }
 

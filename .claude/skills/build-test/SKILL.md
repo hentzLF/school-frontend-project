@@ -28,12 +28,8 @@ npm run build
 npm run test -- --run
 ```
 
-4. **E2E tests** (only if requested):
+4. **Coverage** (when a coverage report is requested):
 
 ```bash
-npm run test:e2e
+npm run test -- --coverage
 ```
-
-## Quick Mode
-
-If $ARGUMENTS contains "quick" or "fast", skip E2E tests — only lint + build + unit tests.

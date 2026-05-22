@@ -1,9 +1,18 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
+
+vi.mock("@/lib/navigation", () => ({
+  redirectToLogin: vi.fn(),
+}));
+
 import { api, ApiError } from "./api";
+import { redirectToLogin } from "@/lib/navigation";
+
+const mockRedirectToLogin = vi.mocked(redirectToLogin);
 
 describe("api", () => {
   beforeEach(() => {
     vi.restoreAllMocks();
+    vi.clearAllMocks();
   });
 
   it("should make a GET request and return JSON data", async () => {
@@ -71,6 +80,37 @@ describe("api", () => {
     );
 
     await expect(api("/api/test")).rejects.toThrow(ApiError);
+  });
+
+  it("should trigger a login redirect on a 401 response", async () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(
+      new Response(JSON.stringify({ message: "Unauthorized" }), {
+        status: 401,
+      }),
+    );
+
+    await expect(api("/api/listings")).rejects.toThrow(ApiError);
+    expect(mockRedirectToLogin).toHaveBeenCalledOnce();
+  });
+
+  it("should not redirect on a successful response", async () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(
+      new Response(JSON.stringify({ ok: true }), { status: 200 }),
+    );
+
+    await api("/api/test");
+    expect(mockRedirectToLogin).not.toHaveBeenCalled();
+  });
+
+  it("should not redirect on a non-401 error response", async () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(
+      new Response(JSON.stringify({ message: "Server error" }), {
+        status: 500,
+      }),
+    );
+
+    await expect(api("/api/test")).rejects.toThrow(ApiError);
+    expect(mockRedirectToLogin).not.toHaveBeenCalled();
   });
 });
 
