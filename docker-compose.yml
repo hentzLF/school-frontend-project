@@ -1,18 +1,10 @@
 services:
   frontend:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    image: agrimarket-frontend:latest
+    build: .
     container_name: agrimarket-frontend
     ports:
-      - "3010:3000"
+      - "3067:3000"
     environment:
-      NODE_ENV: production
-      NEXT_TELEMETRY_DISABLED: "1"
-      # URL of the AgriMarket ASP.NET Core backend the proxy routes to.
-      BACKEND_URL: ${BACKEND_URL:-http://host.docker.internal:5047}
-    extra_hosts:
-      # Lets the container reach a backend running on the host (Linux).
-      - "host.docker.internal:host-gateway"
+      - NODE_ENV=production
+      - BACKEND_URL=${BACKEND_URL}
     restart: unless-stopped

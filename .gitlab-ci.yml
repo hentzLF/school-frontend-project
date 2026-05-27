@@ -1,3 +1,6 @@
+# GitLab CI/CD pipeline for the AgriMarket frontend.
+# Pipeline: verify (lint + unit tests) -> build (Docker image) -> deploy.
+
 stages:
   - verify
   - build
@@ -5,9 +8,8 @@ stages:
 
 variables:
   NEXT_TELEMETRY_DISABLED: "1"
-  IMAGE_TAG: $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
-  IMAGE_LATEST: $CI_REGISTRY_IMAGE:latest
 
+# ---- Verify: lint and unit tests ----
 verify:
   stage: verify
   tags:
@@ -23,37 +25,26 @@ verify:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
     - if: $CI_COMMIT_BRANCH
 
+# ---- Build: build Docker image ----
 build:
   stage: build
   tags:
     - shared
-  before_script:
-    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
   script:
-    - docker build -t "$IMAGE_TAG" -t "$IMAGE_LATEST" .
-    - docker push "$IMAGE_TAG"
-    - docker push "$IMAGE_LATEST"
+    - docker compose build
   rules:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
 
+# ---- Deploy: roll out the latest image ----
 deploy:
   stage: deploy
   tags:
     - shared
   environment:
     name: production
-  before_script:
-    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
   script:
-    - docker pull "$IMAGE_LATEST"
-    - docker rm -f agrimarket-frontend || true
-    - >
-      docker run -d --name agrimarket-frontend
-      -p 3000:3000
-      -e NODE_ENV=production
-      -e BACKEND_URL="$BACKEND_URL"
-      --restart unless-stopped
-      "$IMAGE_LATEST"
+    - docker compose down
+    - docker compose up -d
   rules:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
       when: manual
