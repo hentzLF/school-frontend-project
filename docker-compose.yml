@@ -6,7 +6,7 @@ services:
     image: agrimarket-frontend:latest
     container_name: agrimarket-frontend
     ports:
-      - "3000:3000"
+      - "3010:3000"
     environment:
       NODE_ENV: production
       NEXT_TELEMETRY_DISABLED: "1"
