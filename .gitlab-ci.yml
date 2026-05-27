@@ -33,6 +33,8 @@ verify:
 build:
   stage: build
   image: docker:27
+  tags:
+    - shared
   services:
     - docker:27-dind
   before_script:
