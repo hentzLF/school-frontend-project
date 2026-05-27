@@ -48,6 +48,8 @@ build:
 deploy:
   stage: deploy
   image: docker:27
+  tags:
+    - shared
   services:
     - docker:27-dind
   environment:
