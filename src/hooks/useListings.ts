@@ -40,14 +40,14 @@ export function useListings(
 
   return useQuery<PaginatedResponse<Listing>>({
     queryKey: ["listings", filters],
-    queryFn: () => api<PaginatedResponse<Listing>>(url),
+    queryFn: () => api<PaginatedResponse<Listing>>(url, { redirectOn401: false }),
   });
 }
 
 export function useListing(id: string): ReturnType<typeof useQuery<ListingDetail>> {
   return useQuery<ListingDetail>({
     queryKey: ["listings", id],
-    queryFn: () => api<ListingDetail>(LISTING_ROUTES.detail(id)),
+    queryFn: () => api<ListingDetail>(LISTING_ROUTES.detail(id), { redirectOn401: false }),
     enabled: !!id,
   });
 }

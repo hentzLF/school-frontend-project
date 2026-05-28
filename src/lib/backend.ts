@@ -6,6 +6,7 @@ type BackendRequestOptions = {
   method?: string;
   body?: unknown;
   requireAuth?: boolean;
+  tryAuth?: boolean; // attach token if present, but don't fail without one
   headers?: Record<string, string>;
 };
 
@@ -61,7 +62,7 @@ export async function backendFetch<T>(
   path: string,
   options: BackendRequestOptions = {},
 ): Promise<{ data: T; status: number } | NextResponse> {
-  const { method = "GET", body, requireAuth = true, headers = {} } = options;
+  const { method = "GET", body, requireAuth = true, tryAuth = false, headers = {} } = options;
 
   const backendUrl = process.env.BACKEND_URL;
   if (!backendUrl) {
@@ -77,6 +78,8 @@ export async function backendFetch<T>(
     if (!token) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+  } else if (tryAuth) {
+    token = (await getToken()) ?? undefined;
   }
 
   const buildRequest = (authToken: string | undefined): RequestInit => {

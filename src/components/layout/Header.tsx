@@ -18,7 +18,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 
-const navKeys = [
+const publicNavKeys = [
+  { href: "/listings", key: "nav.listings" },
+] as const;
+
+const authNavKeys = [
   { href: "/dashboard", key: "nav.dashboard" },
   { href: "/listings", key: "nav.listings" },
   { href: "/bookings", key: "nav.bookings" },
@@ -27,16 +31,18 @@ const navKeys = [
 ] as const;
 
 export function Header() {
-  const { user, logout } = useAuth();
+  const { user, logout, isLoading } = useAuth();
   const pathname = usePathname();
   const { t } = useTranslation();
 
-  const links = [
-    ...navKeys,
-    ...(user?.role === "Admin"
-      ? ([{ href: "/admin", key: "nav.admin" }] as const)
-      : []),
-  ];
+  const links = user
+    ? [
+        ...authNavKeys,
+        ...(user.role === "Admin"
+          ? ([{ href: "/admin", key: "nav.admin" }] as const)
+          : []),
+      ]
+    : [...publicNavKeys];
 
   const isActive = (href: string) =>
     pathname === href || pathname.startsWith(`${href}/`);
@@ -45,7 +51,7 @@ export function Header() {
     <header className="sticky top-0 z-40 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6">
         <div className="flex items-center gap-6">
-          <Logo href="/dashboard" />
+          <Logo href={user ? "/dashboard" : "/"} />
           <nav
             className="hidden items-center gap-1 md:flex"
             aria-label="Main navigation"
@@ -72,15 +78,31 @@ export function Header() {
         <div className="flex items-center gap-1.5">
           <LocaleSwitcher />
           <ThemeToggle />
-          <UserMenu />
-          <Button
-            variant="ghost"
-            className="hidden gap-2 md:inline-flex"
-            onClick={() => void logout()}
-          >
-            <LogOut aria-hidden="true" />
-            {t("auth.signOut")}
-          </Button>
+
+          {!isLoading && (
+            user ? (
+              <>
+                <UserMenu />
+                <Button
+                  variant="ghost"
+                  className="hidden gap-2 md:inline-flex"
+                  onClick={() => void logout()}
+                >
+                  <LogOut aria-hidden="true" />
+                  {t("auth.signOut")}
+                </Button>
+              </>
+            ) : (
+              <div className="hidden items-center gap-1.5 md:flex">
+                <Button variant="ghost" render={<Link href="/login" />}>
+                  {t("auth.signIn")}
+                </Button>
+                <Button render={<Link href="/register" />}>
+                  {t("auth.register")}
+                </Button>
+              </div>
+            )
+          )}
 
           <DropdownMenu>
             <DropdownMenuTrigger
@@ -104,10 +126,21 @@ export function Header() {
                   {t(link.key)}
                 </DropdownMenuItem>
               ))}
-              <DropdownMenuItem onClick={() => void logout()}>
-                <LogOut aria-hidden="true" />
-                {t("auth.signOut")}
-              </DropdownMenuItem>
+              {user ? (
+                <DropdownMenuItem onClick={() => void logout()}>
+                  <LogOut aria-hidden="true" />
+                  {t("auth.signOut")}
+                </DropdownMenuItem>
+              ) : (
+                <>
+                  <DropdownMenuItem render={<Link href="/login" prefetch={false} />}>
+                    {t("auth.signIn")}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem render={<Link href="/register" prefetch={false} />}>
+                    {t("auth.register")}
+                  </DropdownMenuItem>
+                </>
+              )}
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

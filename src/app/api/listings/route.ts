@@ -21,6 +21,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
   const result = await backendFetch<PaginatedResponse<Listing>>(path, {
     requireAuth: false,
+    tryAuth: true,
   });
 
   if (isErrorResponse(result)) return result;

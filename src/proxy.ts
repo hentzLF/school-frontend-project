@@ -3,13 +3,13 @@ import type { NextRequest } from "next/server";
 
 const PROTECTED_PATHS = [
   "/dashboard",
-  "/listings",
   "/bookings",
   "/messages",
   "/equipment",
   "/payments",
   "/reviews",
   "/admin",
+  "/listings/new",
 ];
 
 const AUTH_PATHS = ["/login", "/register"];
@@ -18,9 +18,10 @@ export function proxy(request: NextRequest): NextResponse {
   const token = request.cookies.get("token");
   const { pathname } = request.nextUrl;
 
-  const isProtected = PROTECTED_PATHS.some(
-    (path) => pathname === path || pathname.startsWith(`${path}/`),
-  );
+  const isProtected =
+    PROTECTED_PATHS.some(
+      (path) => pathname === path || pathname.startsWith(`${path}/`),
+    ) || /^\/listings\/[^/]+\/edit(\/.*)?$/.test(pathname);
 
   const isAuthPage = AUTH_PATHS.includes(pathname);
 

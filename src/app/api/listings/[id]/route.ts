@@ -11,6 +11,7 @@ export async function GET(
   const { id } = await params;
   const result = await backendFetch<Listing>(`/api/v1/listings/${id}`, {
     requireAuth: false,
+    tryAuth: true,
   });
 
   if (isErrorResponse(result)) return result;

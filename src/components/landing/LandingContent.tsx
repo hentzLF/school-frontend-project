@@ -46,12 +46,20 @@ export function LandingContent() {
     <div className="flex min-h-svh flex-col bg-background">
       <header className="border-b">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
-          <Logo href="/" />
+          <div className="flex items-center gap-6">
+            <Logo href="/" />
+            <Link
+              href="/listings"
+              className="hidden rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground sm:block"
+            >
+              {t("nav.listings")}
+            </Link>
+          </div>
           <div className="flex items-center gap-1.5">
             <LocaleSwitcher />
             <ThemeToggle />
             <Button
-              render={<Link href="/login" />}
+              nativeButton={false} render={<Link href="/login" />}
               variant="outline"
               className="ml-1"
             >
@@ -74,7 +82,7 @@ export function LandingContent() {
           </p>
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Button
-              render={<Link href="/register" />}
+              nativeButton={false} render={<Link href="/listings" />}
               size="lg"
               className="h-11 w-full px-6 text-base sm:w-auto"
             >
@@ -82,7 +90,7 @@ export function LandingContent() {
               <ArrowRight aria-hidden="true" />
             </Button>
             <Button
-              render={<Link href="/login" />}
+              nativeButton={false} render={<Link href="/login" />}
               variant="outline"
               size="lg"
               className="h-11 w-full px-6 text-base sm:w-auto"
