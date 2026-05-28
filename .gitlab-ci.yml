@@ -43,6 +43,7 @@ deploy:
   environment:
     name: production
   script:
+    - echo "BACKEND_URL=${BACKEND_URL}" > .env
     - docker compose down
     - docker compose up -d
   rules:
