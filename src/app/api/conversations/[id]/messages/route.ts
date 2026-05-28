@@ -5,8 +5,10 @@ import type { Message } from "@/types/conversation";
 
 type RouteParams = { params: Promise<{ id: string }> };
 
-type PaginatedResponse<T> = {
-  items: T[] | null;
+type ConversationDetailResponse = {
+  messages: {
+    items: Message[] | null;
+  };
 };
 
 const sendMessageSchema = z.object({
@@ -18,14 +20,11 @@ export async function GET(
   { params }: RouteParams,
 ): Promise<NextResponse> {
   const { id } = await params;
-  const result = await backendFetch<Message[] | PaginatedResponse<Message>>(
-    `/api/v1/conversations/${id}/messages`,
+  const result = await backendFetch<ConversationDetailResponse>(
+    `/api/v1/conversations/${id}`,
   );
   if (isErrorResponse(result)) return result;
-  const items = Array.isArray(result.data)
-    ? result.data
-    : (result.data.items ?? []);
-  return NextResponse.json(items, { status: 200 });
+  return NextResponse.json(result.data.messages.items ?? [], { status: 200 });
 }
 
 export async function POST(

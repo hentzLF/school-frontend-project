@@ -18,11 +18,14 @@ describe("conversations [id] messages route", () => {
   });
 
   describe("GET", () => {
-    it("should return messages for a conversation", async () => {
+    it("should return messages from the conversation detail response", async () => {
       const messages = [
         { id: "msg-1", content: "Hello!", conversationId: "1" },
       ];
-      mockBackendFetch.mockResolvedValue({ data: { items: messages }, status: 200 });
+      mockBackendFetch.mockResolvedValue({
+        data: { messages: { items: messages } },
+        status: 200,
+      });
 
       const response = await GET(
         new NextRequest("http://localhost/api/conversations/1/messages"),
@@ -32,12 +35,15 @@ describe("conversations [id] messages route", () => {
       expect(response.status).toBe(200);
       await expect(response.json()).resolves.toEqual(messages);
       expect(mockBackendFetch).toHaveBeenCalledWith(
-        "/api/v1/conversations/1/messages",
+        "/api/v1/conversations/1",
       );
     });
 
-    it("should return empty array when items is null", async () => {
-      mockBackendFetch.mockResolvedValue({ data: { items: null }, status: 200 });
+    it("should return empty array when messages items is null", async () => {
+      mockBackendFetch.mockResolvedValue({
+        data: { messages: { items: null } },
+        status: 200,
+      });
 
       const response = await GET(
         new NextRequest("http://localhost/api/conversations/1/messages"),
@@ -62,7 +68,10 @@ describe("conversations [id] messages route", () => {
     });
 
     it("should use the id from route params in the backend path", async () => {
-      mockBackendFetch.mockResolvedValue({ data: { items: [] }, status: 200 });
+      mockBackendFetch.mockResolvedValue({
+        data: { messages: { items: [] } },
+        status: 200,
+      });
 
       await GET(
         new NextRequest("http://localhost/api/conversations/42/messages"),
@@ -70,7 +79,7 @@ describe("conversations [id] messages route", () => {
       );
 
       expect(mockBackendFetch).toHaveBeenCalledWith(
-        "/api/v1/conversations/42/messages",
+        "/api/v1/conversations/42",
       );
     });
   });
