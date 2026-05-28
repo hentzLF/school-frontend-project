@@ -17,7 +17,7 @@ type MessageThreadProps = {
 
 export function MessageThread({ conversationId }: MessageThreadProps) {
   const { user } = useAuth();
-  const { data: messages, isLoading } = useMessages(conversationId);
+  const { data: messages, isLoading, isError } = useMessages(conversationId);
   const sendMessage = useSendMessage(conversationId);
   const { t } = useTranslation();
   const [content, setContent] = useState("");
@@ -52,7 +52,13 @@ export function MessageThread({ conversationId }: MessageThreadProps) {
       <div className="flex-1 space-y-3 overflow-y-auto rounded-xl bg-card p-4 ring-1 ring-foreground/10">
         {isLoading && <LoadingState label={t("common.loading")} />}
 
-        {!isLoading && (!messages || messages.length === 0) && (
+        {isError && (
+          <p className="text-center text-sm text-destructive">
+            {t("messages.loadError")}
+          </p>
+        )}
+
+        {!isLoading && !isError && (!messages || messages.length === 0) && (
           <p className="text-center text-sm text-muted-foreground">
             {t("messages.noMessages")}
           </p>

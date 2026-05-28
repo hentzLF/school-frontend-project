@@ -18,11 +18,14 @@ export async function GET(
   { params }: RouteParams,
 ): Promise<NextResponse> {
   const { id } = await params;
-  const result = await backendFetch<PaginatedResponse<Message>>(
+  const result = await backendFetch<Message[] | PaginatedResponse<Message>>(
     `/api/v1/conversations/${id}/messages`,
   );
   if (isErrorResponse(result)) return result;
-  return NextResponse.json(result.data.items ?? [], { status: 200 });
+  const items = Array.isArray(result.data)
+    ? result.data
+    : (result.data.items ?? []);
+  return NextResponse.json(items, { status: 200 });
 }
 
 export async function POST(
