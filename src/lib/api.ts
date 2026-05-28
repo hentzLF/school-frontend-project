@@ -39,7 +39,7 @@ export async function api<T>(
       redirectToLogin();
     }
 
-    throw new ApiError(response.status, error.message ?? "Request failed");
+    throw new ApiError(response.status, error.message ?? error.error ?? "Request failed");
   }
 
   if (response.status === 204) {

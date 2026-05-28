@@ -17,11 +17,13 @@ export function ConversationList() {
   if (isLoading) return <LoadingState label={t("common.loading")} />;
   if (error) return <ErrorState message={t("messages.loadError")} />;
 
+  const conversationList = Array.isArray(conversations) ? conversations : [];
+
   return (
     <div>
       <PageHeader title={t("messages.title")} />
 
-      {!conversations || conversations.length === 0 ? (
+      {conversationList.length === 0 ? (
         <EmptyState
           icon={MessagesSquare}
           title={t("messages.noConversations")}
@@ -29,8 +31,8 @@ export function ConversationList() {
         />
       ) : (
         <div className="space-y-2">
-          {conversations.map((conversation) => {
-            const title = conversation.participantNames.join(", ");
+          {conversationList.map((conversation) => {
+            const title = (conversation.participantNames ?? []).join(", ") || conversation.id;
             return (
               <Link
                 key={conversation.id}

@@ -10,7 +10,7 @@ const createListingSchema = z.object({
   pricePerHectare: z.number().positive(),
   serviceCategoryId: z.string().min(1),
   location: z
-    .object({ municipalityId: z.string().uuid() })
+    .object({ municipalityId: z.string().min(1) })
     .optional(),
 });
 

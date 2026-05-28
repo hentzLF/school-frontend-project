@@ -11,6 +11,7 @@ import type {
   Listing,
   ListingDetail,
   CreateListingRequest,
+  UpdateListingRequest,
   ListingFilters,
 } from "@/types/listing";
 import type { PaginatedResponse } from "@/types/api";
@@ -57,6 +58,31 @@ export function useCreateListing() {
   return useMutation<Listing, Error, CreateListingRequest>({
     mutationFn: (data) =>
       api<Listing>(LISTING_ROUTES.list, { method: "POST", body: data }),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["listings"] });
+    },
+  });
+}
+
+export function useUpdateListing(id: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation<ListingDetail, Error, UpdateListingRequest>({
+    mutationFn: (data) =>
+      api<ListingDetail>(LISTING_ROUTES.detail(id), { method: "PUT", body: data }),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["listings", id] });
+      void queryClient.invalidateQueries({ queryKey: ["listings"] });
+    },
+  });
+}
+
+export function useDeleteListing(id: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation<void, Error, void>({
+    mutationFn: () =>
+      api<void>(LISTING_ROUTES.detail(id), { method: "DELETE" }),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ["listings"] });
     },

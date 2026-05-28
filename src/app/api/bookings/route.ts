@@ -5,8 +5,8 @@ import type { Booking } from "@/types/booking";
 import type { PaginatedResponse } from "@/types/api";
 
 const createBookingSchema = z.object({
-  serviceListingId: z.string().uuid(),
-  availabilityId: z.string().uuid(),
+  serviceListingId: z.string().min(1),
+  availabilityId: z.string().min(1),
   areaInHectares: z.number().positive(),
   notes: z.string().optional(),
 });

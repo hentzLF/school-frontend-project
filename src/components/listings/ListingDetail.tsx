@@ -8,6 +8,7 @@ import { useTranslation } from "@/hooks/useTranslation";
 import { LoadingState } from "@/components/common/LoadingState";
 import { ErrorState } from "@/components/common/ErrorState";
 import { ManageAvailabilities } from "@/components/listings/ManageAvailabilities";
+import { OwnerActions } from "@/components/listings/OwnerActions";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 
@@ -105,7 +106,12 @@ export function ListingDetail({ listingId }: ListingDetailProps) {
         </CardContent>
       </Card>
 
-      {isOwner && <ManageAvailabilities listingId={listing.id} />}
+      {isOwner && (
+        <>
+          <OwnerActions listing={listing} />
+          <ManageAvailabilities listingId={listing.id} />
+        </>
+      )}
     </div>
   );
 }

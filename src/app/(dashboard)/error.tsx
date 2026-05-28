@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { RouteError } from "@/components/common/RouteError";
 
 type ErrorProps = {
@@ -7,6 +8,10 @@ type ErrorProps = {
   reset: () => void;
 };
 
-export default function DashboardError({ reset }: ErrorProps) {
+export default function DashboardError({ error, reset }: ErrorProps) {
+  useEffect(() => {
+    console.error("[DashboardError boundary]", error);
+  }, [error]);
+
   return <RouteError reset={reset} />;
 }
