@@ -19,10 +19,10 @@ describe("conversations [id] messages route", () => {
 
   describe("GET", () => {
     it("should return messages for a conversation", async () => {
-      const payload = [
+      const messages = [
         { id: "msg-1", content: "Hello!", conversationId: "1" },
       ];
-      mockBackendFetch.mockResolvedValue({ data: payload, status: 200 });
+      mockBackendFetch.mockResolvedValue({ data: { items: messages }, status: 200 });
 
       const response = await GET(
         new NextRequest("http://localhost/api/conversations/1/messages"),
@@ -30,10 +30,22 @@ describe("conversations [id] messages route", () => {
       );
 
       expect(response.status).toBe(200);
-      await expect(response.json()).resolves.toEqual(payload);
+      await expect(response.json()).resolves.toEqual(messages);
       expect(mockBackendFetch).toHaveBeenCalledWith(
         "/api/v1/conversations/1/messages",
       );
+    });
+
+    it("should return empty array when items is null", async () => {
+      mockBackendFetch.mockResolvedValue({ data: { items: null }, status: 200 });
+
+      const response = await GET(
+        new NextRequest("http://localhost/api/conversations/1/messages"),
+        { params: Promise.resolve({ id: "1" }) },
+      );
+
+      expect(response.status).toBe(200);
+      await expect(response.json()).resolves.toEqual([]);
     });
 
     it("should propagate a backend error response", async () => {
@@ -50,7 +62,7 @@ describe("conversations [id] messages route", () => {
     });
 
     it("should use the id from route params in the backend path", async () => {
-      mockBackendFetch.mockResolvedValue({ data: [], status: 200 });
+      mockBackendFetch.mockResolvedValue({ data: { items: [] }, status: 200 });
 
       await GET(
         new NextRequest("http://localhost/api/conversations/42/messages"),
