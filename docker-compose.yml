@@ -7,4 +7,7 @@ services:
     environment:
       - NODE_ENV=production
       - BACKEND_URL=${BACKEND_URL}
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
     restart: unless-stopped
