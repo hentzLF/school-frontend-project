@@ -200,6 +200,10 @@ export const et: TranslationKeys = {
     typeMessage: "Kirjuta sõnum...",
     send: "Saada",
     messageContent: "Sõnumi sisu",
+    contactOwner: "Võta pakkujaga ühendust",
+    contactClient: "Võta kliendiga ühendust",
+    startConversationTitle: "Alusta vestlust",
+    initialMessagePlaceholder: "Kirjuta oma esimene sõnum...",
   },
   reviews: {
     title: "Arvustused",

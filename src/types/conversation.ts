@@ -1,24 +1,32 @@
 export type Conversation = {
   id: string;
-  participantIds: string[];
-  participantNames: string[];
-  lastMessage: string | null;
-  lastMessageAt: string | null;
+  bookingId: string | null;
+  otherParticipant: {
+    profileId: string;
+    fullName: string | null;
+  };
+  lastMessage: {
+    content: string | null;
+    senderProfileId: string;
+    sentAt: string;
+  } | null;
+  unreadCount: number;
   createdAt: string;
 };
 
 export type Message = {
   id: string;
   conversationId: string;
-  senderId: string;
-  senderName: string;
-  content: string;
-  createdAt: string;
+  senderProfileId: string;
+  senderName: string | null;
+  content: string | null;
+  sentAt: string;
+  isRead: boolean;
 };
 
 export type CreateConversationRequest = {
-  participantId: string;
-  message: string;
+  participantProfileId: string;
+  bookingId?: string;
 };
 
 export type SendMessageRequest = {

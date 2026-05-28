@@ -11,7 +11,7 @@ export type Review = {
 };
 
 export type CreateReviewRequest = {
-  listingId: string;
+  bookingId: string;
   rating: number;
   comment: string;
 };

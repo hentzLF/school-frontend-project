@@ -53,7 +53,7 @@ export function MessageThread({ conversationId }: MessageThreadProps) {
         {isLoading && <LoadingState label={t("common.loading")} />}
 
         {messages?.map((message) => {
-          const isOwn = message.senderId === user?.id;
+          const isOwn = message.senderProfileId === user?.profileId;
           return (
             <div
               key={message.id}
@@ -81,7 +81,7 @@ export function MessageThread({ conversationId }: MessageThreadProps) {
                       : "text-muted-foreground",
                   )}
                 >
-                  {new Date(message.createdAt).toLocaleTimeString()}
+                  {new Date(message.sentAt).toLocaleTimeString()}
                 </p>
               </div>
             </div>

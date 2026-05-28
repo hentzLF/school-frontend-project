@@ -3,6 +3,15 @@ import { z } from "zod";
 import { backendFetch, isErrorResponse } from "@/lib/backend";
 import type { Message } from "@/types/conversation";
 
+type PaginatedResponse<T> = {
+  items: T[] | null;
+};
+
+type ConversationDetailDto = {
+  id: string;
+  messages: PaginatedResponse<Message> | null;
+};
+
 type RouteParams = { params: Promise<{ id: string }> };
 
 const sendMessageSchema = z.object({
@@ -14,11 +23,11 @@ export async function GET(
   { params }: RouteParams,
 ): Promise<NextResponse> {
   const { id } = await params;
-  const result = await backendFetch<Message[]>(
-    `/api/v1/conversations/${id}/messages`,
+  const result = await backendFetch<ConversationDetailDto>(
+    `/api/v1/conversations/${id}`,
   );
   if (isErrorResponse(result)) return result;
-  return NextResponse.json(result.data, { status: 200 });
+  return NextResponse.json(result.data.messages?.items ?? [], { status: 200 });
 }
 
 export async function POST(

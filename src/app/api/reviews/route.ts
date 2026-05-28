@@ -5,7 +5,7 @@ import type { Review } from "@/types/review";
 import type { PaginatedResponse } from "@/types/api";
 
 const createReviewSchema = z.object({
-  listingId: z.string().min(1),
+  bookingId: z.string().uuid(),
   rating: z.number().min(1).max(5),
   comment: z.string().min(1),
 });

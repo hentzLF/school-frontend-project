@@ -26,14 +26,14 @@ const reviewSchema = z.object({
 type ReviewFormValues = z.infer<typeof reviewSchema>;
 
 type CreateReviewFormProps = {
-  listingId: string;
+  bookingId: string;
   onSuccess?: () => void;
 };
 
 const fieldError = "text-xs text-destructive";
 
 export function CreateReviewForm({
-  listingId,
+  bookingId,
   onSuccess,
 }: CreateReviewFormProps) {
   const createReview = useCreateReview();
@@ -52,7 +52,7 @@ export function CreateReviewForm({
   const onSubmit = async (data: ReviewFormValues) => {
     try {
       await createReview.mutateAsync({
-        listingId,
+        bookingId,
         rating: data.rating,
         comment: data.comment,
       });

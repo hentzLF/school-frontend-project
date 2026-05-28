@@ -20,11 +20,8 @@ export function useCreateReview() {
   return useMutation<Review, Error, CreateReviewRequest>({
     mutationFn: (data) =>
       api<Review>(REVIEW_ROUTES.list, { method: "POST", body: data }),
-    onSuccess: (_, variables) => {
-      void queryClient.invalidateQueries({
-        queryKey: ["reviews", variables.listingId],
-      });
-      void queryClient.invalidateQueries({ queryKey: ["reviews", undefined] });
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["reviews"] });
     },
   });
 }

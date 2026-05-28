@@ -30,10 +30,10 @@ export function useCreateConversation() {
   const queryClient = useQueryClient();
 
   return useMutation<Conversation, Error, CreateConversationRequest>({
-    mutationFn: (data) =>
+    mutationFn: ({ participantProfileId, bookingId }) =>
       api<Conversation>(CONVERSATION_ROUTES.list, {
         method: "POST",
-        body: data,
+        body: { participantProfileId, bookingId },
       }),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ["conversations"] });

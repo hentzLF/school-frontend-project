@@ -32,7 +32,7 @@ export function ConversationList() {
       ) : (
         <div className="space-y-2">
           {conversationList.map((conversation) => {
-            const title = (conversation.participantNames ?? []).join(", ") || conversation.id;
+            const title = conversation.otherParticipant?.fullName ?? conversation.id;
             return (
               <Link
                 key={conversation.id}
@@ -49,17 +49,17 @@ export function ConversationList() {
                     <p className="truncate font-medium text-foreground">
                       {title}
                     </p>
-                    {conversation.lastMessageAt && (
+                    {conversation.lastMessage?.sentAt && (
                       <span className="shrink-0 text-xs text-muted-foreground">
                         {new Date(
-                          conversation.lastMessageAt,
+                          conversation.lastMessage.sentAt,
                         ).toLocaleDateString()}
                       </span>
                     )}
                   </div>
-                  {conversation.lastMessage && (
+                  {conversation.lastMessage?.content && (
                     <p className="truncate text-sm text-muted-foreground">
-                      {conversation.lastMessage}
+                      {conversation.lastMessage.content}
                     </p>
                   )}
                 </div>

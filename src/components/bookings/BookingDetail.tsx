@@ -9,8 +9,10 @@ import { useTranslation } from "@/hooks/useTranslation";
 import { LoadingState } from "@/components/common/LoadingState";
 import { ErrorState } from "@/components/common/ErrorState";
 import { StatusBadge } from "@/components/common/StatusBadge";
+import { StartConversationButton } from "@/components/messages/StartConversationButton";
+import { CreateReviewForm } from "@/components/reviews/CreateReviewForm";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { BookingStatus } from "@/types/booking";
 
 type BookingDetailProps = {
@@ -87,6 +89,25 @@ export function BookingDetail({ bookingId }: BookingDetailProps) {
           <span className="font-medium text-primary">
             {listing.pricePerHectare.toFixed(2)} EUR / ha
           </span>
+        </div>
+      )}
+
+      {(isClient || isProvider) && (
+        <div className="mb-4">
+          {isClient && (
+            <StartConversationButton
+              otherProfileId={booking.providerProfileId}
+              label={t("messages.contactOwner")}
+              bookingId={bookingId}
+            />
+          )}
+          {isProvider && (
+            <StartConversationButton
+              otherProfileId={booking.clientProfileId}
+              label={t("messages.contactClient")}
+              bookingId={bookingId}
+            />
+          )}
         </div>
       )}
 
@@ -196,6 +217,17 @@ export function BookingDetail({ bookingId }: BookingDetailProps) {
           )}
         </CardContent>
       </Card>
+
+      {isClient && s === "ClientConfirmed" && (
+        <Card className="mt-4">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base">{t("reviews.writeReview")}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <CreateReviewForm bookingId={bookingId} />
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }

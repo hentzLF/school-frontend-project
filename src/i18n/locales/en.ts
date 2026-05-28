@@ -198,6 +198,10 @@ export const en = {
     typeMessage: "Type a message...",
     send: "Send",
     messageContent: "Message content",
+    contactOwner: "Contact Provider",
+    contactClient: "Contact Client",
+    startConversationTitle: "Start a Conversation",
+    initialMessagePlaceholder: "Write your first message...",
   },
   reviews: {
     title: "Reviews",

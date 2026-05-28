@@ -3,15 +3,21 @@ import { z } from "zod";
 import { backendFetch, isErrorResponse } from "@/lib/backend";
 import type { Conversation } from "@/types/conversation";
 
+type PaginatedResponse<T> = {
+  items: T[] | null;
+};
+
 const createConversationSchema = z.object({
-  participantId: z.string().min(1),
-  message: z.string().min(1),
+  participantProfileId: z.string().uuid(),
+  bookingId: z.string().uuid().optional(),
 });
 
 export async function GET(): Promise<NextResponse> {
-  const result = await backendFetch<Conversation[]>("/api/v1/conversations");
+  const result = await backendFetch<PaginatedResponse<Conversation>>(
+    "/api/v1/conversations",
+  );
   if (isErrorResponse(result)) return result;
-  return NextResponse.json(result.data, { status: 200 });
+  return NextResponse.json(result.data.items ?? [], { status: 200 });
 }
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
@@ -35,7 +41,10 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
   const result = await backendFetch<Conversation>("/api/v1/conversations", {
     method: "POST",
-    body: parsed.data,
+    body: {
+      participantProfileIds: [parsed.data.participantProfileId],
+      bookingId: parsed.data.bookingId ?? null,
+    },
   });
 
   if (isErrorResponse(result)) return result;
