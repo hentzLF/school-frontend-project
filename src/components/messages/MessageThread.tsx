@@ -52,6 +52,12 @@ export function MessageThread({ conversationId }: MessageThreadProps) {
       <div className="flex-1 space-y-3 overflow-y-auto rounded-xl bg-card p-4 ring-1 ring-foreground/10">
         {isLoading && <LoadingState label={t("common.loading")} />}
 
+        {!isLoading && (!messages || messages.length === 0) && (
+          <p className="text-center text-sm text-muted-foreground">
+            {t("messages.noMessages")}
+          </p>
+        )}
+
         {messages?.map((message) => {
           const isOwn = message.senderProfileId === user?.profileId;
           return (
@@ -72,7 +78,7 @@ export function MessageThread({ conversationId }: MessageThreadProps) {
                     {message.senderName}
                   </p>
                 )}
-                <p className="text-sm break-words">{message.content}</p>
+                <p className="text-sm break-words">{message.content ?? ""}</p>
                 <p
                   className={cn(
                     "mt-1 text-xs",

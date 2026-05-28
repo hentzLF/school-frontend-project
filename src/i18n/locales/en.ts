@@ -198,6 +198,7 @@ export const en = {
     typeMessage: "Type a message...",
     send: "Send",
     messageContent: "Message content",
+    noMessages: "No messages yet. Start the conversation!",
     contactOwner: "Contact Provider",
     contactClient: "Contact Client",
     startConversationTitle: "Start a Conversation",
