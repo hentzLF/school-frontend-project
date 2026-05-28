@@ -31,6 +31,7 @@ describe("listings [id] route", () => {
       await expect(response.json()).resolves.toEqual(payload);
       expect(mockBackendFetch).toHaveBeenCalledWith("/api/v1/listings/1", {
         requireAuth: false,
+        tryAuth: true,
       });
     });
 
@@ -56,6 +57,7 @@ describe("listings [id] route", () => {
 
       expect(mockBackendFetch).toHaveBeenCalledWith("/api/v1/listings/42", {
         requireAuth: false,
+        tryAuth: true,
       });
     });
   });

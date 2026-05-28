@@ -39,7 +39,7 @@ describe("listings route", () => {
 
       expect(mockBackendFetch).toHaveBeenCalledWith(
         "/api/v1/listings?search=tractor&page=2",
-        { requireAuth: false },
+        { requireAuth: false, tryAuth: true },
       );
     });
 

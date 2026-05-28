@@ -68,7 +68,7 @@ describe("reviews route", () => {
 
   describe("POST", () => {
     const validBody = {
-      listingId: "listing-1",
+      bookingId: "550e8400-e29b-41d4-a716-446655440001",
       rating: 5,
       comment: "Excellent service, very professional.",
     };

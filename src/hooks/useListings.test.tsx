@@ -48,7 +48,7 @@ describe("useListings", () => {
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(result.current.data).toEqual(data);
-    expect(mockApi).toHaveBeenCalledWith("/api/listings");
+    expect(mockApi).toHaveBeenCalledWith("/api/listings", { redirectOn401: false });
   });
 
   it("should append filters as query parameters", async () => {
@@ -60,7 +60,7 @@ describe("useListings", () => {
     );
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(mockApi).toHaveBeenCalledWith("/api/listings?search=tractor&page=2");
+    expect(mockApi).toHaveBeenCalledWith("/api/listings?search=tractor&page=2", { redirectOn401: false });
   });
 });
 
@@ -77,7 +77,7 @@ describe("useListing", () => {
     });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(mockApi).toHaveBeenCalledWith("/api/listings/1");
+    expect(mockApi).toHaveBeenCalledWith("/api/listings/1", { redirectOn401: false });
   });
 
   it("should stay idle when no id is provided", () => {

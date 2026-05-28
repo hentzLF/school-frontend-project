@@ -34,20 +34,21 @@ function createWrapper() {
 
 const mockConversation: Conversation = {
   id: "conv1",
-  participantIds: ["u1", "u2"],
-  participantNames: ["Alice", "Bob"],
-  lastMessage: "Hello",
-  lastMessageAt: "2026-01-01T00:00:00Z",
+  bookingId: null,
+  otherParticipant: { profileId: "u2", fullName: "Alice" },
+  lastMessage: { content: "Hello", senderProfileId: "u2", sentAt: "2026-01-01T00:00:00Z" },
+  unreadCount: 0,
   createdAt: "2026-01-01T00:00:00Z",
 };
 
 const mockMessage: Message = {
   id: "msg1",
   conversationId: "conv1",
-  senderId: "u1",
+  senderProfileId: "u1",
   senderName: "Alice",
   content: "Hello there!",
-  createdAt: "2026-01-01T00:00:00Z",
+  sentAt: "2026-01-01T00:00:00Z",
+  isRead: false,
 };
 
 describe("useConversations", () => {
@@ -107,13 +108,12 @@ describe("useCreateConversation", () => {
     });
 
     await result.current.mutateAsync({
-      participantId: "u2",
-      message: "Hello!",
+      participantProfileId: "u2",
     });
 
     expect(mockApi).toHaveBeenCalledWith("/api/conversations", {
       method: "POST",
-      body: { participantId: "u2", message: "Hello!" },
+      body: { participantProfileId: "u2", bookingId: undefined },
     });
   });
 });

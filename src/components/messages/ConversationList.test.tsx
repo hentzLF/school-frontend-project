@@ -28,10 +28,10 @@ vi.mock("@/hooks/useTranslation", () => ({
 
 const mockConversation: Conversation = {
   id: "conv-1",
-  participantIds: ["user-1", "user-2"],
-  participantNames: ["Alice", "Bob"],
-  lastMessage: "Hello there!",
-  lastMessageAt: "2026-05-01T10:00:00Z",
+  bookingId: null,
+  otherParticipant: { profileId: "user-2", fullName: "Alice, Bob" },
+  lastMessage: { content: "Hello there!", senderProfileId: "user-1", sentAt: "2026-05-01T10:00:00Z" },
+  unreadCount: 0,
   createdAt: "2026-04-01T00:00:00Z",
 };
 

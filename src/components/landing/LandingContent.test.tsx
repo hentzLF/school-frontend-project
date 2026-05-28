@@ -42,12 +42,12 @@ describe("LandingContent", () => {
 
   it("should render sign in and get started links", () => {
     render(<LandingContent />);
-    const signInLinks = screen.getAllByRole("link", { name: /sign in/i });
-    expect(signInLinks.length).toBeGreaterThanOrEqual(1);
-    expect(signInLinks[0]).toHaveAttribute("href", "/login");
+    const signInButtons = screen.getAllByRole("button", { name: /sign in/i });
+    expect(signInButtons.length).toBeGreaterThanOrEqual(1);
+    expect(signInButtons[0]).toHaveAttribute("href", "/login");
 
-    const getStartedLink = screen.getByRole("link", { name: /get started/i });
-    expect(getStartedLink).toHaveAttribute("href", "/register");
+    const getStartedButton = screen.getByRole("button", { name: /get started/i });
+    expect(getStartedButton).toHaveAttribute("href", "/listings");
   });
 
   it("should render the three feature cards", () => {

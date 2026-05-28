@@ -35,6 +35,12 @@ const dashboardLinks: DashboardLink[] = [
     descKey: "dashboard.bookingsDesc",
   },
   {
+    href: "/payments",
+    icon: CreditCard,
+    titleKey: "nav.payments",
+    descKey: "dashboard.paymentsDesc",
+  },
+  {
     href: "/messages",
     icon: MessageSquare,
     titleKey: "nav.messages",

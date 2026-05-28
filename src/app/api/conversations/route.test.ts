@@ -20,7 +20,7 @@ describe("conversations route", () => {
   describe("GET", () => {
     it("should return conversations data from the backend", async () => {
       const payload = [{ id: "1", participantId: "user-1" }];
-      mockBackendFetch.mockResolvedValue({ data: payload, status: 200 });
+      mockBackendFetch.mockResolvedValue({ data: { items: payload }, status: 200 });
 
       const response = await GET();
 
@@ -49,14 +49,16 @@ describe("conversations route", () => {
   });
 
   describe("POST", () => {
-    const validBody = {
-      participantId: "user-2",
-      message: "Hello, is the tractor still available?",
+    const participantProfileId = "550e8400-e29b-41d4-a716-446655440000";
+    const validBody = { participantProfileId };
+    const expectedBackendBody = {
+      participantProfileIds: [participantProfileId],
+      bookingId: null,
     };
 
     it("should create a conversation with valid input", async () => {
       mockBackendFetch.mockResolvedValue({
-        data: { id: "1", ...validBody },
+        data: { id: "1" },
         status: 201,
       });
 
@@ -70,7 +72,7 @@ describe("conversations route", () => {
       expect(response.status).toBe(201);
       expect(mockBackendFetch).toHaveBeenCalledWith(
         "/api/v1/conversations",
-        expect.objectContaining({ method: "POST", body: validBody }),
+        expect.objectContaining({ method: "POST", body: expectedBackendBody }),
       );
     });
 
@@ -78,7 +80,7 @@ describe("conversations route", () => {
       const response = await POST(
         new NextRequest("http://localhost/api/conversations", {
           method: "POST",
-          body: JSON.stringify({ participantId: "" }),
+          body: JSON.stringify({ participantProfileId: "not-a-uuid" }),
         }),
       );
 
