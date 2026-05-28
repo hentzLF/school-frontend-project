@@ -9,36 +9,22 @@ const mockListings: Listing[] = [
   {
     id: "listing-1",
     title: "Plowing Service",
-    description: "Professional plowing",
-    price: 80,
-    priceUnit: "hour",
-    categoryId: "cat-1",
     categoryName: "Plowing",
-    countyId: "county-1",
-    countyName: "Harju",
-    providerId: "prov-1",
     providerName: "Farm Co",
-    status: "Active",
-    imageUrl: null,
-    createdAt: "2025-01-01T00:00:00Z",
-    updatedAt: "2025-01-01T00:00:00Z",
+    pricePerHectare: 80,
+    isActive: true,
+    averageRating: 4.2,
+    reviewCount: 5,
   },
   {
     id: "listing-2",
     title: "Harvesting Service",
-    description: "Efficient harvesting",
-    price: 120,
-    priceUnit: "day",
-    categoryId: "cat-2",
     categoryName: "Harvesting",
-    countyId: "county-2",
-    countyName: "Tartu",
-    providerId: "prov-2",
     providerName: "Agro Ltd",
-    status: "Inactive",
-    imageUrl: null,
-    createdAt: "2025-02-01T00:00:00Z",
-    updatedAt: "2025-02-01T00:00:00Z",
+    pricePerHectare: 120,
+    isActive: false,
+    averageRating: 3.8,
+    reviewCount: 2,
   },
 ];
 
@@ -138,6 +124,6 @@ describe("AdminListings", () => {
     expect(screen.getByText("Farm Co")).toBeInTheDocument();
     expect(screen.getByText("Harvesting Service")).toBeInTheDocument();
     expect(screen.getByText("Agro Ltd")).toBeInTheDocument();
-    expect(screen.getByText("80.00 EUR")).toBeInTheDocument();
+    expect(screen.getByText("80.00 EUR / ha")).toBeInTheDocument();
   });
 });

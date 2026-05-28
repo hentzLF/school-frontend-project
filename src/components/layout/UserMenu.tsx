@@ -56,12 +56,12 @@ export function UserMenu() {
           </span>
         </div>
         <DropdownMenuSeparator />
-        <DropdownMenuItem render={<Link href="/dashboard" />}>
+        <DropdownMenuItem render={<Link href="/dashboard" prefetch={false} />}>
           <LayoutDashboard aria-hidden="true" />
           {t("nav.dashboard")}
         </DropdownMenuItem>
         {user.role === "Admin" && (
-          <DropdownMenuItem render={<Link href="/admin" />}>
+          <DropdownMenuItem render={<Link href="/admin" prefetch={false} />}>
             <ShieldCheck aria-hidden="true" />
             {t("nav.admin")}
           </DropdownMenuItem>

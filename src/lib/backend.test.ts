@@ -6,14 +6,16 @@ vi.mock("@/lib/auth", () => ({
   getToken: vi.fn(),
   getRefreshToken: vi.fn(),
   setAuthCookies: vi.fn(),
+  clearAuthCookiesOnResponse: vi.fn(),
 }));
 
 import { backendFetch, isErrorResponse } from "./backend";
-import { getToken, getRefreshToken, setAuthCookies } from "@/lib/auth";
+import { getToken, getRefreshToken, setAuthCookies, clearAuthCookiesOnResponse } from "@/lib/auth";
 
 const mockGetToken = vi.mocked(getToken);
 const mockGetRefreshToken = vi.mocked(getRefreshToken);
 const mockSetAuthCookies = vi.mocked(setAuthCookies);
+const mockClearAuthCookiesOnResponse = vi.mocked(clearAuthCookiesOnResponse);
 
 function jsonResponse(body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), {
@@ -27,6 +29,7 @@ describe("backendFetch", () => {
     vi.clearAllMocks();
     mockGetToken.mockResolvedValue("valid-token");
     mockGetRefreshToken.mockResolvedValue("valid-refresh");
+    mockClearAuthCookiesOnResponse.mockReturnValue(undefined);
   });
 
   afterEach(() => {

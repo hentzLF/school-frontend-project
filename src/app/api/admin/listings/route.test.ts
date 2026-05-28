@@ -16,20 +16,18 @@ const mockListings = [
   {
     id: "l1",
     title: "Tractor service",
-    description: "Plowing and tilling",
-    price: 50,
-    priceUnit: "hour",
-    categoryId: "cat-1",
-    countyId: "county-1",
+    categoryName: "Plowing",
+    providerName: "Farm Co",
+    pricePerHectare: 50,
+    isActive: true,
   },
   {
     id: "l2",
     title: "Irrigation setup",
-    description: "Install irrigation systems",
-    price: 200,
-    priceUnit: "day",
-    categoryId: "cat-2",
-    countyId: "county-2",
+    categoryName: "Irrigation",
+    providerName: "Agro Ltd",
+    pricePerHectare: 200,
+    isActive: false,
   },
 ];
 

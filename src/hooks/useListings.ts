@@ -9,12 +9,15 @@ import {
 } from "@/config/constants";
 import type {
   Listing,
+  ListingDetail,
   CreateListingRequest,
   ListingFilters,
 } from "@/types/listing";
 import type { PaginatedResponse } from "@/types/api";
 import type { County } from "@/types/county";
+import type { Municipality } from "@/types/municipality";
 import type { Category } from "@/types/category";
+import type { Availability } from "@/types/availability";
 
 export function useListings(
   filters: ListingFilters = {},
@@ -40,10 +43,10 @@ export function useListings(
   });
 }
 
-export function useListing(id: string): ReturnType<typeof useQuery<Listing>> {
-  return useQuery<Listing>({
+export function useListing(id: string): ReturnType<typeof useQuery<ListingDetail>> {
+  return useQuery<ListingDetail>({
     queryKey: ["listings", id],
-    queryFn: () => api<Listing>(LISTING_ROUTES.detail(id)),
+    queryFn: () => api<ListingDetail>(LISTING_ROUTES.detail(id)),
     enabled: !!id,
   });
 }
@@ -68,10 +71,68 @@ export function useCounties(): ReturnType<typeof useQuery<County[]>> {
   });
 }
 
+export function useMunicipalities(
+  countyId: string | undefined,
+): ReturnType<typeof useQuery<Municipality[]>> {
+  return useQuery<Municipality[]>({
+    queryKey: ["municipalities", countyId],
+    queryFn: () =>
+      api<Municipality[]>(COUNTY_ROUTES.municipalities(countyId!)),
+    enabled: !!countyId,
+    staleTime: 30 * 60 * 1000,
+  });
+}
+
 export function useCategories(): ReturnType<typeof useQuery<Category[]>> {
   return useQuery<Category[]>({
     queryKey: ["categories"],
     queryFn: () => api<Category[]>(CATEGORY_ROUTES.list),
     staleTime: 30 * 60 * 1000,
+  });
+}
+
+export function useAvailabilities(
+  listingId: string | undefined,
+): ReturnType<typeof useQuery<Availability[]>> {
+  return useQuery<Availability[]>({
+    queryKey: ["availabilities", listingId],
+    queryFn: () =>
+      api<Availability[]>(LISTING_ROUTES.availabilities(listingId!)),
+    enabled: !!listingId,
+  });
+}
+
+export function useCreateAvailability(listingId: string) {
+  const queryClient = useQueryClient();
+  return useMutation<
+    Availability,
+    Error,
+    { startTime: string; endTime: string }
+  >({
+    mutationFn: (data) =>
+      api<Availability>(LISTING_ROUTES.availabilities(listingId), {
+        method: "POST",
+        body: data,
+      }),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({
+        queryKey: ["availabilities", listingId],
+      });
+    },
+  });
+}
+
+export function useDeleteAvailability(listingId: string) {
+  const queryClient = useQueryClient();
+  return useMutation<void, Error, string>({
+    mutationFn: (availabilityId) =>
+      api<void>(LISTING_ROUTES.deleteAvailability(listingId, availabilityId), {
+        method: "DELETE",
+      }),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({
+        queryKey: ["availabilities", listingId],
+      });
+    },
   });
 }

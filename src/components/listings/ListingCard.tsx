@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { MapPin, Tag } from "lucide-react";
+import { Tag } from "lucide-react";
 import type { Listing } from "@/types/listing";
 
 type ListingCardProps = {
@@ -18,23 +18,16 @@ export function ListingCard({ listing }: ListingCardProps) {
         <h3 className="line-clamp-1 font-semibold text-foreground group-hover:text-primary">
           {listing.title}
         </h3>
-        <p className="line-clamp-2 text-sm text-muted-foreground">
-          {listing.description}
-        </p>
       </div>
 
       <p className="mt-auto text-lg font-bold text-primary">
-        {listing.price.toFixed(2)} EUR / {listing.priceUnit}
+        {listing.pricePerHectare.toFixed(2)} EUR / ha
       </p>
 
       <div className="flex flex-wrap items-center gap-x-3 gap-y-1 border-t pt-3 text-xs text-muted-foreground">
         <span className="inline-flex items-center gap-1">
           <Tag className="size-3.5" aria-hidden="true" />
           {listing.categoryName}
-        </span>
-        <span className="inline-flex items-center gap-1">
-          <MapPin className="size-3.5" aria-hidden="true" />
-          {listing.countyName}
         </span>
         <span className="ml-auto font-medium text-foreground">
           {listing.providerName}

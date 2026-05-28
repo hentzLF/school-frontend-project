@@ -1,64 +1,78 @@
 // @vitest-environment node
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { NextResponse } from "next/server";
 
-vi.mock("@/lib/backend", () => ({
-  backendFetch: vi.fn(),
-  isErrorResponse: (r: unknown) => r instanceof NextResponse,
+vi.mock("@/lib/auth", () => ({
+  getToken: vi.fn(),
 }));
 
-import { backendFetch } from "@/lib/backend";
+import { getToken } from "@/lib/auth";
 import { GET } from "./route";
 
-const mockBackendFetch = vi.mocked(backendFetch);
+const mockGetToken = vi.mocked(getToken);
 
-const mockUser = {
-  id: "u1",
-  email: "farmer@example.com",
-  firstName: "John",
-  lastName: "Doe",
-  role: "Client",
-};
+function makeJwt(payload: Record<string, unknown>): string {
+  const header = Buffer.from(JSON.stringify({ alg: "HS256" })).toString(
+    "base64url",
+  );
+  const body = Buffer.from(JSON.stringify(payload)).toString("base64url");
+  return `${header}.${body}.signature`;
+}
 
 describe("auth/me route", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it("should return the current user from the backend", async () => {
-    mockBackendFetch.mockResolvedValue({ data: mockUser, status: 200 });
+  it("should return user info decoded from the JWT", async () => {
+    mockGetToken.mockResolvedValue(
+      makeJwt({
+        sub: "user-id-123",
+        given_name: "John",
+        family_name: "Doe",
+        role: "Client",
+      }),
+    );
 
     const response = await GET();
 
     expect(response.status).toBe(200);
-    await expect(response.json()).resolves.toEqual(mockUser);
+    await expect(response.json()).resolves.toMatchObject({
+      id: "user-id-123",
+      firstName: "John",
+      lastName: "Doe",
+      role: "Client",
+    });
   });
 
-  it("should call the correct backend endpoint", async () => {
-    mockBackendFetch.mockResolvedValue({ data: mockUser, status: 200 });
-
-    await GET();
-
-    expect(mockBackendFetch).toHaveBeenCalledWith("/api/v1/auth/me");
-  });
-
-  it("should propagate a backend error response", async () => {
-    mockBackendFetch.mockResolvedValue(
-      NextResponse.json({ error: "Unauthorized" }, { status: 401 }),
-    );
+  it("should return 401 when no token is present", async () => {
+    mockGetToken.mockResolvedValue(undefined);
 
     const response = await GET();
 
     expect(response.status).toBe(401);
   });
 
-  it("should propagate a 403 forbidden response", async () => {
-    mockBackendFetch.mockResolvedValue(
-      NextResponse.json({ error: "Forbidden" }, { status: 403 }),
-    );
+  it("should return 401 for a malformed token", async () => {
+    mockGetToken.mockResolvedValue("not.a.jwt");
 
     const response = await GET();
 
-    expect(response.status).toBe(403);
+    expect(response.status).toBe(401);
+  });
+
+  it("should handle an array role claim", async () => {
+    mockGetToken.mockResolvedValue(
+      makeJwt({
+        sub: "u2",
+        given_name: "Jane",
+        family_name: "Smith",
+        role: ["Admin", "Client"],
+      }),
+    );
+
+    const response = await GET();
+    const body = await response.json();
+
+    expect(body.role).toBe("Admin");
   });
 });

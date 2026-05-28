@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { backendFetch, isErrorResponse } from "@/lib/backend";
 import type { Review } from "@/types/review";
+import type { PaginatedResponse } from "@/types/api";
 
 const createReviewSchema = z.object({
   listingId: z.string().min(1),
@@ -14,9 +15,11 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   const query = searchParams.toString();
   const path = `/api/v1/reviews${query ? `?${query}` : ""}`;
 
-  const result = await backendFetch<Review[]>(path);
+  const result = await backendFetch<PaginatedResponse<Review>>(path, {
+    requireAuth: false,
+  });
   if (isErrorResponse(result)) return result;
-  return NextResponse.json(result.data, { status: 200 });
+  return NextResponse.json(result.data.items, { status: 200 });
 }
 
 export async function POST(request: NextRequest): Promise<NextResponse> {

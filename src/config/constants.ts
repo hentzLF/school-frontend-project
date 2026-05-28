@@ -11,6 +11,9 @@ export const AUTH_ROUTES = {
 export const LISTING_ROUTES = {
   list: `${API_BASE}/listings`,
   detail: (id: string) => `${API_BASE}/listings/${id}`,
+  availabilities: (id: string) => `${API_BASE}/listings/${id}/availabilities`,
+  deleteAvailability: (id: string, availabilityId: string) =>
+    `${API_BASE}/listings/${id}/availabilities/${availabilityId}`,
 } as const;
 
 export const BOOKING_ROUTES = {
@@ -37,6 +40,8 @@ export const REVIEW_ROUTES = {
 
 export const COUNTY_ROUTES = {
   list: `${API_BASE}/counties`,
+  municipalities: (countyId: string) =>
+    `${API_BASE}/counties/${countyId}/municipalities`,
 } as const;
 
 export const EQUIPMENT_ROUTES = {

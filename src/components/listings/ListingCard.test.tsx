@@ -8,34 +8,23 @@ afterEach(cleanup);
 const mockListing: Listing = {
   id: "1",
   title: "Tractor Service",
-  description: "Professional tractor service for your fields",
-  price: 50,
-  priceUnit: "hour",
-  categoryId: "cat-1",
   categoryName: "Plowing",
-  countyId: "county-1",
-  countyName: "Harju",
-  providerId: "prov-1",
   providerName: "John Farmer",
-  status: "Active",
-  imageUrl: null,
-  createdAt: "2026-01-01T00:00:00Z",
-  updatedAt: "2026-01-01T00:00:00Z",
+  pricePerHectare: 50,
+  isActive: true,
+  averageRating: 4.5,
+  reviewCount: 10,
 };
 
 describe("ListingCard", () => {
-  it("should render listing title and description", () => {
+  it("should render listing title", () => {
     render(<ListingCard listing={mockListing} />);
     expect(screen.getByText("Tractor Service")).toBeInTheDocument();
-    expect(
-      screen.getByText("Professional tractor service for your fields"),
-    ).toBeInTheDocument();
   });
 
-  it("should render price, county, category, and provider", () => {
+  it("should render price, category, and provider", () => {
     const { container } = render(<ListingCard listing={mockListing} />);
-    expect(container.textContent).toContain("50.00 EUR / hour");
-    expect(container.textContent).toContain("Harju");
+    expect(container.textContent).toContain("50.00 EUR / ha");
     expect(container.textContent).toContain("Plowing");
     expect(container.textContent).toContain("John Farmer");
   });

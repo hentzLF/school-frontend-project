@@ -1,27 +1,41 @@
+export type BookingStatus =
+  | "Pending"
+  | "Confirmed"
+  | "InProgress"
+  | "ProviderCompleted"
+  | "ClientConfirmed"
+  | "Archived"
+  | "Cancelled"
+  | "Disputed"
+  | "AwaitingPayment";
+
 export type Booking = {
   id: string;
-  listingId: string;
-  listingTitle: string;
-  clientId: string;
-  clientName: string;
-  providerId: string;
-  providerName: string;
-  status: "Pending" | "Confirmed" | "InProgress" | "Completed" | "Cancelled";
-  startDate: string;
-  endDate: string;
+  status: BookingStatus;
   totalPrice: number;
-  notes: string | null;
+  areaInHectares: number;
   createdAt: string;
-  updatedAt: string;
+  notes: string | null;
+  serviceListingId: string;
+  clientProfileId: string;
+  providerProfileId: string;
+  availabilityId: string;
+  availabilityStart: string | null;
+  availabilityEnd: string | null;
+  clientName: string;
+  listingTitle: string;
+  paymentStatus: number | null;
+  paymentAmount: number | null;
+  paymentPlatformFee: number | null;
 };
 
 export type CreateBookingRequest = {
-  listingId: string;
-  startDate: string;
-  endDate: string;
+  serviceListingId: string;
+  availabilityId: string;
+  areaInHectares: number;
   notes?: string;
 };
 
 export type UpdateBookingStatusRequest = {
-  status: "Confirmed" | "InProgress" | "Completed" | "Cancelled";
+  status: BookingStatus;
 };

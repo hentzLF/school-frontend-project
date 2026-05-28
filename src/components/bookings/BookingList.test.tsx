@@ -7,7 +7,26 @@ afterEach(cleanup);
 
 vi.mock("@/hooks/useBookings", () => ({
   useBookings: vi.fn(),
-  useUpdateBookingStatus: () => ({ mutate: vi.fn() }),
+  useUpdateBookingStatus: () => ({ mutate: vi.fn(), isPending: false }),
+}));
+
+vi.mock("@/hooks/useListings", () => ({
+  useListing: () => ({ data: undefined }),
+}));
+
+vi.mock("@/hooks/useAuth", () => ({
+  useAuth: () => ({
+    user: {
+      id: "user-1",
+      profileId: "client-profile-1",
+      email: "test@example.com",
+      firstName: "Test",
+      lastName: "User",
+      role: "Client",
+    },
+    isLoading: false,
+    isAuthenticated: true,
+  }),
 }));
 
 vi.mock("@/hooks/useTranslation", () => ({
@@ -16,15 +35,16 @@ vi.mock("@/hooks/useTranslation", () => ({
       const map: Record<string, string> = {
         "common.loading": "Loading...",
         "bookings.loadError": "Failed to load bookings",
-        "bookings.title": "My Bookings",
+        "bookings.title": "Bookings",
         "bookings.noBookings": "No bookings yet",
         "dashboard.bookingsDesc": "Manage your bookings",
-        "bookings.client": "Client",
-        "bookings.provider": "Provider",
+        "bookings.areaInHectares": "Area (ha)",
         "bookings.confirm": "Confirm",
         "common.cancel": "Cancel",
         "bookings.startWork": "Start Work",
         "bookings.complete": "Complete",
+        "bookings.status.Pending": "Pending",
+        "bookings.requestPayment": "Request Payment",
       };
       return map[key] ?? key;
     },
@@ -34,20 +54,23 @@ vi.mock("@/hooks/useTranslation", () => ({
 }));
 
 const mockBooking: Booking = {
-  id: "booking-1",
-  listingId: "listing-1",
-  listingTitle: "Tractor Service",
-  clientId: "client-1",
-  clientName: "Alice Smith",
-  providerId: "provider-1",
-  providerName: "Bob Farmer",
+  id: "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
   status: "Pending",
-  startDate: "2026-06-01T00:00:00Z",
-  endDate: "2026-06-03T00:00:00Z",
   totalPrice: 300,
-  notes: null,
+  areaInHectares: 5.5,
   createdAt: "2026-05-01T00:00:00Z",
-  updatedAt: "2026-05-01T00:00:00Z",
+  notes: null,
+  serviceListingId: "listing-1",
+  clientProfileId: "client-profile-1",
+  providerProfileId: "provider-profile-1",
+  availabilityId: "avail-1",
+  availabilityStart: "2026-06-01T08:00:00Z",
+  availabilityEnd: "2026-06-01T16:00:00Z",
+  clientName: "Alice Smith",
+  listingTitle: "Tractor Service",
+  paymentStatus: null,
+  paymentAmount: null,
+  paymentPlatformFee: null,
 };
 
 describe("BookingList", () => {
@@ -87,7 +110,7 @@ describe("BookingList", () => {
     expect(screen.getByText("No bookings yet")).toBeInTheDocument();
   });
 
-  it("should render a booking card with listing title and price", async () => {
+  it("should render a booking card with id prefix and price", async () => {
     const { useBookings } = await import("@/hooks/useBookings");
     vi.mocked(useBookings).mockReturnValue({
       data: [mockBooking],

@@ -7,36 +7,42 @@ afterEach(cleanup);
 
 const mockBookings: Booking[] = [
   {
-    id: "booking-1",
-    listingId: "listing-1",
-    listingTitle: "Tractor Service",
-    clientId: "client-1",
-    clientName: "Jane Doe",
-    providerId: "prov-1",
-    providerName: "Farm Co",
+    id: "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
     status: "Confirmed",
-    startDate: "2025-06-01T00:00:00Z",
-    endDate: "2025-06-03T00:00:00Z",
     totalPrice: 240,
-    notes: null,
+    areaInHectares: 4,
     createdAt: "2025-05-01T00:00:00Z",
-    updatedAt: "2025-05-01T00:00:00Z",
+    notes: null,
+    serviceListingId: "listing-1",
+    clientProfileId: "client-1",
+    providerProfileId: "provider-1",
+    availabilityId: "avail-1",
+    availabilityStart: "2025-06-01T08:00:00Z",
+    availabilityEnd: "2025-06-01T16:00:00Z",
+    clientName: "Jane Doe",
+    listingTitle: "Tractor Service",
+    paymentStatus: null,
+    paymentAmount: null,
+    paymentPlatformFee: null,
   },
   {
-    id: "booking-2",
-    listingId: "listing-2",
-    listingTitle: "Harvesting Service",
-    clientId: "client-2",
-    clientName: "John Smith",
-    providerId: "prov-2",
-    providerName: "Agro Ltd",
+    id: "b2c3d4e5-f6a7-8901-bcde-f12345678901",
     status: "Pending",
-    startDate: "2025-07-10T00:00:00Z",
-    endDate: "2025-07-12T00:00:00Z",
     totalPrice: 360,
-    notes: "Need early start",
+    areaInHectares: 6,
     createdAt: "2025-05-15T00:00:00Z",
-    updatedAt: "2025-05-15T00:00:00Z",
+    notes: "Need early start",
+    serviceListingId: "listing-2",
+    clientProfileId: "client-2",
+    providerProfileId: "provider-2",
+    availabilityId: "avail-2",
+    availabilityStart: "2025-07-10T08:00:00Z",
+    availabilityEnd: "2025-07-10T16:00:00Z",
+    clientName: "John Smith",
+    listingTitle: "Harvesting Service",
+    paymentStatus: null,
+    paymentAmount: null,
+    paymentPlatformFee: null,
   },
 ];
 
@@ -122,7 +128,6 @@ describe("AdminBookings", () => {
     render(<AdminBookings />);
     expect(screen.getByText("Tractor Service")).toBeInTheDocument();
     expect(screen.getByText("Jane Doe")).toBeInTheDocument();
-    expect(screen.getByText("Farm Co")).toBeInTheDocument();
     expect(screen.getByText("240.00 EUR")).toBeInTheDocument();
     expect(screen.getByText("Harvesting Service")).toBeInTheDocument();
     expect(screen.getByText("John Smith")).toBeInTheDocument();

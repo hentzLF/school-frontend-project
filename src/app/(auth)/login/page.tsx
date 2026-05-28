@@ -3,8 +3,8 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { useTranslation } from "@/hooks/useTranslation";
 import { LocaleSwitcher } from "@/components/layout/LocaleSwitcher";
@@ -34,9 +34,10 @@ const loginSchema = z.object({
 type LoginFormValues = z.infer<typeof loginSchema>;
 
 export default function LoginPage() {
-  const router = useRouter();
   const { login, loginError, isLoginPending } = useAuth();
   const { t } = useTranslation();
+  const searchParams = useSearchParams();
+  const justRegistered = searchParams.get("registered") === "1";
 
   const {
     register,
@@ -49,7 +50,7 @@ export default function LoginPage() {
   const onSubmit = async (data: LoginFormValues) => {
     try {
       await login(data);
-      router.push("/dashboard");
+      window.location.assign("/dashboard");
     } catch {
       // Error is captured by loginError from useAuth
     }
@@ -81,6 +82,9 @@ export default function LoginPage() {
             noValidate
             className="space-y-4"
           >
+            {justRegistered && !apiErrorMessage && (
+              <FormAlert message={t("auth.registrationSuccess")} variant="success" />
+            )}
             {apiErrorMessage && <FormAlert message={apiErrorMessage} />}
 
             <div className="space-y-1.5">

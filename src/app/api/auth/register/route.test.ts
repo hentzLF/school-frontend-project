@@ -4,12 +4,13 @@ import { NextRequest } from "next/server";
 
 vi.mock("@/lib/auth", () => ({
   setAuthCookies: vi.fn(),
+  setAuthCookiesOnResponse: vi.fn(),
 }));
 
-import { setAuthCookies } from "@/lib/auth";
+import { setAuthCookiesOnResponse } from "@/lib/auth";
 import { POST } from "./route";
 
-const mockSetAuthCookies = vi.mocked(setAuthCookies);
+const mockSetAuthCookies = vi.mocked(setAuthCookiesOnResponse);
 
 function postRequest(body: unknown): NextRequest {
   return new NextRequest("http://localhost/api/auth/register", {
@@ -23,7 +24,6 @@ const validBody = {
   password: "secret123",
   firstName: "John",
   lastName: "Doe",
-  role: "Client" as const,
 };
 
 const authData = {
@@ -56,7 +56,7 @@ describe("auth/register route", () => {
     const response = await POST(postRequest(validBody));
 
     expect(response.status).toBe(201);
-    expect(mockSetAuthCookies).toHaveBeenCalledWith(authData);
+    expect(mockSetAuthCookies).toHaveBeenCalledWith(expect.anything(), authData);
     await expect(response.json()).resolves.toEqual({ user: authData.user });
   });
 
@@ -72,15 +72,6 @@ describe("auth/register route", () => {
   it("should reject a missing required field with 400", async () => {
     const response = await POST(
       postRequest({ email: "a@b.com", password: "secret" }),
-    );
-
-    expect(response.status).toBe(400);
-    expect(mockSetAuthCookies).not.toHaveBeenCalled();
-  });
-
-  it("should reject an invalid role with 400", async () => {
-    const response = await POST(
-      postRequest({ ...validBody, role: "SuperAdmin" }),
     );
 
     expect(response.status).toBe(400);

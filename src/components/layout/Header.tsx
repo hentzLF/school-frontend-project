@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu } from "lucide-react";
+import { LogOut, Menu } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useTranslation } from "@/hooks/useTranslation";
 import { LocaleSwitcher } from "@/components/layout/LocaleSwitcher";
@@ -27,7 +27,7 @@ const navKeys = [
 ] as const;
 
 export function Header() {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const pathname = usePathname();
   const { t } = useTranslation();
 
@@ -54,6 +54,7 @@ export function Header() {
               <Link
                 key={link.href}
                 href={link.href}
+                prefetch={false}
                 aria-current={isActive(link.href) ? "page" : undefined}
                 className={cn(
                   "rounded-md px-3 py-2 text-sm font-medium transition-colors",
@@ -72,6 +73,14 @@ export function Header() {
           <LocaleSwitcher />
           <ThemeToggle />
           <UserMenu />
+          <Button
+            variant="ghost"
+            className="hidden gap-2 md:inline-flex"
+            onClick={() => void logout()}
+          >
+            <LogOut aria-hidden="true" />
+            {t("auth.signOut")}
+          </Button>
 
           <DropdownMenu>
             <DropdownMenuTrigger
@@ -90,11 +99,15 @@ export function Header() {
               {links.map((link) => (
                 <DropdownMenuItem
                   key={link.href}
-                  render={<Link href={link.href} />}
+                  render={<Link href={link.href} prefetch={false} />}
                 >
                   {t(link.key)}
                 </DropdownMenuItem>
               ))}
+              <DropdownMenuItem onClick={() => void logout()}>
+                <LogOut aria-hidden="true" />
+                {t("auth.signOut")}
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

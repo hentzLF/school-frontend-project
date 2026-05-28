@@ -18,28 +18,38 @@ describe("reviews route", () => {
   });
 
   describe("GET", () => {
-    it("should return review data from the backend", async () => {
-      const payload = [{ id: "1", listingId: "listing-1", rating: 5 }];
-      mockBackendFetch.mockResolvedValue({ data: payload, status: 200 });
+    it("should return review items from the paginated backend response", async () => {
+      const items = [{ id: "1", rating: 5 }];
+      mockBackendFetch.mockResolvedValue({
+        data: { items, totalCount: 1, page: 1, pageSize: 20, totalPages: 1 },
+        status: 200,
+      });
 
       const response = await GET(
         new NextRequest("http://localhost/api/reviews"),
       );
 
       expect(response.status).toBe(200);
-      await expect(response.json()).resolves.toEqual(payload);
-      expect(mockBackendFetch).toHaveBeenCalledWith("/api/v1/reviews");
+      await expect(response.json()).resolves.toEqual(items);
+      expect(mockBackendFetch).toHaveBeenCalledWith(
+        "/api/v1/reviews",
+        { requireAuth: false },
+      );
     });
 
     it("should forward query parameters to the backend", async () => {
-      mockBackendFetch.mockResolvedValue({ data: [], status: 200 });
+      mockBackendFetch.mockResolvedValue({
+        data: { items: [], totalCount: 0, page: 1, pageSize: 20, totalPages: 0 },
+        status: 200,
+      });
 
       await GET(
-        new NextRequest("http://localhost/api/reviews?listingId=listing-1"),
+        new NextRequest("http://localhost/api/reviews?page=2"),
       );
 
       expect(mockBackendFetch).toHaveBeenCalledWith(
-        "/api/v1/reviews?listingId=listing-1",
+        "/api/v1/reviews?page=2",
+        { requireAuth: false },
       );
     });
 

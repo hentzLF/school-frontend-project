@@ -93,6 +93,19 @@ describe("api", () => {
     expect(mockRedirectToLogin).toHaveBeenCalledOnce();
   });
 
+  it("should not redirect on 401 when redirectOn401 is false", async () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(
+      new Response(JSON.stringify({ message: "Unauthorized" }), {
+        status: 401,
+      }),
+    );
+
+    await expect(
+      api("/api/auth/me", { redirectOn401: false }),
+    ).rejects.toThrow(ApiError);
+    expect(mockRedirectToLogin).not.toHaveBeenCalled();
+  });
+
   it("should not redirect on a successful response", async () => {
     vi.spyOn(globalThis, "fetch").mockResolvedValue(
       new Response(JSON.stringify({ ok: true }), { status: 200 }),

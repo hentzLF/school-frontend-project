@@ -37,7 +37,7 @@ describe("equipment [id] route", () => {
 
       expect(response.status).toBe(200);
       expect(mockBackendFetch).toHaveBeenCalledWith(
-        "/api/v1/equipment/1",
+        "/api/v1/provider/equipment/1",
         expect.objectContaining({ method: "PUT", body }),
       );
     });
@@ -85,7 +85,7 @@ describe("equipment [id] route", () => {
 
       expect(response.status).toBe(200);
       await expect(response.json()).resolves.toEqual({ success: true });
-      expect(mockBackendFetch).toHaveBeenCalledWith("/api/v1/equipment/1", {
+      expect(mockBackendFetch).toHaveBeenCalledWith("/api/v1/provider/equipment/1", {
         method: "DELETE",
       });
     });
@@ -115,7 +115,7 @@ describe("equipment [id] route", () => {
         { params: Promise.resolve({ id: "7" }) },
       );
 
-      expect(mockBackendFetch).toHaveBeenCalledWith("/api/v1/equipment/7", {
+      expect(mockBackendFetch).toHaveBeenCalledWith("/api/v1/provider/equipment/7", {
         method: "DELETE",
       });
     });

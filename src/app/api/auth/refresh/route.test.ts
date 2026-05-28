@@ -4,13 +4,14 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 vi.mock("@/lib/auth", () => ({
   getRefreshToken: vi.fn(),
   setAuthCookies: vi.fn(),
+  setAuthCookiesOnResponse: vi.fn(),
 }));
 
-import { getRefreshToken, setAuthCookies } from "@/lib/auth";
+import { getRefreshToken, setAuthCookiesOnResponse } from "@/lib/auth";
 import { POST } from "./route";
 
 const mockGetRefreshToken = vi.mocked(getRefreshToken);
-const mockSetAuthCookies = vi.mocked(setAuthCookies);
+const mockSetAuthCookies = vi.mocked(setAuthCookiesOnResponse);
 
 const authData = {
   token: "new-access-token",
@@ -52,7 +53,7 @@ describe("auth/refresh route", () => {
     const response = await POST();
 
     expect(response.status).toBe(200);
-    expect(mockSetAuthCookies).toHaveBeenCalledWith(authData);
+    expect(mockSetAuthCookies).toHaveBeenCalledWith(expect.anything(), authData);
     await expect(response.json()).resolves.toEqual({ user: authData.user });
   });
 

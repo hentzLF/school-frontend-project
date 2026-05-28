@@ -18,21 +18,27 @@ describe("bookings route", () => {
   });
 
   describe("GET", () => {
-    it("should return booking data from the backend", async () => {
-      const payload = [{ id: "1", listingId: "listing-1" }];
-      mockBackendFetch.mockResolvedValue({ data: payload, status: 200 });
+    it("should return booking items from the paginated backend response", async () => {
+      const items = [{ id: "1", serviceListingId: "listing-1" }];
+      mockBackendFetch.mockResolvedValue({
+        data: { items, totalCount: 1, page: 1, pageSize: 20, totalPages: 1 },
+        status: 200,
+      });
 
       const response = await GET(
         new NextRequest("http://localhost/api/bookings"),
       );
 
       expect(response.status).toBe(200);
-      await expect(response.json()).resolves.toEqual(payload);
+      await expect(response.json()).resolves.toEqual(items);
       expect(mockBackendFetch).toHaveBeenCalledWith("/api/v1/bookings");
     });
 
     it("should forward query parameters to the backend", async () => {
-      mockBackendFetch.mockResolvedValue({ data: [], status: 200 });
+      mockBackendFetch.mockResolvedValue({
+        data: { items: [], totalCount: 0, page: 1, pageSize: 20, totalPages: 0 },
+        status: 200,
+      });
 
       await GET(
         new NextRequest("http://localhost/api/bookings?status=Confirmed"),
@@ -58,9 +64,9 @@ describe("bookings route", () => {
 
   describe("POST", () => {
     const validBody = {
-      listingId: "listing-1",
-      startDate: "2024-06-01",
-      endDate: "2024-06-07",
+      serviceListingId: "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+      availabilityId: "b2c3d4e5-f6a7-8901-bcde-f12345678901",
+      areaInHectares: 5.5,
       notes: "Please be on time",
     };
 
@@ -88,7 +94,7 @@ describe("bookings route", () => {
       const response = await POST(
         new NextRequest("http://localhost/api/bookings", {
           method: "POST",
-          body: JSON.stringify({ listingId: "" }),
+          body: JSON.stringify({ serviceListingId: "", areaInHectares: -1 }),
         }),
       );
 

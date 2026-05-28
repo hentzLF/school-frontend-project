@@ -42,19 +42,12 @@ vi.mock("@/hooks/useTranslation", () => ({
 const mockListing: Listing = {
   id: "listing-1",
   title: "Tractor Service",
-  description: "Professional tractor plowing",
-  price: 50,
-  priceUnit: "hour",
-  categoryId: "cat-1",
   categoryName: "Plowing",
-  countyId: "county-1",
-  countyName: "Harju",
-  providerId: "prov-1",
   providerName: "John Farmer",
-  status: "Active",
-  imageUrl: null,
-  createdAt: "2026-01-01T00:00:00Z",
-  updatedAt: "2026-01-01T00:00:00Z",
+  pricePerHectare: 50,
+  isActive: true,
+  averageRating: 4.0,
+  reviewCount: 3,
 };
 
 describe("ListingList", () => {

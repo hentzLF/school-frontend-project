@@ -19,14 +19,14 @@ describe("equipment route", () => {
 
   describe("GET", () => {
     it("should return equipment data from the backend", async () => {
-      const payload = [{ id: "1", name: "John Deere 6120M" }];
+      const payload = [{ id: "1", name: "John Deere 6120M", make: "John Deere" }];
       mockBackendFetch.mockResolvedValue({ data: payload, status: 200 });
 
       const response = await GET();
 
       expect(response.status).toBe(200);
       await expect(response.json()).resolves.toEqual(payload);
-      expect(mockBackendFetch).toHaveBeenCalledWith("/api/v1/equipment");
+      expect(mockBackendFetch).toHaveBeenCalledWith("/api/v1/provider/equipment");
     });
 
     it("should propagate a backend error response", async () => {
@@ -44,14 +44,14 @@ describe("equipment route", () => {
 
       await GET();
 
-      expect(mockBackendFetch).toHaveBeenCalledWith("/api/v1/equipment");
+      expect(mockBackendFetch).toHaveBeenCalledWith("/api/v1/provider/equipment");
     });
   });
 
   describe("POST", () => {
     const validBody = {
       name: "John Deere 6120M",
-      description: "Powerful tractor for field work",
+      make: "John Deere",
       condition: "Good",
     };
 
@@ -70,16 +70,16 @@ describe("equipment route", () => {
 
       expect(response.status).toBe(201);
       expect(mockBackendFetch).toHaveBeenCalledWith(
-        "/api/v1/equipment",
+        "/api/v1/provider/equipment",
         expect.objectContaining({ method: "POST", body: validBody }),
       );
     });
 
-    it("should reject invalid input with 400", async () => {
+    it("should reject input missing required make field with 400", async () => {
       const response = await POST(
         new NextRequest("http://localhost/api/equipment", {
           method: "POST",
-          body: JSON.stringify({ name: "" }),
+          body: JSON.stringify({ name: "Tractor", condition: "Good" }),
         }),
       );
 

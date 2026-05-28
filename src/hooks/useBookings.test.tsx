@@ -33,20 +33,23 @@ function createWrapper() {
 }
 
 const mockBooking: Booking = {
-  id: "b1",
-  listingId: "l1",
-  listingTitle: "Tractor Service",
-  clientId: "c1",
-  clientName: "Client One",
-  providerId: "p1",
-  providerName: "Provider One",
+  id: "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
   status: "Pending",
-  startDate: "2026-06-01",
-  endDate: "2026-06-02",
   totalPrice: 150,
-  notes: null,
+  areaInHectares: 3,
   createdAt: "2026-01-01T00:00:00Z",
-  updatedAt: "2026-01-01T00:00:00Z",
+  notes: null,
+  serviceListingId: "listing-1",
+  clientProfileId: "client-profile-1",
+  providerProfileId: "provider-profile-1",
+  availabilityId: "avail-1",
+  availabilityStart: "2026-06-01T08:00:00Z",
+  availabilityEnd: "2026-06-01T16:00:00Z",
+  clientName: "Alice Smith",
+  listingTitle: "Tractor Service",
+  paymentStatus: null,
+  paymentAmount: null,
+  paymentPlatformFee: null,
 };
 
 describe("useBookings", () => {
@@ -106,18 +109,18 @@ describe("useCreateBooking", () => {
     });
 
     await result.current.mutateAsync({
-      listingId: "l1",
-      startDate: "2026-06-01",
-      endDate: "2026-06-02",
+      serviceListingId: "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+      availabilityId: "b2c3d4e5-f6a7-8901-bcde-f12345678901",
+      areaInHectares: 3,
       notes: "Please arrive early",
     });
 
     expect(mockApi).toHaveBeenCalledWith("/api/bookings", {
       method: "POST",
       body: {
-        listingId: "l1",
-        startDate: "2026-06-01",
-        endDate: "2026-06-02",
+        serviceListingId: "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+        availabilityId: "b2c3d4e5-f6a7-8901-bcde-f12345678901",
+        areaInHectares: 3,
         notes: "Please arrive early",
       },
     });
@@ -129,18 +132,18 @@ describe("useUpdateBookingStatus", () => {
     vi.clearAllMocks();
   });
 
-  it("should call api with PUT and new status", async () => {
-    mockApi.mockResolvedValue({ ...mockBooking, status: "Confirmed" });
+  it("should call api with PATCH and new status", async () => {
+    mockApi.mockResolvedValue({ ...mockBooking, status: "AwaitingPayment" });
 
     const { result } = renderHook(() => useUpdateBookingStatus(), {
       wrapper: createWrapper(),
     });
 
-    await result.current.mutateAsync({ id: "b1", status: "Confirmed" });
+    await result.current.mutateAsync({ id: "b1", status: "AwaitingPayment" });
 
     expect(mockApi).toHaveBeenCalledWith("/api/bookings/b1/status", {
-      method: "PUT",
-      body: { status: "Confirmed" },
+      method: "PATCH",
+      body: { status: "AwaitingPayment" },
     });
   });
 });

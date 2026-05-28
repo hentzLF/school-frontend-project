@@ -60,10 +60,8 @@ describe("listings route", () => {
     const validBody = {
       title: "Tractor service",
       description: "Plowing and tilling",
-      price: 50,
-      priceUnit: "hour",
-      categoryId: "cat-1",
-      countyId: "county-1",
+      pricePerHectare: 50,
+      serviceCategoryId: "cat-1",
     };
 
     it("should create a listing with valid input", async () => {

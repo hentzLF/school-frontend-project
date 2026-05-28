@@ -4,12 +4,13 @@ import { NextRequest } from "next/server";
 
 vi.mock("@/lib/auth", () => ({
   setAuthCookies: vi.fn(),
+  setAuthCookiesOnResponse: vi.fn(),
 }));
 
-import { setAuthCookies } from "@/lib/auth";
+import { setAuthCookiesOnResponse } from "@/lib/auth";
 import { POST } from "./route";
 
-const mockSetAuthCookies = vi.mocked(setAuthCookies);
+const mockSetAuthCookies = vi.mocked(setAuthCookiesOnResponse);
 
 function postRequest(body: unknown): NextRequest {
   return new NextRequest("http://localhost/api/auth/login", {
@@ -41,7 +42,13 @@ describe("auth/login route", () => {
 
   it("should log in with valid credentials and set auth cookies", async () => {
     vi.spyOn(globalThis, "fetch").mockResolvedValue(
-      new Response(JSON.stringify(authData), { status: 200 }),
+      new Response(JSON.stringify({ accessToken: authData.token }), {
+        status: 200,
+        headers: {
+          "Set-Cookie":
+            `refreshToken=${authData.refreshToken}; Path=/api/v1/auth; HttpOnly`,
+        },
+      }),
     );
 
     const response = await POST(
@@ -49,8 +56,13 @@ describe("auth/login route", () => {
     );
 
     expect(response.status).toBe(200);
-    expect(mockSetAuthCookies).toHaveBeenCalledWith(authData);
-    await expect(response.json()).resolves.toEqual({ user: authData.user });
+    expect(mockSetAuthCookies).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({
+        token: authData.token,
+        refreshToken: authData.refreshToken,
+      }),
+    );
   });
 
   it("should reject an invalid email with 400", async () => {

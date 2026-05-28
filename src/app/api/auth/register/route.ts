@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { setAuthCookies } from "@/lib/auth";
+import { setAuthCookiesOnResponse } from "@/lib/auth";
 import type { AuthResponse } from "@/types/auth";
 import type { ApiErrorResponse } from "@/types/api";
 
@@ -9,7 +9,6 @@ const registerSchema = z.object({
   password: z.string().min(1),
   firstName: z.string().min(1),
   lastName: z.string().min(1),
-  role: z.enum(["Client", "Provider"]),
 });
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
@@ -65,8 +64,27 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     );
   }
 
-  const authData: AuthResponse = await backendResponse.json();
-  await setAuthCookies(authData);
+  const text = await backendResponse.text();
+  if (!text) {
+    // Backend returned 201 with no body — registration succeeded, prompt login
+    return NextResponse.json(
+      { message: "Registration successful" },
+      { status: 201 },
+    );
+  }
 
-  return NextResponse.json({ user: authData.user }, { status: 201 });
+  let authData: AuthResponse;
+  try {
+    authData = JSON.parse(text) as AuthResponse;
+  } catch {
+    return NextResponse.json(
+      { message: "Registration successful" },
+      { status: 201 },
+    );
+  }
+
+  const response = NextResponse.json({ user: authData.user }, { status: 201 });
+  setAuthCookiesOnResponse(response, authData);
+
+  return response;
 }

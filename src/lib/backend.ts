@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { getToken, getRefreshToken, setAuthCookies } from "@/lib/auth";
-import type { AuthResponse } from "@/types/auth";
+import { getToken, getRefreshToken, setAuthCookies, clearAuthCookiesOnResponse } from "@/lib/auth";
+import { normalizeAuthResponse, type RawAuthResponse } from "@/types/auth";
 
 type BackendRequestOptions = {
   method?: string;
@@ -14,21 +14,44 @@ type BackendRequestOptions = {
  * rotated tokens. Returns the new access token, or null when a refresh is not
  * possible (no refresh token, backend rejection, or network failure).
  */
+function extractRefreshTokenCookie(headers: Headers): string | undefined {
+  const h = headers as unknown as { getSetCookie?: () => string[] };
+  const cookies: string[] =
+    typeof h.getSetCookie === "function"
+      ? h.getSetCookie()
+      : [headers.get("set-cookie") ?? ""];
+
+  for (const cookie of cookies) {
+    if (cookie.toLowerCase().startsWith("refreshtoken=")) {
+      return cookie.split(";")[0].slice("refreshToken=".length);
+    }
+  }
+  return undefined;
+}
+
 async function refreshAccessToken(backendUrl: string): Promise<string | null> {
   const refreshToken = await getRefreshToken();
   if (!refreshToken) return null;
 
   try {
+    // Backend reads refreshToken from Request.Cookies, not request body
     const response = await fetch(`${backendUrl}/api/v1/auth/refresh`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ refreshToken }),
+      headers: {
+        "Content-Type": "application/json",
+        Cookie: `refreshToken=${refreshToken}`,
+      },
     });
     if (!response.ok) return null;
 
-    const authData = (await response.json()) as AuthResponse;
+    const rawBody = (await response.json()) as RawAuthResponse;
+    const newRefreshToken = extractRefreshTokenCookie(response.headers);
+    const authData = normalizeAuthResponse({
+      ...rawBody,
+      refreshToken: newRefreshToken,
+    });
     await setAuthCookies(authData);
-    return authData.token;
+    return authData.token || null;
   } catch {
     return null;
   }
@@ -95,6 +118,16 @@ export async function backendFetch<T>(
           { status: 502 },
         );
       }
+    } else {
+      // Refresh failed — clear cookies on the response so the browser actually
+      // removes them. cookies() store writes don't add Set-Cookie headers in
+      // Route Handlers, so clearAuthCookiesOnResponse is required here.
+      const unauthResponse = NextResponse.json(
+        { error: "Unauthorized" },
+        { status: 401 },
+      );
+      clearAuthCookiesOnResponse(unauthResponse);
+      return unauthResponse;
     }
   }
 
@@ -102,10 +135,16 @@ export async function backendFetch<T>(
     const errorData = await response.json().catch(() => ({
       message: response.statusText,
     }));
-    return NextResponse.json(
+    const errResponse = NextResponse.json(
       { error: errorData.message ?? "Request failed" },
       { status: response.status },
     );
+    // If a retried request (after successful refresh) is still rejected, clear
+    // the cookies so stale state doesn't trap the user at /dashboard.
+    if (response.status === 401) {
+      clearAuthCookiesOnResponse(errResponse);
+    }
+    return errResponse;
   }
 
   if (response.status === 204) {

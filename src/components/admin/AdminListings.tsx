@@ -61,12 +61,12 @@ export function AdminListings() {
                     {listing.categoryName}
                   </TableCell>
                   <TableCell className="text-muted-foreground">
-                    {listing.price.toFixed(2)} EUR
+                    {listing.pricePerHectare.toFixed(2)} EUR / ha
                   </TableCell>
                   <TableCell>
                     <StatusBadge
-                      status={listing.status}
-                      label={listing.status}
+                      status={listing.isActive ? "Active" : "Inactive"}
+                      label={listing.isActive ? "Active" : "Inactive"}
                     />
                   </TableCell>
                   <TableCell className="text-right">

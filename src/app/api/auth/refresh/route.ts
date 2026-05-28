@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
-import { getRefreshToken, setAuthCookies } from "@/lib/auth";
-import type { AuthResponse } from "@/types/auth";
+import {
+  getRefreshToken,
+  setAuthCookiesOnResponse,
+} from "@/lib/auth";
+import { normalizeAuthResponse, type RawAuthResponse } from "@/types/auth";
 import type { ApiErrorResponse } from "@/types/api";
 
 export async function POST(): Promise<NextResponse> {
@@ -43,8 +46,11 @@ export async function POST(): Promise<NextResponse> {
     );
   }
 
-  const authData: AuthResponse = await backendResponse.json();
-  await setAuthCookies(authData);
+  const authData = normalizeAuthResponse(
+    (await backendResponse.json()) as RawAuthResponse,
+  );
+  const response = NextResponse.json({ user: authData.user }, { status: 200 });
+  setAuthCookiesOnResponse(response, authData);
 
-  return NextResponse.json({ user: authData.user }, { status: 200 });
+  return response;
 }

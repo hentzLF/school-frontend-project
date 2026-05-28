@@ -1,17 +1,23 @@
 export type Equipment = {
   id: string;
   name: string;
-  description: string;
-  providerId: string;
-  condition: string;
-  createdAt: string;
-  updatedAt: string;
+  make: string;
+  model?: string;
+  manufactureYear?: number;
+  horsePower?: number;
+  condition: "New" | "Excellent" | "Good" | "Fair" | "Poor";
+  status: "Available" | "InUse" | "UnderMaintenance" | "Retired";
+  description?: string;
 };
 
 export type CreateEquipmentRequest = {
   name: string;
-  description: string;
+  make: string;
+  model?: string;
+  manufactureYear?: number;
+  horsePower?: number;
   condition: string;
+  description?: string;
 };
 
 export type UpdateEquipmentRequest = Partial<CreateEquipmentRequest>;

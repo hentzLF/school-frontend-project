@@ -8,7 +8,7 @@ vi.mock("@/lib/backend", () => ({
 }));
 
 import { backendFetch } from "@/lib/backend";
-import { PUT } from "./route";
+import { PATCH } from "./route";
 
 const mockBackendFetch = vi.mocked(backendFetch);
 
@@ -17,16 +17,16 @@ describe("bookings [id] status route", () => {
     vi.clearAllMocks();
   });
 
-  describe("PUT", () => {
-    const validBody = { status: "Confirmed" as const };
+  describe("PATCH", () => {
+    const validBody = { status: "AwaitingPayment" as const };
 
     it("should update booking status with valid input", async () => {
-      const payload = { id: "1", status: "Confirmed" };
+      const payload = { id: "1", status: "AwaitingPayment" };
       mockBackendFetch.mockResolvedValue({ data: payload, status: 200 });
 
-      const response = await PUT(
+      const response = await PATCH(
         new NextRequest("http://localhost/api/bookings/1/status", {
-          method: "PUT",
+          method: "PATCH",
           body: JSON.stringify(validBody),
         }),
         { params: Promise.resolve({ id: "1" }) },
@@ -36,14 +36,14 @@ describe("bookings [id] status route", () => {
       await expect(response.json()).resolves.toEqual(payload);
       expect(mockBackendFetch).toHaveBeenCalledWith(
         "/api/v1/bookings/1/status",
-        expect.objectContaining({ method: "PUT", body: validBody }),
+        expect.objectContaining({ method: "PATCH", body: validBody }),
       );
     });
 
     it("should reject invalid status value with 400", async () => {
-      const response = await PUT(
+      const response = await PATCH(
         new NextRequest("http://localhost/api/bookings/1/status", {
-          method: "PUT",
+          method: "PATCH",
           body: JSON.stringify({ status: "InvalidStatus" }),
         }),
         { params: Promise.resolve({ id: "1" }) },
@@ -54,9 +54,9 @@ describe("bookings [id] status route", () => {
     });
 
     it("should reject malformed JSON body with 400", async () => {
-      const response = await PUT(
+      const response = await PATCH(
         new NextRequest("http://localhost/api/bookings/1/status", {
-          method: "PUT",
+          method: "PATCH",
           body: "{not json",
         }),
         { params: Promise.resolve({ id: "1" }) },
@@ -71,9 +71,9 @@ describe("bookings [id] status route", () => {
         NextResponse.json({ error: "Backend down" }, { status: 502 }),
       );
 
-      const response = await PUT(
+      const response = await PATCH(
         new NextRequest("http://localhost/api/bookings/1/status", {
-          method: "PUT",
+          method: "PATCH",
           body: JSON.stringify(validBody),
         }),
         { params: Promise.resolve({ id: "1" }) },

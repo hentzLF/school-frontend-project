@@ -59,7 +59,9 @@ describe("useAuth", () => {
     await waitFor(() => expect(result.current.isLoading).toBe(false));
     expect(result.current.user).toEqual(user);
     expect(result.current.isAuthenticated).toBe(true);
-    expect(mockApi).toHaveBeenCalledWith("/api/auth/me");
+    expect(mockApi).toHaveBeenCalledWith("/api/auth/me", {
+      redirectOn401: false,
+    });
   });
 
   it("should return null user and not authenticated when me returns null", async () => {

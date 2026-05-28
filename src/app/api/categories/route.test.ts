@@ -31,15 +31,14 @@ describe("categories route", () => {
       await expect(response.json()).resolves.toEqual(payload);
     });
 
-    it("should call the backend admin path with requireAuth false", async () => {
+    it("should call the public backend categories path with requireAuth false", async () => {
       mockBackendFetch.mockResolvedValue({ data: [], status: 200 });
 
       await GET();
 
-      expect(mockBackendFetch).toHaveBeenCalledWith(
-        "/api/v1/admin/categories",
-        { requireAuth: false },
-      );
+      expect(mockBackendFetch).toHaveBeenCalledWith("/api/v1/categories", {
+        requireAuth: false,
+      });
     });
 
     it("should propagate a backend error response", async () => {

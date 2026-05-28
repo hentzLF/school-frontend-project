@@ -37,7 +37,6 @@ export function AdminBookings() {
               <TableRow>
                 <TableHead>{t("admin.listing")}</TableHead>
                 <TableHead>{t("bookings.client")}</TableHead>
-                <TableHead>{t("bookings.provider")}</TableHead>
                 <TableHead>{t("admin.dates")}</TableHead>
                 <TableHead>{t("admin.total")}</TableHead>
                 <TableHead>{t("admin.status")}</TableHead>
@@ -53,11 +52,9 @@ export function AdminBookings() {
                     {booking.clientName}
                   </TableCell>
                   <TableCell className="text-muted-foreground">
-                    {booking.providerName}
-                  </TableCell>
-                  <TableCell className="text-muted-foreground">
-                    {new Date(booking.startDate).toLocaleDateString()} —{" "}
-                    {new Date(booking.endDate).toLocaleDateString()}
+                    {booking.availabilityStart && booking.availabilityEnd
+                      ? `${new Date(booking.availabilityStart).toLocaleDateString()} — ${new Date(booking.availabilityEnd).toLocaleDateString()}`
+                      : "—"}
                   </TableCell>
                   <TableCell className="text-muted-foreground">
                     {booking.totalPrice.toFixed(2)} EUR

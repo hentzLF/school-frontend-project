@@ -3,7 +3,7 @@ import { backendFetch, isErrorResponse } from "@/lib/backend";
 import type { Category } from "@/types/category";
 
 export async function GET(): Promise<NextResponse> {
-  const result = await backendFetch<Category[]>("/api/v1/admin/categories", {
+  const result = await backendFetch<Category[]>("/api/v1/categories", {
     requireAuth: false,
   });
 

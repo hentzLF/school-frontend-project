@@ -6,10 +6,20 @@ import type { Booking } from "@/types/booking";
 type RouteParams = { params: Promise<{ id: string }> };
 
 const updateStatusSchema = z.object({
-  status: z.enum(["Confirmed", "InProgress", "Completed", "Cancelled"]),
+  status: z.enum([
+    "Pending",
+    "Confirmed",
+    "InProgress",
+    "ProviderCompleted",
+    "ClientConfirmed",
+    "Archived",
+    "Cancelled",
+    "Disputed",
+    "AwaitingPayment",
+  ]),
 });
 
-export async function PUT(
+export async function PATCH(
   request: NextRequest,
   { params }: RouteParams,
 ): Promise<NextResponse> {
@@ -34,7 +44,7 @@ export async function PUT(
   }
 
   const result = await backendFetch<Booking>(`/api/v1/bookings/${id}/status`, {
-    method: "PUT",
+    method: "PATCH",
     body: parsed.data,
   });
 

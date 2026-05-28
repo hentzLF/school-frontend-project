@@ -65,7 +65,7 @@ describe("listings [id] route", () => {
       const payload = { id: "1", title: "Updated title" };
       mockBackendFetch.mockResolvedValue({ data: payload, status: 200 });
 
-      const body = { title: "Updated title", description: "desc", price: 100 };
+      const body = { title: "Updated title", description: "desc", pricePerHectare: 100 };
       const response = await PUT(
         new NextRequest("http://localhost/api/listings/1", {
           method: "PUT",

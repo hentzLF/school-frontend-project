@@ -7,10 +7,11 @@ import type { PaginatedResponse } from "@/types/api";
 const createListingSchema = z.object({
   title: z.string().min(1),
   description: z.string().min(1),
-  price: z.number().positive(),
-  priceUnit: z.string().min(1),
-  categoryId: z.string().min(1),
-  countyId: z.string().min(1),
+  pricePerHectare: z.number().positive(),
+  serviceCategoryId: z.string().min(1),
+  location: z
+    .object({ municipalityId: z.string().uuid() })
+    .optional(),
 });
 
 export async function GET(request: NextRequest): Promise<NextResponse> {

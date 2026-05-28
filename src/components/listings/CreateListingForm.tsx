@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import {
   useCreateListing,
   useCounties,
+  useMunicipalities,
   useCategories,
 } from "@/hooks/useListings";
 import { useTranslation } from "@/hooks/useTranslation";
@@ -29,10 +30,10 @@ import {
 const createListingSchema = z.object({
   title: z.string().min(1, "Title is required"),
   description: z.string().min(1, "Description is required"),
-  price: z.number().positive("Price must be positive"),
-  priceUnit: z.string().min(1, "Price unit is required"),
-  categoryId: z.string().min(1, "Category is required"),
-  countyId: z.string().min(1, "County is required"),
+  pricePerHectare: z.number().positive("Price must be positive"),
+  serviceCategoryId: z.string().min(1, "Category is required"),
+  countyId: z.string().optional(),
+  municipalityId: z.string().optional(),
 });
 
 type CreateListingFormValues = z.infer<typeof createListingSchema>;
@@ -50,14 +51,28 @@ export function CreateListingForm() {
     register,
     handleSubmit,
     control,
+    watch,
+    setValue,
     formState: { errors },
   } = useForm<CreateListingFormValues>({
     resolver: zodResolver(createListingSchema),
   });
 
+  const selectedCountyId = watch("countyId");
+  const { data: municipalities } = useMunicipalities(selectedCountyId);
+
   const onSubmit = async (data: CreateListingFormValues) => {
     try {
-      const listing = await createListing.mutateAsync(data);
+      const payload = {
+        title: data.title,
+        description: data.description,
+        pricePerHectare: data.pricePerHectare,
+        serviceCategoryId: data.serviceCategoryId,
+        ...(data.municipalityId
+          ? { location: { municipalityId: data.municipalityId } }
+          : {}),
+      };
+      const listing = await createListing.mutateAsync(payload);
       router.push(`/listings/${listing.id}`);
     } catch {
       // Error captured by mutation
@@ -71,13 +86,6 @@ export function CreateListingForm() {
       : apiError
         ? t("auth.unexpectedError")
         : null;
-
-  const priceUnits = [
-    { value: "hour", label: t("listings.perHour") },
-    { value: "day", label: t("listings.perDay") },
-    { value: "hectare", label: t("listings.perHectare") },
-    { value: "job", label: t("listings.perJob") },
-  ];
 
   return (
     <div className="mx-auto max-w-2xl">
@@ -120,75 +128,46 @@ export function CreateListingForm() {
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-1.5">
-                <Label htmlFor="price">{t("listings.priceLabel")}</Label>
+                <Label htmlFor="pricePerHectare">
+                  {t("listings.priceLabel")} (EUR / ha)
+                </Label>
                 <Input
-                  id="price"
+                  id="pricePerHectare"
                   type="number"
                   step="0.01"
-                  {...register("price", { valueAsNumber: true })}
-                  aria-invalid={!!errors.price}
+                  min="0.01"
+                  {...register("pricePerHectare", { valueAsNumber: true })}
+                  aria-invalid={!!errors.pricePerHectare}
                 />
-                {errors.price && (
+                {errors.pricePerHectare && (
                   <p role="alert" className={fieldError}>
-                    {errors.price.message}
+                    {errors.pricePerHectare.message}
                   </p>
                 )}
               </div>
 
               <div className="space-y-1.5">
-                <Label htmlFor="priceUnit">{t("listings.priceUnit")}</Label>
+                <Label htmlFor="serviceCategoryId">
+                  {t("listings.category")}
+                </Label>
                 <Controller
                   control={control}
-                  name="priceUnit"
+                  name="serviceCategoryId"
                   render={({ field }) => (
                     <Select
                       value={field.value ?? ""}
                       onValueChange={field.onChange}
                     >
                       <SelectTrigger
-                        id="priceUnit"
+                        id="serviceCategoryId"
                         className="w-full"
-                        aria-invalid={!!errors.priceUnit}
-                      >
-                        <SelectValue placeholder={t("listings.selectUnit")} />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {priceUnits.map((unit) => (
-                          <SelectItem key={unit.value} value={unit.value}>
-                            {unit.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  )}
-                />
-                {errors.priceUnit && (
-                  <p role="alert" className={fieldError}>
-                    {errors.priceUnit.message}
-                  </p>
-                )}
-              </div>
-            </div>
-
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="space-y-1.5">
-                <Label htmlFor="categoryId">{t("listings.category")}</Label>
-                <Controller
-                  control={control}
-                  name="categoryId"
-                  render={({ field }) => (
-                    <Select
-                      value={field.value ?? ""}
-                      onValueChange={field.onChange}
-                    >
-                      <SelectTrigger
-                        id="categoryId"
-                        className="w-full"
-                        aria-invalid={!!errors.categoryId}
+                        aria-invalid={!!errors.serviceCategoryId}
                       >
                         <SelectValue
                           placeholder={t("listings.selectCategory")}
-                        />
+                        >
+                          {categories?.find((c) => c.id === field.value)?.name}
+                        </SelectValue>
                       </SelectTrigger>
                       <SelectContent>
                         {categories?.map((category) => (
@@ -200,13 +179,15 @@ export function CreateListingForm() {
                     </Select>
                   )}
                 />
-                {errors.categoryId && (
+                {errors.serviceCategoryId && (
                   <p role="alert" className={fieldError}>
-                    {errors.categoryId.message}
+                    {errors.serviceCategoryId.message}
                   </p>
                 )}
               </div>
+            </div>
 
+            <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-1.5">
                 <Label htmlFor="countyId">{t("listings.county")}</Label>
                 <Controller
@@ -215,14 +196,15 @@ export function CreateListingForm() {
                   render={({ field }) => (
                     <Select
                       value={field.value ?? ""}
-                      onValueChange={field.onChange}
+                      onValueChange={(val) => {
+                        field.onChange(val);
+                        setValue("municipalityId", undefined);
+                      }}
                     >
-                      <SelectTrigger
-                        id="countyId"
-                        className="w-full"
-                        aria-invalid={!!errors.countyId}
-                      >
-                        <SelectValue placeholder={t("listings.selectCounty")} />
+                      <SelectTrigger id="countyId" className="w-full">
+                        <SelectValue placeholder={t("listings.selectCounty")}>
+                          {counties?.find((c) => c.id === field.value)?.name}
+                        </SelectValue>
                       </SelectTrigger>
                       <SelectContent>
                         {counties?.map((county) => (
@@ -234,11 +216,43 @@ export function CreateListingForm() {
                     </Select>
                   )}
                 />
-                {errors.countyId && (
-                  <p role="alert" className={fieldError}>
-                    {errors.countyId.message}
-                  </p>
-                )}
+              </div>
+
+              <div className="space-y-1.5">
+                <Label htmlFor="municipalityId">
+                  {t("listings.municipality")}
+                </Label>
+                <Controller
+                  control={control}
+                  name="municipalityId"
+                  render={({ field }) => (
+                    <Select
+                      value={field.value ?? ""}
+                      onValueChange={field.onChange}
+                      disabled={!selectedCountyId || !municipalities?.length}
+                    >
+                      <SelectTrigger id="municipalityId" className="w-full">
+                        <SelectValue
+                          placeholder={
+                            selectedCountyId
+                              ? t("listings.selectMunicipality")
+                              : t("listings.selectCountyFirst")
+                          }
+                        >
+                          {municipalities?.find((m) => m.id === field.value)
+                            ?.name}
+                        </SelectValue>
+                      </SelectTrigger>
+                      <SelectContent>
+                        {municipalities?.map((m) => (
+                          <SelectItem key={m.id} value={m.id}>
+                            {m.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
               </div>
             </div>
 

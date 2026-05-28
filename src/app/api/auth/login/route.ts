@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { setAuthCookies } from "@/lib/auth";
-import type { AuthResponse } from "@/types/auth";
+import { setAuthCookiesOnResponse } from "@/lib/auth";
+import { normalizeAuthResponse, type RawAuthResponse } from "@/types/auth";
 import type { ApiErrorResponse } from "@/types/api";
 
 const loginSchema = z.object({
@@ -62,8 +62,28 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     );
   }
 
-  const authData: AuthResponse = await backendResponse.json();
-  await setAuthCookies(authData);
+  // Backend returns accessToken in body and refreshToken as a Set-Cookie header
+  const rawBody = (await backendResponse.json()) as RawAuthResponse;
+  const refreshToken = extractRefreshTokenCookie(backendResponse.headers);
+  const authData = normalizeAuthResponse({ ...rawBody, refreshToken });
 
-  return NextResponse.json({ user: authData.user }, { status: 200 });
+  const response = NextResponse.json({ user: authData.user }, { status: 200 });
+  setAuthCookiesOnResponse(response, authData);
+
+  return response;
+}
+
+function extractRefreshTokenCookie(headers: Headers): string | undefined {
+  const h = headers as unknown as { getSetCookie?: () => string[] };
+  const cookies: string[] =
+    typeof h.getSetCookie === "function"
+      ? h.getSetCookie()
+      : [headers.get("set-cookie") ?? ""];
+
+  for (const cookie of cookies) {
+    if (cookie.toLowerCase().startsWith("refreshtoken=")) {
+      return cookie.split(";")[0].slice("refreshToken=".length);
+    }
+  }
+  return undefined;
 }

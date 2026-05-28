@@ -1,32 +1,50 @@
 export type Listing = {
   id: string;
   title: string;
-  description: string;
-  price: number;
-  priceUnit: string;
-  categoryId: string;
   categoryName: string;
+  providerName: string;
+  pricePerHectare: number;
+  isActive: boolean;
+  averageRating: number;
+  reviewCount: number;
+};
+
+export type ListingLocation = {
+  municipalityId: string;
+  municipalityName: string;
   countyId: string;
   countyName: string;
-  providerId: string;
+  address: string | null;
+  latitude: number | null;
+  longitude: number | null;
+};
+
+export type ListingDetail = {
+  id: string;
+  title: string;
+  description: string | null;
+  pricePerHectare: number;
+  isActive: boolean;
+  userProfileId: string;
+  serviceCategoryId: string;
+  location: ListingLocation | null;
+  categoryName: string;
   providerName: string;
-  status: "Active" | "Inactive" | "Draft";
-  imageUrl: string | null;
-  createdAt: string;
-  updatedAt: string;
+  providerUserId: string | null;
+  averageRating: number;
+  reviewCount: number;
 };
 
 export type CreateListingRequest = {
   title: string;
   description: string;
-  price: number;
-  priceUnit: string;
-  categoryId: string;
-  countyId: string;
+  pricePerHectare: number;
+  serviceCategoryId: string;
+  location?: { municipalityId: string };
 };
 
 export type UpdateListingRequest = Partial<CreateListingRequest> & {
-  status?: "Active" | "Inactive" | "Draft";
+  isActive?: boolean;
 };
 
 export type ListingFilters = {

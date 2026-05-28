@@ -1,10 +1,16 @@
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 import { Logo } from "@/components/layout/Logo";
 
 type AuthLayoutProps = {
   children: React.ReactNode;
 };
 
-export default function AuthLayout({ children }: AuthLayoutProps) {
+export default async function AuthLayout({ children }: AuthLayoutProps) {
+  const cookieStore = await cookies();
+  if (cookieStore.get("token")) {
+    redirect("/dashboard");
+  }
   return (
     <div className="flex min-h-svh flex-col bg-muted/30">
       <div className="flex flex-1 flex-col items-center justify-center px-4 py-10">

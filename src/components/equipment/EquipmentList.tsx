@@ -44,11 +44,13 @@ export function EquipmentList() {
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
+  const [make, setMake] = useState("");
   const [description, setDescription] = useState("");
   const [condition, setCondition] = useState("");
 
   const conditions = [
     { value: "New", label: t("equipment.conditionNew") },
+    { value: "Excellent", label: t("equipment.conditionExcellent") },
     { value: "Good", label: t("equipment.conditionGood") },
     { value: "Fair", label: t("equipment.conditionFair") },
     { value: "Poor", label: t("equipment.conditionPoor") },
@@ -57,8 +59,14 @@ export function EquipmentList() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await createEquipment.mutateAsync({ name, description, condition });
+      await createEquipment.mutateAsync({
+        name,
+        make,
+        description: description || undefined,
+        condition,
+      });
       setName("");
+      setMake("");
       setDescription("");
       setCondition("");
       setOpen(false);
@@ -104,6 +112,15 @@ export function EquipmentList() {
                   />
                 </div>
                 <div className="space-y-1.5">
+                  <Label htmlFor="eq-make">{t("equipment.make")}</Label>
+                  <Input
+                    id="eq-make"
+                    value={make}
+                    onChange={(e) => setMake(e.target.value)}
+                    required
+                  />
+                </div>
+                <div className="space-y-1.5">
                   <Label htmlFor="eq-description">
                     {t("equipment.description")}
                   </Label>
@@ -112,7 +129,6 @@ export function EquipmentList() {
                     rows={2}
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
-                    required
                   />
                 </div>
                 <div className="space-y-1.5">
@@ -145,7 +161,7 @@ export function EquipmentList() {
                   </DialogClose>
                   <Button
                     type="submit"
-                    disabled={createEquipment.isPending || !condition}
+                    disabled={createEquipment.isPending || !condition || !make}
                   >
                     {createEquipment.isPending
                       ? t("equipment.adding")
@@ -173,9 +189,12 @@ export function EquipmentList() {
               <CardContent className="flex items-start justify-between gap-3">
                 <div className="min-w-0 space-y-1.5">
                   <h3 className="font-medium text-foreground">{item.name}</h3>
-                  <p className="text-sm text-muted-foreground">
-                    {item.description}
-                  </p>
+                  <p className="text-sm text-muted-foreground">{item.make}</p>
+                  {item.description && (
+                    <p className="text-sm text-muted-foreground">
+                      {item.description}
+                    </p>
+                  )}
                   <Badge variant="secondary">
                     {conditionLabel(item.condition)}
                   </Badge>

@@ -1,4 +1,5 @@
 import { cookies } from "next/headers";
+import type { NextResponse } from "next/server";
 import type { AuthResponse, User } from "@/types/auth";
 
 export const TOKEN_COOKIE = "token";
@@ -32,10 +33,27 @@ export async function setAuthCookies(
   );
 }
 
+export function setAuthCookiesOnResponse(
+  response: NextResponse,
+  authResponse: AuthResponse,
+): void {
+  response.cookies.set(TOKEN_COOKIE, authResponse.token, cookieOptions);
+  response.cookies.set(
+    REFRESH_TOKEN_COOKIE,
+    authResponse.refreshToken,
+    cookieOptions,
+  );
+}
+
 export async function clearAuthCookies(): Promise<void> {
   const cookieStore = await cookies();
   cookieStore.delete(TOKEN_COOKIE);
   cookieStore.delete(REFRESH_TOKEN_COOKIE);
+}
+
+export function clearAuthCookiesOnResponse(response: NextResponse): void {
+  response.cookies.delete(TOKEN_COOKIE);
+  response.cookies.delete(REFRESH_TOKEN_COOKIE);
 }
 
 export async function getToken(): Promise<string | undefined> {

@@ -4,13 +4,14 @@ type RequestOptions = {
   method?: string;
   body?: unknown;
   headers?: Record<string, string>;
+  redirectOn401?: boolean;
 };
 
 export async function api<T>(
   endpoint: string,
   options: RequestOptions = {},
 ): Promise<T> {
-  const { method = "GET", body, headers = {} } = options;
+  const { method = "GET", body, headers = {}, redirectOn401 = true } = options;
 
   const config: RequestInit = {
     method,
@@ -34,7 +35,7 @@ export async function api<T>(
 
     // A 401 here means the server-side token refresh also failed — the
     // session is genuinely over, so send the user to the login page.
-    if (response.status === 401) {
+    if (response.status === 401 && redirectOn401) {
       redirectToLogin();
     }
 

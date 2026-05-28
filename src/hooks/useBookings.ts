@@ -46,7 +46,7 @@ export function useUpdateBookingStatus() {
   >({
     mutationFn: ({ id, status }) =>
       api<Booking>(BOOKING_ROUTES.updateStatus(id), {
-        method: "PUT",
+        method: "PATCH",
         body: { status },
       }),
     onSuccess: () => {

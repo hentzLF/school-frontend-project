@@ -7,6 +7,7 @@ afterEach(cleanup);
 
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ push: vi.fn() }),
+  useSearchParams: () => ({ get: () => null }),
 }));
 
 const mockLogin = vi.fn();

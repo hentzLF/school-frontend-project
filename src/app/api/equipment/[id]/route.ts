@@ -20,10 +20,10 @@ export async function PUT(
     );
   }
 
-  const result = await backendFetch<Equipment>(`/api/v1/equipment/${id}`, {
-    method: "PUT",
-    body,
-  });
+  const result = await backendFetch<Equipment>(
+    `/api/v1/provider/equipment/${id}`,
+    { method: "PUT", body },
+  );
 
   if (isErrorResponse(result)) return result;
   return NextResponse.json(result.data, { status: 200 });
@@ -34,9 +34,10 @@ export async function DELETE(
   { params }: RouteParams,
 ): Promise<NextResponse> {
   const { id } = await params;
-  const result = await backendFetch<void>(`/api/v1/equipment/${id}`, {
-    method: "DELETE",
-  });
+  const result = await backendFetch<void>(
+    `/api/v1/provider/equipment/${id}`,
+    { method: "DELETE" },
+  );
 
   if (isErrorResponse(result)) return result;
   return NextResponse.json({ success: true }, { status: 200 });

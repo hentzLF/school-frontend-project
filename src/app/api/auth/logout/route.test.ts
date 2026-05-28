@@ -3,12 +3,13 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 
 vi.mock("@/lib/auth", () => ({
   clearAuthCookies: vi.fn(),
+  clearAuthCookiesOnResponse: vi.fn(),
 }));
 
-import { clearAuthCookies } from "@/lib/auth";
+import { clearAuthCookiesOnResponse } from "@/lib/auth";
 import { POST } from "./route";
 
-const mockClearAuthCookies = vi.mocked(clearAuthCookies);
+const mockClearAuthCookies = vi.mocked(clearAuthCookiesOnResponse);
 
 describe("auth/logout route", () => {
   beforeEach(() => {
@@ -16,7 +17,7 @@ describe("auth/logout route", () => {
   });
 
   it("should clear auth cookies and return success", async () => {
-    mockClearAuthCookies.mockResolvedValue(undefined);
+    mockClearAuthCookies.mockReturnValue(undefined);
 
     const response = await POST();
 
@@ -26,7 +27,7 @@ describe("auth/logout route", () => {
   });
 
   it("should call clearAuthCookies exactly once per request", async () => {
-    mockClearAuthCookies.mockResolvedValue(undefined);
+    mockClearAuthCookies.mockReturnValue(undefined);
 
     await POST();
 
@@ -34,7 +35,7 @@ describe("auth/logout route", () => {
   });
 
   it("should still return 200 even when called multiple times", async () => {
-    mockClearAuthCookies.mockResolvedValue(undefined);
+    mockClearAuthCookies.mockReturnValue(undefined);
 
     const r1 = await POST();
     const r2 = await POST();

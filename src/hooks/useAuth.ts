@@ -33,7 +33,9 @@ export function useAuth(): UseAuthReturn {
     queryKey: ["auth", "me"],
     queryFn: async () => {
       try {
-        return await api<MeResponse>(AUTH_ROUTES.me);
+        return await api<MeResponse>(AUTH_ROUTES.me, {
+          redirectOn401: false,
+        });
       } catch (err) {
         if (err instanceof ApiError && err.status === 401) {
           return null;
@@ -56,19 +58,12 @@ export function useAuth(): UseAuthReturn {
     },
   });
 
-  const registerMutation = useMutation<
-    AuthMutationResponse,
-    Error,
-    RegisterRequest
-  >({
+  const registerMutation = useMutation<unknown, Error, RegisterRequest>({
     mutationFn: (data: RegisterRequest) =>
-      api<AuthMutationResponse>(AUTH_ROUTES.register, {
+      api<unknown>(AUTH_ROUTES.register, {
         method: "POST",
         body: data,
       }),
-    onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ["auth", "me"] });
-    },
   });
 
   const logoutMutation = useMutation<void, Error, void>({

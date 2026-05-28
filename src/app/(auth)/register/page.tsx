@@ -1,9 +1,8 @@
 "use client";
 
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/hooks/useAuth";
 import { useTranslation } from "@/hooks/useTranslation";
@@ -22,13 +21,6 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 
 const registerSchema = z
   .object({
@@ -40,9 +32,6 @@ const registerSchema = z
       .email("Enter a valid email address"),
     password: z.string().min(6, "Password must be at least 6 characters"),
     confirmPassword: z.string().min(1, "Please confirm your password"),
-    role: z.enum(["Client", "Provider"], {
-      error: "Please select a role",
-    }),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match",
@@ -54,7 +43,6 @@ type RegisterFormValues = z.infer<typeof registerSchema>;
 const fieldError = "text-xs text-destructive";
 
 export default function RegisterPage() {
-  const router = useRouter();
   const {
     register: registerUser,
     registerError,
@@ -78,9 +66,8 @@ export default function RegisterPage() {
         lastName: data.lastName,
         email: data.email,
         password: data.password,
-        role: data.role,
       });
-      router.push("/dashboard");
+      window.location.assign("/login?registered=1");
     } catch {
       // Error is captured by registerError from useAuth
     }
@@ -211,42 +198,6 @@ export default function RegisterPage() {
                   className={fieldError}
                 >
                   {errors.confirmPassword.message}
-                </p>
-              )}
-            </div>
-
-            <div className="space-y-1.5">
-              <Label htmlFor="role">{t("auth.role")}</Label>
-              <Controller
-                control={control}
-                name="role"
-                render={({ field }) => (
-                  <Select
-                    value={field.value ?? ""}
-                    onValueChange={field.onChange}
-                  >
-                    <SelectTrigger
-                      id="role"
-                      className="w-full"
-                      aria-invalid={!!errors.role}
-                      aria-describedby={errors.role ? "role-error" : undefined}
-                    >
-                      <SelectValue placeholder={t("auth.roleRequired")} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Client">
-                        {t("auth.roleClient")}
-                      </SelectItem>
-                      <SelectItem value="Provider">
-                        {t("auth.roleProvider")}
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
-                )}
-              />
-              {errors.role && (
-                <p id="role-error" role="alert" className={fieldError}>
-                  {errors.role.message}
                 </p>
               )}
             </div>
